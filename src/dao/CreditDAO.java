@@ -373,18 +373,43 @@ public class CreditDAO {
      * Enregistre un paiement pour un crédit
      */
     public boolean enregistrerPaiement(int idCredit, BigDecimal montantPaiement) {
-        String sql = "UPDATE credit SET montant_rembourse = montant_rembourse + ?, " +
-                    "statut = CASE WHEN montant_rembourse + ? >= (montant_emprunte * (1 + taux_interet/100)) " +
-                    "THEN 'rembourse' ELSE statut END WHERE id_credit = ?";
-        
-        try (Connection conn = dbConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try {
+            // Récupérer le crédit actuel pour validation
+            Credit credit = findById(idCredit);
+            if (credit == null) {
+                System.err.println("Crédit introuvable pour l'ID: " + idCredit);
+                return false;
+            }
             
-            pstmt.setBigDecimal(1, montantPaiement);
-            pstmt.setBigDecimal(2, montantPaiement);
-            pstmt.setInt(3, idCredit);
+            BigDecimal resteAPayer = credit.getResteARembourser();
             
-            return pstmt.executeUpdate() > 0;
+            // Validation : ne pas permettre le paiement supérieur au reste à payer
+            if (montantPaiement.compareTo(resteAPayer) > 0) {
+                System.err.println("Paiement de " + montantPaiement + " supérieur au reste à payer de " + resteAPayer);
+                return false;
+            }
+            
+            // Calcul du nouveau montant remboursé
+            BigDecimal nouveauMontantRembourse = credit.getMontantRembourse().add(montantPaiement);
+            BigDecimal totalDu = credit.getMontantTotal();
+            
+            // Déterminer le statut
+            String nouveauStatut = credit.getStatut();
+            if (nouveauMontantRembourse.compareTo(totalDu) == 0) {
+                nouveauStatut = "rembourse";
+            }
+            
+            String sql = "UPDATE credit SET montant_rembourse = ?, statut = ? WHERE id_credit = ?";
+            
+            try (Connection conn = dbConnection.getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                
+                pstmt.setBigDecimal(1, nouveauMontantRembourse);
+                pstmt.setString(2, nouveauStatut);
+                pstmt.setInt(3, idCredit);
+                
+                return pstmt.executeUpdate() > 0;
+            }
             
         } catch (SQLException ex) {
             System.err.println("Erreur lors de l'enregistrement du paiement: " + ex.getMessage());

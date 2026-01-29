@@ -622,16 +622,46 @@ public class CreditsPanel extends JPanel {
         
         try {
             int id = (int) tableModel.getValueAt(selectedRow, 0);
+            Credit credit = creditDAO.findById(id);
+            
+            if (credit == null) {
+                showErrorMessage("Crédit introuvable");
+                return;
+            }
+            
+            BigDecimal resteAPayer = credit.getResteARembourser();
+            
+            String message = "Montant du paiement (FCFA):\n" +
+                           "Reste à payer: " + String.format("%.0f FCFA", resteAPayer.doubleValue()) + "\n" +
+                           "Montant maximum autorisé: " + String.format("%.0f FCFA", resteAPayer.doubleValue());
+            
             String montantStr = JOptionPane.showInputDialog(this, 
-                "Montant du paiement (FCFA):", 
+                message, 
                 "Enregistrer un paiement", 
                 JOptionPane.QUESTION_MESSAGE);
             
             if (montantStr != null && !montantStr.trim().isEmpty()) {
                 double montant = Double.parseDouble(montantStr);
-                if (creditDAO.enregistrerPaiement(id, BigDecimal.valueOf(montant))) {
+                
+                if (montant <= 0) {
+                    showErrorMessage("Le montant doit être supérieur à 0");
+                    return;
+                }
+                
+                BigDecimal paiement = BigDecimal.valueOf(montant);
+                
+                // Vérifier que le paiement ne dépasse pas le reste à payer
+                if (paiement.compareTo(resteAPayer) > 0) {
+                    showErrorMessage("Le paiement ne peut pas dépasser le reste à payer de " + 
+                                   String.format("%.0f FCFA", resteAPayer.doubleValue()));
+                    return;
+                }
+                
+                if (creditDAO.enregistrerPaiement(id, paiement)) {
                     showSuccessMessage("Paiement enregistré avec succès");
                     chargerCredits();
+                } else {
+                    showErrorMessage("Erreur lors de l'enregistrement du paiement");
                 }
             }
         } catch (NumberFormatException e) {
@@ -721,11 +751,20 @@ class CreditDialog extends JDialog {
     private JComboBox<String> cmbStatut;
     private com.toedter.calendar.JDateChooser dateDebut, dateFin;
     
+    // Nouveaux composants pour l'UX améliorée
+    private JLabel lblMontantTotal, lblMensualite, lblTotalInteret;
+    private JPanel previewPanel;
+    private JLabel lblValidationMessage;
+    
     // Couleurs
     private static final Color PRIMARY_PURPLE = new Color(139, 92, 246);
+    private static final Color SUCCESS_GREEN = new Color(16, 185, 129);
+    private static final Color ERROR_RED = new Color(239, 68, 68);
+    private static final Color WARNING_AMBER = new Color(251, 146, 60);
     private static final Color TEXT_PRIMARY = new Color(15, 23, 42);
     private static final Color TEXT_SECONDARY = new Color(100, 116, 139);
     private static final Color BACKGROUND = new Color(248, 250, 252);
+    private static final Color CARD_BG = new Color(255, 255, 255);
     
     public CreditDialog(Frame parent, Credit credit, MembreDAO membreDAO) {
         super(parent, credit == null ? "Nouveau Crédit" : "Modifier Crédit", true);
@@ -789,16 +828,70 @@ class CreditDialog extends JDialog {
     }
     
     private JPanel createFormPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
+        JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(BACKGROUND);
-        panel.setBorder(BorderFactory.createEmptyBorder(28, 28, 28, 28));
+        
+        // Panel principal avec formulaire et aperçu
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBackground(BACKGROUND);
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(28, 28, 28, 28));
         
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(10, 0, 10, 0);
         gbc.anchor = GridBagConstraints.WEST;
         
+        // Panel formulaire à gauche
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setBackground(BACKGROUND);
+        
         // Initialiser les composants
+        initializeComponents();
+        
+        // Ajouter les champs du formulaire
+        int row = 0;
+        addFormField(formPanel, gbc, row++, "Membre", cmbMembre, true, "Sélectionnez le membre bénéficiaire du crédit");
+        addFormField(formPanel, gbc, row++, "Tontine", cmbTontine, true, "Choisissez la tontine concernée");
+        addFormField(formPanel, gbc, row++, "Montant (FCFA)", txtMontant, true, "Montant emprunté sans les intérêts");
+        addFormField(formPanel, gbc, row++, "Taux d'intérêt (%)", txtTauxInteret, true, "Taux d'intérêt annuel appliqué");
+        addFormField(formPanel, gbc, row++, "Durée (mois)", txtDuree, true, "Nombre de mois pour le remboursement");
+        addFormField(formPanel, gbc, row++, "Date de début", dateDebut, true, "Date de début du crédit");
+        addFormField(formPanel, gbc, row++, "Date d'échéance", dateFin, true, "Date de fin de remboursement");
+        addFormField(formPanel, gbc, row++, "Statut", cmbStatut, false, "État actuel du crédit");
+        
+        // Panel d'aperçu à droite
+        previewPanel = createPreviewPanel();
+        
+        // Assembler le layout
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.7;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        mainPanel.add(formPanel, gbc);
+        
+        gbc.gridx = 1;
+        gbc.weightx = 0.3;
+        gbc.insets = new Insets(10, 20, 10, 0);
+        mainPanel.add(previewPanel, gbc);
+        
+        panel.add(mainPanel, BorderLayout.CENTER);
+        
+        // Panel de messages de validation
+        lblValidationMessage = new JLabel(" ");
+        lblValidationMessage.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        lblValidationMessage.setBorder(BorderFactory.createEmptyBorder(10, 28, 10, 28));
+        lblValidationMessage.setVisible(false);
+        panel.add(lblValidationMessage, BorderLayout.SOUTH);
+        
+        return panel;
+    }
+    
+    /**
+     * Initialise tous les composants du formulaire
+     */
+    private void initializeComponents() {
+        // Initialiser les composants principaux
         cmbMembre = createStyledComboBox();
         cmbTontine = createStyledComboBox();
         txtMontant = createStyledTextField();
@@ -812,6 +905,16 @@ class CreditDialog extends JDialog {
         cmbStatut.addItem("en_retard");
         
         // Charger les données
+        loadComboBoxData();
+        
+        // Ajouter les listeners pour la validation en temps réel
+        addRealTimeValidation();
+    }
+    
+    /**
+     * Charge les données dans les combobox
+     */
+    private void loadComboBoxData() {
         try {
             List<Membre> membres = membreDAO.findAll();
             for (Membre m : membres) {
@@ -829,32 +932,137 @@ class CreditDialog extends JDialog {
         } catch (Exception e) {
             System.err.println("Erreur chargement tontines: " + e.getMessage());
         }
+    }
+    
+    /**
+     * Ajoute les listeners pour la validation en temps réel
+     */
+    private void addRealTimeValidation() {
+        // Listener pour le montant
+        txtMontant.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { updatePreview(); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { updatePreview(); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { updatePreview(); }
+        });
         
-        // Ajouter les champs
-        int row = 0;
-        addFormField(panel, gbc, row++, "Membre", cmbMembre, true);
-        addFormField(panel, gbc, row++, "Tontine", cmbTontine, true);
-        addFormField(panel, gbc, row++, "Montant (FCFA)", txtMontant, true);
-        addFormField(panel, gbc, row++, "Taux d'intérêt (%)", txtTauxInteret, true);
-        addFormField(panel, gbc, row++, "Durée (mois)", txtDuree, true);
-        addFormField(panel, gbc, row++, "Date de début", dateDebut, true);
-        addFormField(panel, gbc, row++, "Date d'échéance", dateFin, true);
-        addFormField(panel, gbc, row++, "Statut", cmbStatut, false);
+        // Listener pour le taux d'intérêt
+        txtTauxInteret.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { updatePreview(); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { updatePreview(); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { updatePreview(); }
+        });
+        
+        // Listener pour la durée
+        txtDuree.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { updatePreview(); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { updatePreview(); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { updatePreview(); }
+        });
+        
+        // Listener pour la date de début
+        dateDebut.getDateEditor().addPropertyChangeListener("date", e -> {
+            if (dateDebut.getDate() != null) {
+                calculateEndDate();
+                updatePreview();
+            }
+        });
+    }
+    
+    /**
+     * Crée le panneau d'aperçu des calculs
+     */
+    private JPanel createPreviewPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(CARD_BG);
+        panel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(226, 232, 240), 1),
+            BorderFactory.createEmptyBorder(20, 20, 20, 20)
+        ));
+        
+        // Titre
+        JLabel title = new JLabel("💰 Aperçu du crédit");
+        title.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        title.setForeground(TEXT_PRIMARY);
+        title.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
+        panel.add(title, BorderLayout.NORTH);
+        
+        // Détails du calcul
+        JPanel detailsPanel = new JPanel(new GridBagLayout());
+        detailsPanel.setBackground(CARD_BG);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(8, 0, 8, 0);
+        
+        // Montant total
+        addPreviewRow(detailsPanel, gbc, 0, "Montant emprunté:", "0 FCFA", TEXT_PRIMARY);
+        lblMontantTotal = (JLabel) ((JPanel)detailsPanel.getComponent(0)).getComponent(1);
+        
+        // Total intérêts
+        addPreviewRow(detailsPanel, gbc, 1, "Intérêts totaux:", "0 FCFA", WARNING_AMBER);
+        lblTotalInteret = (JLabel) ((JPanel)detailsPanel.getComponent(1)).getComponent(1);
+        
+        // Montant total avec intérêts
+        addPreviewRow(detailsPanel, gbc, 2, "Montant total:", "0 FCFA", PRIMARY_PURPLE);
+        
+        // Mensualité
+        addPreviewRow(detailsPanel, gbc, 3, "Mensualité:", "0 FCFA", SUCCESS_GREEN);
+        lblMensualite = (JLabel) ((JPanel)detailsPanel.getComponent(3)).getComponent(1);
+        
+        panel.add(detailsPanel, BorderLayout.CENTER);
         
         return panel;
     }
     
+    /**
+     * Ajoute une ligne d'aperçu
+     */
+    private void addPreviewRow(JPanel parent, GridBagConstraints gbc, int row, String label, String value, Color valueColor) {
+        JPanel rowPanel = new JPanel(new BorderLayout());
+        rowPanel.setBackground(CARD_BG);
+        
+        JLabel lbl = new JLabel(label);
+        lbl.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        lbl.setForeground(TEXT_SECONDARY);
+        
+        JLabel val = new JLabel(value);
+        val.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        val.setForeground(valueColor);
+        val.setHorizontalAlignment(JLabel.RIGHT);
+        
+        rowPanel.add(lbl, BorderLayout.WEST);
+        rowPanel.add(val, BorderLayout.EAST);
+        
+        gbc.gridy = row;
+        gbc.gridx = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        parent.add(rowPanel, gbc);
+    }
     private void addFormField(JPanel panel, GridBagConstraints gbc, int row, 
-                              String labelText, JComponent field, boolean required) {
+                              String labelText, JComponent field, boolean required, String helpText) {
         gbc.gridx = 0;
         gbc.gridy = row;
         gbc.weightx = 0;
         gbc.gridwidth = 1;
         
+        // Panel pour le label et l'aide
+        JPanel labelPanel = new JPanel(new BorderLayout());
+        labelPanel.setBackground(BACKGROUND);
+        
         JLabel label = new JLabel(labelText + (required ? " *" : ""));
         label.setFont(new Font("Segoe UI", Font.BOLD, 13));
         label.setForeground(TEXT_PRIMARY);
-        panel.add(label, gbc);
+        labelPanel.add(label, BorderLayout.NORTH);
+        
+        if (helpText != null && !helpText.isEmpty()) {
+            JLabel help = new JLabel(helpText);
+            help.setFont(new Font("Segoe UI", Font.ITALIC, 11));
+            help.setForeground(TEXT_SECONDARY);
+            help.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
+            labelPanel.add(help, BorderLayout.CENTER);
+        }
+        
+        panel.add(labelPanel, gbc);
         
         gbc.gridy = row;
         gbc.gridx = 0;
@@ -862,6 +1070,109 @@ class CreditDialog extends JDialog {
         gbc.insets = new Insets(4, 0, 16, 0);
         panel.add(field, gbc);
         gbc.insets = new Insets(10, 0, 10, 0);
+    }
+    
+    /**
+     * Met à jour l'aperçu des calculs en temps réel
+     */
+    private void updatePreview() {
+        try {
+            double montant = getDoubleValue(txtMontant.getText());
+            double taux = getDoubleValue(txtTauxInteret.getText());
+            int duree = getIntValue(txtDuree.getText());
+            
+            if (montant > 0 && taux >= 0 && duree > 0) {
+                // Calculs
+                double totalInterets = montant * (taux / 100) * (duree / 12.0);
+                double montantTotal = montant + totalInterets;
+                double mensualite = montantTotal / duree;
+                
+                // Mise à jour des labels
+                if (lblMontantTotal != null) {
+                    lblMontantTotal.setText(String.format("%.0f FCFA", montant));
+                }
+                if (lblTotalInteret != null) {
+                    lblTotalInteret.setText(String.format("%.0f FCFA", totalInterets));
+                }
+                if (lblMensualite != null) {
+                    lblMensualite.setText(String.format("%.0f FCFA", mensualite));
+                }
+                
+                // Validation en temps réel
+                showValidationMessage("Calculs mis à jour automatiquement", SUCCESS_GREEN);
+            } else {
+                resetPreview();
+            }
+        } catch (Exception e) {
+            showValidationMessage("Vérifiez les valeurs saisies", ERROR_RED);
+        }
+    }
+    
+    /**
+     * Calcule automatiquement la date d'échéance
+     */
+    private void calculateEndDate() {
+        try {
+            int duree = getIntValue(txtDuree.getText());
+            if (duree > 0 && dateDebut.getDate() != null) {
+                LocalDate debut = convertToLocalDate(dateDebut.getDate());
+                LocalDate fin = debut.plusMonths(duree);
+                dateFin.setDate(convertToDate(fin));
+            }
+        } catch (Exception e) {
+            // Ignorer les erreurs de calcul
+        }
+    }
+    
+    /**
+     * Réinitialise l'aperçu
+     */
+    private void resetPreview() {
+        if (lblMontantTotal != null) lblMontantTotal.setText("0 FCFA");
+        if (lblTotalInteret != null) lblTotalInteret.setText("0 FCFA");
+        if (lblMensualite != null) lblMensualite.setText("0 FCFA");
+    }
+    
+    /**
+     * Affiche un message de validation
+     */
+    private void showValidationMessage(String message, Color color) {
+        if (lblValidationMessage != null) {
+            lblValidationMessage.setText(message);
+            lblValidationMessage.setForeground(color);
+            lblValidationMessage.setVisible(true);
+            
+            // Cacher le message après 3 secondes
+            javax.swing.Timer timer = new javax.swing.Timer(3000, e -> {
+                lblValidationMessage.setVisible(false);
+            });
+            timer.setRepeats(false);
+            timer.start();
+        }
+    }
+    
+    /**
+     * Extrait une valeur double d'un champ texte
+     */
+    private double getDoubleValue(String text) {
+        if (text == null || text.trim().isEmpty()) return 0;
+        try {
+            return Double.parseDouble(text.trim().replaceAll("[^0-9.,]", ""));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+    
+    /**
+     * Extrait une valeur entière d'un champ texte
+     */
+    private int getIntValue(String text) {
+        if (text == null || text.trim().isEmpty()) return 0;
+        try {
+            return Integer.parseInt(text.trim().replaceAll("[^0-9]", ""));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
     
     private JComboBox createStyledComboBox() {

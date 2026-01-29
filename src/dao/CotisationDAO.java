@@ -31,13 +31,14 @@ public class CotisationDAO {
      * Ajoute une nouvelle cotisation
      */
     public boolean create(Cotisation cotisation) {
-        String sql = "INSERT INTO cotisation (id_seance, id_membre, montant, date_paiement) " +
-                    "VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO cotisation (id_seance, id_membre, montant_du, montant, date_paiement) " +
+                    "VALUES (?, ?, ?, ?, ?)";
         
         System.out.println("🔍 [DAO DEBUG] Tentative d'insertion cotisation:");
         System.out.println("  - SQL: " + sql);
         System.out.println("  - id_seance: " + cotisation.getIdSeance());
         System.out.println("  - id_membre: " + cotisation.getIdMembre());
+        System.out.println("  - montant_du: " + cotisation.getMontant());
         System.out.println("  - montant: " + cotisation.getMontant());
         System.out.println("  - date_paiement: " + cotisation.getDatePaiement());
         
@@ -47,7 +48,8 @@ public class CotisationDAO {
             pstmt.setInt(1, cotisation.getIdSeance());
             pstmt.setInt(2, cotisation.getIdMembre());
             pstmt.setBigDecimal(3, cotisation.getMontant());
-            pstmt.setDate(4, Date.valueOf(cotisation.getDatePaiement()));
+            pstmt.setBigDecimal(4, cotisation.getMontant());
+            pstmt.setDate(5, Date.valueOf(cotisation.getDatePaiement()));
             
             int affectedRows = pstmt.executeUpdate();
             System.out.println("🔍 [DAO DEBUG] affectedRows: " + affectedRows);
@@ -76,7 +78,7 @@ public class CotisationDAO {
      * Met à jour une cotisation
      */
     public boolean update(Cotisation cotisation) {
-        String sql = "UPDATE cotisation SET id_seance = ?, id_membre = ?, montant = ?, date_paiement = ? WHERE id_cotisation = ?";
+        String sql = "UPDATE cotisation SET id_seance = ?, id_membre = ?, montant_du = ?, montant = ?, date_paiement = ? WHERE id_cotisation = ?";
         
         try (Connection conn = dbConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -84,8 +86,9 @@ public class CotisationDAO {
             pstmt.setInt(1, cotisation.getIdSeance());
             pstmt.setInt(2, cotisation.getIdMembre());
             pstmt.setBigDecimal(3, cotisation.getMontant());
-            pstmt.setDate(4, Date.valueOf(cotisation.getDatePaiement()));
-            pstmt.setInt(5, cotisation.getIdCotisation());
+            pstmt.setBigDecimal(4, cotisation.getMontant());
+            pstmt.setDate(5, Date.valueOf(cotisation.getDatePaiement()));
+            pstmt.setInt(6, cotisation.getIdCotisation());
             
             return pstmt.executeUpdate() > 0;
             

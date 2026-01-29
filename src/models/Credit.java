@@ -153,12 +153,14 @@ public class Credit {
         if (montantRembourse == null) {
             return total;
         }
-        return total.subtract(montantRembourse);
+        BigDecimal reste = total.subtract(montantRembourse);
+        // Ne jamais retourner de montant négatif
+        return reste.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : reste;
     }
     
     public boolean estCompletementRembourse() {
         return montantRembourse != null && 
-               montantRembourse.compareTo(getMontantTotal()) >= 0;
+               montantRembourse.compareTo(getMontantTotal()) == 0;
     }
     
     public boolean estEnRetardDePaiement() {

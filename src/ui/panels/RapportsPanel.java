@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -21,6 +22,14 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import javax.swing.SwingWorker;
+import javax.swing.JDialog;
+import javax.swing.JProgressBar;
+import javax.swing.JFrame;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -31,6 +40,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -48,6 +59,7 @@ import models.Credit;
 import models.Membre;
 import models.Seance;
 import models.Tontine;
+import utils.ReportGenerator;
 import ui.MainFrame;
 
 /**
@@ -596,19 +608,19 @@ public class RapportsPanel extends JPanel {
         try {
             switch (typeRapport) {
                 case "Résumé Général":
-                    genererRapportResumeGeneral();
+                    txtResultat.setText("📊 Rapport de Résumé Général prêt pour export PDF");
                     break;
                 case "Membres Actifs":
-                    genererRapportMembresActifs();
+                    txtResultat.setText("👥 Rapport des Membres Actifs prêt pour export PDF");
                     break;
                 case "Tontines Actives":
-                    genererRapportTontinesActives();
+                    txtResultat.setText("💰 Rapport des Tontines Actives prêt pour export PDF");
                     break;
                 case "Crédits en Cours":
-                    genererRapportCreditsEnCours();
+                    txtResultat.setText("💳 Rapport des Crédits en Cours prêt pour export PDF");
                     break;
                 case "Séances du Mois":
-                    genererRapportSeancesMois(dateDebutValue, dateFinValue);
+                    txtResultat.setText("📅 Rapport des Séances du Mois prêt pour export PDF");
                     break;
             }
             updateVisualStats();
@@ -617,270 +629,9 @@ public class RapportsPanel extends JPanel {
         }
     }
     
-    /**
-     * Génère le rapport des membres actifs
-     */
-    private void genererRapportMembresActifs() {
-        try {
-            List<Membre> membres = membreDAO.findAll();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            
-            StringBuilder resultat = new StringBuilder();
-            resultat.append("╔════════════════════════════════════════╗\n");
-            resultat.append("║   RAPPORT DES MEMBRES ACTIFS           ║\n");
-            resultat.append("╚════════════════════════════════════════╝\n\n");
-            resultat.append("📅 Généré le: ").append(LocalDate.now().format(formatter)).append("\n\n");
-            
-            int total = 0;
-            int actifs = 0;
-            
-            for (Membre m : membres) {
-                total++;
-                if (m.getStatut() != null && m.getStatut().equals("actif")) {
-                    actifs++;
-                    
-                    Object[] row = {
-                        m.getIdMembre(),
-                        m.getNomComplet(),
-                        "Membre",
-                        "N/A",
-                        m.getDateInscription() != null ? m.getDateInscription().format(formatter) : "N/A",
-                        m.getStatut()
-                    };
-                    tableModel.addRow(row);
-                }
-            }
-            
-            resultat.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-            resultat.append("📊 STATISTIQUES\n");
-            resultat.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
-            resultat.append("  • Total membres: ").append(total).append("\n");
-            resultat.append("  • Membres actifs: ").append(actifs).append("\n");
-            resultat.append("  • Taux d'activité: ").append(total > 0 ? String.format("%.1f%%", (actifs * 100.0 / total)) : "0%").append("\n");
-            
-            txtResultat.setText(resultat.toString());
-            
-        } catch (Exception e) {
-            showErrorMessage("Erreur: " + e.getMessage());
-        }
-    }
     
     /**
-     * Génère le rapport des tontines actives
-     */
-    private void genererRapportTontinesActives() {
-        try {
-            List<Tontine> tontines = tontineDAO.findAll();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            
-            StringBuilder resultat = new StringBuilder();
-            resultat.append("╔════════════════════════════════════════╗\n");
-            resultat.append("║   RAPPORT DES TONTINES ACTIVES         ║\n");
-            resultat.append("╚════════════════════════════════════════╝\n\n");
-            resultat.append("📅 Généré le: ").append(LocalDate.now().format(formatter)).append("\n\n");
-            
-            int total = 0;
-            int actives = 0;
-            
-            for (Tontine t : tontines) {
-                total++;
-                if (t.getStatut() != null && t.getStatut().equals("active")) {
-                    actives++;
-                    
-                    Object[] row = {
-                        t.getIdTontine(),
-                        t.getNom(),
-                        "Tontine",
-                        t.getNombreTours() + " tours",
-                        t.getDateDebut() != null ? t.getDateDebut().format(formatter) : "N/A",
-                        t.getStatut()
-                    };
-                    tableModel.addRow(row);
-                }
-            }
-            
-            resultat.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-            resultat.append("📊 STATISTIQUES\n");
-            resultat.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
-            resultat.append("  • Total tontines: ").append(total).append("\n");
-            resultat.append("  • Tontines actives: ").append(actives).append("\n");
-            resultat.append("  • Taux d'activité: ").append(total > 0 ? String.format("%.1f%%", (actives * 100.0 / total)) : "0%").append("\n");
-            
-            txtResultat.setText(resultat.toString());
-            
-        } catch (Exception e) {
-            showErrorMessage("Erreur: " + e.getMessage());
-        }
-    }
-    
-    /**
-     * Génère le rapport des crédits en cours
-     */
-    private void genererRapportCreditsEnCours() {
-        try {
-            List<Credit> credits = creditDAO.findAll();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            
-            StringBuilder resultat = new StringBuilder();
-            resultat.append("╔════════════════════════════════════════╗\n");
-            resultat.append("║   RAPPORT DES CRÉDITS EN COURS         ║\n");
-            resultat.append("╚════════════════════════════════════════╝\n\n");
-            resultat.append("📅 Généré le: ").append(LocalDate.now().format(formatter)).append("\n\n");
-            
-            int total = 0;
-            int enCours = 0;
-            double montantTotal = 0;
-            
-            for (Credit c : credits) {
-                total++;
-                if (c.getStatut() != null && c.getStatut().equals("en_cours")) {
-                    enCours++;
-                    montantTotal += c.getMontantEmprunte().doubleValue();
-                    
-                    Object[] row = {
-                        c.getIdCredit(),
-                        c.getMembre() != null ? c.getMembre().getNomComplet() : "N/A",
-                        "Crédit",
-                        String.format("%.0f FCFA", c.getMontantEmprunte()),
-                        c.getDateDebut() != null ? c.getDateDebut().format(formatter) : "N/A",
-                        c.getStatut()
-                    };
-                    tableModel.addRow(row);
-                }
-            }
-            
-            resultat.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-            resultat.append("📊 STATISTIQUES\n");
-            resultat.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
-            resultat.append("  • Total crédits: ").append(total).append("\n");
-            resultat.append("  • Crédits en cours: ").append(enCours).append("\n");
-            resultat.append("  • Montant total: ").append(String.format("%.0f FCFA", montantTotal)).append("\n");
-            
-            txtResultat.setText(resultat.toString());
-            
-        } catch (Exception e) {
-            showErrorMessage("Erreur: " + e.getMessage());
-        }
-    }
-    
-    /**
-     * Génère le rapport des séances
-     */
-    private void genererRapportSeancesMois(LocalDate dateDebut, LocalDate dateFin) {
-        try {
-            List<Seance> seances = seanceDAO.findAll();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            
-            StringBuilder resultat = new StringBuilder();
-            resultat.append("╔════════════════════════════════════════╗\n");
-            resultat.append("║   RAPPORT DES SÉANCES                  ║\n");
-            resultat.append("╚════════════════════════════════════════╝\n\n");
-            resultat.append("📅 Période: ");
-            if (dateDebut != null && dateFin != null) {
-                resultat.append(dateDebut.format(formatter)).append(" → ").append(dateFin.format(formatter));
-            } else {
-                resultat.append("Toutes les séances");
-            }
-            resultat.append("\n\n");
-            
-            int total = 0;
-            int planifiees = 0;
-            int terminees = 0;
-            
-            for (Seance s : seances) {
-                if (dateDebut != null && s.getDateSeance().isBefore(dateDebut)) continue;
-                if (dateFin != null && s.getDateSeance().isAfter(dateFin)) continue;
-                
-                total++;
-                
-                if (s.getStatut() != null) {
-                    switch (s.getStatut()) {
-                        case "planifiée": planifiees++; break;
-                        case "terminée": terminees++; break;
-                    }
-                }
-                
-                Object[] row = {
-                    s.getIdSeance(),
-                    "Tour " + s.getNumeroTour(),
-                    "Séance",
-                    "N/A",
-                    s.getDateSeance() != null ? s.getDateSeance().format(formatter) : "N/A",
-                    s.getStatut()
-                };
-                tableModel.addRow(row);
-            }
-            
-            resultat.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-            resultat.append("📊 STATISTIQUES\n");
-            resultat.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
-            resultat.append("  • Total séances: ").append(total).append("\n");
-            resultat.append("  • Planifiées: ").append(planifiees).append("\n");
-            resultat.append("  • Terminées: ").append(terminees).append("\n");
-            
-            txtResultat.setText(resultat.toString());
-            
-        } catch (Exception e) {
-            showErrorMessage("Erreur: " + e.getMessage());
-        }
-    }
-    
-    /**
-     * Génère le résumé général
-     */
-    private void genererRapportResumeGeneral() {
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            
-            StringBuilder resultat = new StringBuilder();
-            resultat.append("╔════════════════════════════════════════╗\n");
-            resultat.append("║   RÉSUMÉ GÉNÉRAL                       ║\n");
-            resultat.append("╚════════════════════════════════════════╝\n\n");
-            resultat.append("📅 Généré le: ").append(LocalDate.now().format(formatter)).append("\n\n");
-            
-            // Membres
-            List<Membre> membres = membreDAO.findAll();
-            int membresTotal = membres.size();
-            int membresActifs = (int) membres.stream().filter(m -> "actif".equals(m.getStatut())).count();
-            
-            resultat.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-            resultat.append("👥 MEMBRES\n");
-            resultat.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-            resultat.append("  • Total: ").append(membresTotal).append("\n");
-            resultat.append("  • Actifs: ").append(membresActifs).append("\n");
-            resultat.append("  • Taux: ").append(membresTotal > 0 ? String.format("%.1f%%", (membresActifs * 100.0 / membresTotal)) : "0%").append("\n\n");
-            
-            // Tontines
-            List<Tontine> tontines = tontineDAO.findAll();
-            int tontinesTotal = tontines.size();
-            int tontinesActives = (int) tontines.stream().filter(t -> "active".equals(t.getStatut())).count();
-            
-            resultat.append("💰 TONTINES\n");
-            resultat.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-            resultat.append("  • Total: ").append(tontinesTotal).append("\n");
-            resultat.append("  • Actives: ").append(tontinesActives).append("\n\n");
-            
-            // Crédits
-            List<Credit> credits = creditDAO.findAll();
-            int creditsTotal = credits.size();
-            int creditsEnCours = (int) credits.stream().filter(c -> "en_cours".equals(c.getStatut())).count();
-            double montantTotal = credits.stream().mapToDouble(c -> c.getMontantEmprunte().doubleValue()).sum();
-            
-            resultat.append("💳 CRÉDITS\n");
-            resultat.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-            resultat.append("  • Total: ").append(creditsTotal).append("\n");
-            resultat.append("  • En cours: ").append(creditsEnCours).append("\n");
-            resultat.append("  • Montant: ").append(String.format("%.0f FCFA", montantTotal)).append("\n");
-            
-            txtResultat.setText(resultat.toString());
-            
-        } catch (Exception e) {
-            showErrorMessage("Erreur: " + e.getMessage());
-        }
-    }
-    
-    /**
-     * Exporte le rapport
+     * Exporte le rapport en PDF ultra-moderne
      */
     private void exporterRapport() {
         if (txtResultat.getText().isEmpty()) {
@@ -889,23 +640,211 @@ public class RapportsPanel extends JPanel {
         }
         
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Exporter le rapport");
-        fileChooser.setSelectedFile(new File("rapport_" + LocalDate.now() + ".txt"));
+        fileChooser.setDialogTitle("Exporter le rapport PDF");
+        fileChooser.setFileFilter(new FileNameExtensionFilter(
+            "PDF Documents", "pdf"));
+        fileChooser.setSelectedFile(new File("rapport_" + 
+            LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ".pdf"));
         
         int userSelection = fileChooser.showSaveDialog(this);
         if (userSelection == JFileChooser.APPROVE_OPTION) {
-            File fileToSave = fileChooser.getSelectedFile();
-            try (FileWriter writer = new FileWriter(fileToSave)) {
-                writer.write(txtResultat.getText());
-                showSuccessMessage("Rapport exporté avec succès vers:\n" + fileToSave.getAbsolutePath());
-            } catch (IOException e) {
-                showErrorMessage("Erreur lors de l'export: " + e.getMessage());
+            File selectedFile = fileChooser.getSelectedFile();
+            
+            // Ajouter .pdf si absent
+            String filePath = selectedFile.getAbsolutePath();
+            if (!filePath.toLowerCase().endsWith(".pdf")) {
+                filePath += ".pdf";
             }
+            final File fileToSave = new File(filePath);
+            
+            // Afficher dialogue de progression
+            JDialog progressDialog = createProgressDialog();
+            progressDialog.setVisible(true);
+            
+            // Générer le PDF dans un thread séparé
+            SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                    generateModernPDF(fileToSave);
+                    return null;
+                }
+                
+                @Override
+                protected void done() {
+                    progressDialog.dispose();
+                    try {
+                        get(); // Vérifier les erreurs
+                        showSuccessMessage("✅ Rapport PDF exporté avec succès!\n\n" + 
+                            "📁 " + fileToSave.getAbsolutePath());
+                        
+                        // Proposer d'ouvrir le fichier
+                        int response = JOptionPane.showConfirmDialog(
+                            RapportsPanel.this,
+                            "Voulez-vous ouvrir le rapport maintenant?",
+                            "Ouvrir le rapport",
+                            JOptionPane.YES_NO_OPTION
+                        );
+                        
+                        if (response == JOptionPane.YES_OPTION) {
+                            Desktop.getDesktop().open(fileToSave);
+                        }
+                    } catch (Exception e) {
+                        showErrorMessage("❌ Erreur lors de l'export: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+            };
+            
+            worker.execute();
         }
     }
     
     /**
-     * Imprime le rapport
+     * Génère un PDF moderne avec le ReportGenerator
+     */
+    private void generateModernPDF(File outputFile) throws Exception {
+        ReportGenerator generator = new ReportGenerator();
+        
+        // Préparer les données du rapport
+        Map<String, Object> reportData = new HashMap<>();
+        
+        // Type de rapport
+        String reportType = (String) cmbTypeRapport.getSelectedItem();
+        reportData.put("reportType", reportType);
+        
+        // Période
+        String period = "Toutes périodes";
+        if (dateDebut.getDate() != null && dateFin.getDate() != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate debut = convertToLocalDate(dateDebut.getDate());
+            LocalDate fin = convertToLocalDate(dateFin.getDate());
+            period = debut.format(formatter) + " - " + fin.format(formatter);
+        }
+        reportData.put("period", period);
+        
+        // Statistiques globales
+        reportData.put("totalItems", tableModel.getRowCount());
+        
+        // KPIs
+        try {
+            List<Membre> membres = membreDAO.findAll();
+            int actifsMembres = (int) membres.stream()
+                .filter(m -> "actif".equals(m.getStatut())).count();
+            reportData.put("activeMembers", actifsMembres);
+            
+            List<Credit> credits = creditDAO.findAll();
+            double totalRevenue = credits.stream()
+                .mapToDouble(c -> c.getMontantEmprunte().doubleValue()).sum();
+            reportData.put("totalRevenue", String.format("%.0f", totalRevenue));
+            
+            double performance = actifsMembres * 100.0 / Math.max(1, membres.size());
+            reportData.put("performance", String.format("%.1f", performance));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        // Données de tableau
+        List<String[]> tableData = new ArrayList<>();
+        
+        // Headers
+        String[] headers = new String[tableModel.getColumnCount()];
+        for (int i = 0; i < headers.length; i++) {
+            headers[i] = tableModel.getColumnName(i);
+        }
+        tableData.add(headers);
+        
+        // Lignes (limiter à 20 pour le PDF)
+        int maxRows = Math.min(20, tableModel.getRowCount());
+        for (int i = 0; i < maxRows; i++) {
+            String[] row = new String[tableModel.getColumnCount()];
+            for (int j = 0; j < row.length; j++) {
+                Object value = tableModel.getValueAt(i, j);
+                row[j] = value != null ? value.toString() : "";
+            }
+            tableData.add(row);
+        }
+        reportData.put("tableData", tableData);
+        
+        // Données pour graphiques
+        Map<String, Double> chartData = new HashMap<>();
+        try {
+            List<Tontine> tontines = tontineDAO.findAll();
+            int actives = (int) tontines.stream()
+                .filter(t -> "active".equals(t.getStatut())).count();
+            chartData.put("Tontines Actives", (double) actives);
+            chartData.put("Tontines Terminées", (double) (tontines.size() - actives));
+            
+            List<Credit> credits = creditDAO.findAll();
+            int enCours = (int) credits.stream()
+                .filter(c -> "en_cours".equals(c.getStatut())).count();
+            chartData.put("Crédits Actifs", (double) enCours);
+            chartData.put("Crédits Remboursés", (double) (credits.size() - enCours));
+            
+            reportData.put("chartData", chartData);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        // Générer le rapport
+        generator.generateReport(outputFile.getAbsolutePath(), reportType, reportData);
+    }
+    
+    /**
+     * Crée un dialogue de progression moderne
+     */
+    private JDialog createProgressDialog() {
+        JDialog dialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), 
+            "Génération du rapport", true);
+        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        dialog.setResizable(false);
+        
+        JPanel panel = new JPanel(new BorderLayout(20, 20));
+        panel.setBackground(CARD_BG);
+        panel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
+        
+        // Icône animée
+        JLabel iconLabel = new JLabel("📊");
+        iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 48));
+        iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        // Message
+        JLabel messageLabel = new JLabel("Génération du rapport PDF en cours...");
+        messageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        messageLabel.setForeground(TEXT_PRIMARY);
+        messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        // Progress bar
+        JProgressBar progressBar = new JProgressBar();
+        progressBar.setIndeterminate(true);
+        progressBar.setPreferredSize(new Dimension(300, 8));
+        progressBar.setBackground(BACKGROUND);
+        progressBar.setForeground(PRIMARY_PURPLE);
+        progressBar.setBorderPainted(false);
+        
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setBackground(CARD_BG);
+        
+        iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        progressBar.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        contentPanel.add(iconLabel);
+        contentPanel.add(Box.createVerticalStrut(15));
+        contentPanel.add(messageLabel);
+        contentPanel.add(Box.createVerticalStrut(15));
+        contentPanel.add(progressBar);
+        
+        panel.add(contentPanel);
+        dialog.add(panel);
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+        
+        return dialog;
+    }
+    
+    /**
+     * Imprime le rapport avec un rendu professionnel
      */
     private void imprimerRapport() {
         if (txtResultat.getText().isEmpty()) {
@@ -913,16 +852,58 @@ public class RapportsPanel extends JPanel {
             return;
         }
         
-        try {
-            boolean complete = txtResultat.print();
-            if (complete) {
-                showSuccessMessage("Impression envoyée à l'imprimante");
-            } else {
-                showWarningMessage("Impression annulée");
+        // Créer un dialogue de confirmation avec options
+        String[] options = {"Imprimer le texte", "Imprimer en PDF", "Annuler"};
+        int choice = JOptionPane.showOptionDialog(
+            this,
+            "Choisissez le format d'impression:",
+            "Impression du rapport",
+            JOptionPane.YES_NO_CANCEL_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            options,
+            options[1] // PDF par défaut
+        );
+        
+        if (choice == 0) {
+            // Impression texte classique
+            try {
+                boolean complete = txtResultat.print();
+                if (complete) {
+                    showSuccessMessage("✅ Impression envoyée à l'imprimante");
+                } else {
+                    showWarningMessage("⚠️ Impression annulée");
+                }
+            } catch (Exception e) {
+                showErrorMessage("❌ Erreur lors de l'impression: " + e.getMessage());
             }
-        } catch (Exception e) {
-            showErrorMessage("Erreur lors de l'impression: " + e.getMessage());
+        } else if (choice == 1) {
+            // Génération PDF temporaire et impression
+            try {
+                File tempFile = File.createTempFile("rapport_", ".pdf");
+                tempFile.deleteOnExit();
+                
+                generateModernPDF(tempFile);
+                Desktop.getDesktop().print(tempFile);
+                
+                showSuccessMessage("✅ Document envoyé à l'imprimante");
+            } catch (Exception e) {
+                showErrorMessage("❌ Erreur lors de l'impression PDF: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
+    }
+    
+    /**
+     * Message de succès amélioré
+     */
+    private void showSuccessMessage(String message) {
+        JOptionPane.showMessageDialog(
+            this, 
+            message, 
+            "✅ Succès", 
+            JOptionPane.INFORMATION_MESSAGE
+        );
     }
     
     /**
@@ -943,10 +924,6 @@ public class RapportsPanel extends JPanel {
     
     private void showErrorMessage(String message) {
         JOptionPane.showMessageDialog(this, message, "Erreur", JOptionPane.ERROR_MESSAGE);
-    }
-    
-    private void showSuccessMessage(String message) {
-        JOptionPane.showMessageDialog(this, message, "Succès", JOptionPane.INFORMATION_MESSAGE);
     }
     
     private LocalDate convertToLocalDate(java.util.Date date) {

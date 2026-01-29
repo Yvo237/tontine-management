@@ -5,15 +5,19 @@ ui/panels/TontinesPanel.class
 ui/panels/MembreDialog$5.class
 ui/panels/SeancesPanel$2.class
 dao/SeanceDAO.class
+ui/panels/CreditDialog$3.class
+ui/panels/SeanceDialog$FieldValidationListener.class
 models/TypeTontine.class
 ui/panels/RapportsPanel$2.class
 ui/panels/MembresPanel$6.class
+ui/panels/SeanceDialog$1.class
 ui/panels/AccueilPanel$2.class
 dao/TontineDAO.class
 ui/panels/TontinesPanel$2.class
 ui/panels/CotisationsDialog$4.class
 models/Membre.class
 ui/panels/CreditsPanel$2.class
+ui/panels/CreditDialog$4.class
 ui/panels/CreditsPanel.class
 ui/MainFrame$2.class
 ui/panels/ParticipantsDialog$5.class
@@ -21,6 +25,7 @@ ui/panels/MembreDialog.class
 ui/panels/MembreDialog$2.class
 database/DatabaseConnection.class
 ui/panels/MembresPanel$4.class
+utils/ReportGenerator.class
 ui/panels/TontineDialog.class
 ui/panels/ParticipantsDialog$4.class
 ui/panels/ParticipantsDialog$7.class
@@ -32,6 +37,7 @@ ui/panels/MembreDialog$4.class
 dao/CreditDAO.class
 ui/panels/CreditsPanel$1.class
 ui/panels/MembreDialog$1.class
+ui/panels/CreditDialog$2.class
 ui/panels/CreditsPanel$RoundedBorder.class
 ui/MainFrame$1.class
 ui/panels/RapportsPanel$1.class
@@ -57,6 +63,7 @@ ui/panels/AccueilPanel.class
 ui/panels/MembresPanel$RoundedBorder.class
 ui/panels/TontineDialog$1.class
 ui/panels/MembreDialog$RoundedBorder.class
+utils/ReportGenerator$ModernHeaderFooter.class
 ui/panels/CotisationsDialog$1.class
 ui/MainFrame.class
 ui/panels/ParticipantsDialog$2.class

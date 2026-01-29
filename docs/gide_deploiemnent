@@ -1,0 +1,661 @@
+# Guide de Déploiement
+## Application de Gestion de Tontine
+
+---
+
+## 📋 Table des Matières
+
+1. [Prérequis Système](#prerequis)
+2. [Installation de MySQL](#mysql)
+3. [Configuration de la Base de Données](#bdd)
+4. [Installation de Java](#java)
+5. [Compilation du Projet](#compilation)
+6. [Configuration de l'Application](#configuration)
+7. [Exécution](#execution)
+8. [Tests](#tests)
+9. [Déploiement en Production](#production)
+10. [Maintenance](#maintenance)
+
+---
+
+<a name="prerequis"></a>
+## 1. Prérequis Système
+
+### Configuration Minimale
+
+- **Système d'exploitation**: Windows 7+, Linux, macOS 10.12+
+- **RAM**: 2 GB minimum (4 GB recommandé)
+- **Espace disque**: 500 MB minimum
+- **Résolution écran**: 1024x768 minimum (1280x720 recommandé)
+
+### Logiciels Requis
+
+- Java JDK 8 ou supérieur
+- MySQL Server 8.0 ou supérieur
+- Maven 3.6+ (optionnel, pour compilation)
+- Git (optionnel, pour versionning)
+
+---
+
+<a name="mysql"></a>
+## 2. Installation de MySQL
+
+### Sur Windows
+
+1. **Télécharger MySQL Installer**
+   - URL: https://dev.mysql.com/downloads/installer/
+   - Choisir: `mysql-installer-community-8.0.x.msi`
+
+2. **Installer MySQL**
+   ```
+   - Lancer l'installateur
+   - Choisir "Developer Default" ou "Server only"
+   - Suivre l'assistant d'installation
+   ```
+
+3. **Configuration Initiale**
+   ```
+   - Port: 3306 (par défaut)
+   - Mot de passe root: [choisir un mot de passe fort]
+   - Démarrage automatique: ✅ OUI
+   ```
+
+4. **Vérifier l'Installation**
+   ```bash
+   mysql --version
+   # Devrait afficher: mysql Ver 8.0.x
+   ```
+
+### Sur Linux (Ubuntu/Debian)
+
+```bash
+# Mettre à jour les paquets
+sudo apt update
+
+# Installer MySQL Server
+sudo apt install mysql-server
+
+# Démarrer MySQL
+sudo systemctl start mysql
+
+# Activer au démarrage
+sudo systemctl enable mysql
+
+# Sécuriser l'installation
+sudo mysql_secure_installation
+```
+
+### Sur macOS
+
+```bash
+# Avec Homebrew
+brew install mysql
+
+# Démarrer MySQL
+brew services start mysql
+
+# Configuration initiale
+mysql_secure_installation
+```
+
+---
+
+<a name="bdd"></a>
+## 3. Configuration de la Base de Données
+
+### Étape 1: Connexion à MySQL
+
+```bash
+# Windows
+mysql -u root -p
+
+# Linux/macOS
+sudo mysql -u root -p
+```
+
+Entrez le mot de passe root.
+
+### Étape 2: Créer la Base de Données
+
+```sql
+-- Créer la base de données
+CREATE DATABASE gestion_tontine CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- Vérifier
+SHOW DATABASES;
+```
+
+### Étape 3: Créer un Utilisateur (Recommandé)
+
+```sql
+-- Créer un utilisateur dédié
+CREATE USER 'tontine_user'@'localhost' IDENTIFIED BY 'VotreMotDePasse123!';
+
+-- Donner tous les privilèges sur la base
+GRANT ALL PRIVILEGES ON gestion_tontine.* TO 'tontine_user'@'localhost';
+
+-- Appliquer les changements
+FLUSH PRIVILEGES;
+
+-- Vérifier
+SHOW GRANTS FOR 'tontine_user'@'localhost';
+```
+
+### Étape 4: Importer le Schéma
+
+```bash
+# Méthode 1: Depuis la ligne de commande
+mysql -u root -p gestion_tontine < schema.sql
+
+# Méthode 2: Depuis MySQL
+mysql -u root -p
+USE gestion_tontine;
+SOURCE /chemin/vers/schema.sql;
+```
+
+### Étape 5: Vérifier l'Importation
+
+```sql
+USE gestion_tontine;
+
+-- Lister les tables
+SHOW TABLES;
+
+-- Devrait afficher:
+-- +----------------------------+
+-- | Tables_in_gestion_tontine  |
+-- +----------------------------+
+-- | Beneficiaire               |
+-- | ContributionFIAC           |
+-- | Cotisation                 |
+-- | Credit                     |
+-- | Membre                     |
+-- | Participation              |
+-- | Penalite                   |
+-- | ProjetFIAC                 |
+-- | RemboursementCredit        |
+-- | Seance                     |
+-- | Tontine                    |
+-- | TypeTontine                |
+-- +----------------------------+
+
+-- Vérifier les données de test
+SELECT COUNT(*) FROM Membre;
+SELECT COUNT(*) FROM TypeTontine;
+```
+
+---
+
+<a name="java"></a>
+## 4. Installation de Java
+
+### Vérifier si Java est Installé
+
+```bash
+java -version
+javac -version
+```
+
+### Installation sur Windows
+
+1. **Télécharger JDK**
+   - URL: https://www.oracle.com/java/technologies/downloads/
+   - Ou OpenJDK: https://adoptium.net/
+
+2. **Installer**
+   - Lancer l'installateur
+   - Noter le chemin d'installation (ex: `C:\Program Files\Java\jdk-11`)
+
+3. **Configurer JAVA_HOME**
+   ```
+   - Panneau de configuration → Système → Paramètres système avancés
+   - Variables d'environnement
+   - Nouvelle variable système:
+     Nom: JAVA_HOME
+     Valeur: C:\Program Files\Java\jdk-11
+   
+   - Modifier PATH:
+     Ajouter: %JAVA_HOME%\bin
+   ```
+
+4. **Vérifier**
+   ```bash
+   java -version
+   javac -version
+   ```
+
+### Installation sur Linux
+
+```bash
+# Ubuntu/Debian
+sudo apt install openjdk-11-jdk
+
+# Vérifier
+java -version
+javac -version
+
+# Configurer JAVA_HOME (ajouter à ~/.bashrc)
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+export PATH=$PATH:$JAVA_HOME/bin
+```
+
+---
+
+<a name="compilation"></a>
+## 5. Compilation du Projet
+
+### Option A: Avec Maven (Recommandé)
+
+1. **Installer Maven**
+   ```bash
+   # Windows: Télécharger depuis https://maven.apache.org/download.cgi
+   # Linux
+   sudo apt install maven
+   
+   # Vérifier
+   mvn -version
+   ```
+
+2. **Structure du Projet**
+   ```
+   gestion-tontine/
+   ├── pom.xml
+   ├── src/
+   │   └── main/
+   │       └── java/
+   │           └── com/
+   │               └── tontine/
+   │                   ├── database/
+   │                   ├── models/
+   │                   ├── dao/
+   │                   └── ui/
+   └── resources/
+       └── database.properties
+   ```
+
+3. **Compiler**
+   ```bash
+   cd gestion-tontine
+   mvn clean compile
+   ```
+
+4. **Créer le JAR**
+   ```bash
+   mvn package
+   
+   # Le JAR sera dans: target/gestion-tontine-1.0.0.jar
+   # JAR avec dépendances: target/gestion-tontine-1.0.0-jar-with-dependencies.jar
+   ```
+
+### Option B: Avec javac (Manuel)
+
+1. **Télécharger les Dépendances**
+   - MySQL Connector/J: https://dev.mysql.com/downloads/connector/j/
+   - JCalendar: https://toedter.com/jcalendar/
+   - Placer les JAR dans `lib/`
+
+2. **Compiler**
+   ```bash
+   # Windows
+   javac -cp ".;lib/*" -d bin src/com/tontine/**/*.java
+   
+   # Linux/macOS
+   javac -cp ".:lib/*" -d bin src/com/tontine/**/*.java
+   ```
+
+3. **Créer le JAR**
+   ```bash
+   cd bin
+   jar cvfm ../gestion-tontine.jar META-INF/MANIFEST.MF com/
+   ```
+
+---
+
+<a name="configuration"></a>
+## 6. Configuration de l'Application
+
+### Fichier database.properties
+
+Créer `src/main/resources/database.properties`:
+
+```properties
+# Configuration Base de Données MySQL
+db.url=jdbc:mysql://localhost:3306/gestion_tontine?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
+db.username=tontine_user
+db.password=VotreMotDePasse123!
+
+# Pool de connexions (optionnel)
+db.pool.size=10
+db.pool.timeout=30000
+
+# Logs
+db.log.enabled=true
+db.log.level=INFO
+```
+
+### Adapter à Votre Configuration
+
+```properties
+# Production
+db.url=jdbc:mysql://192.168.1.100:3306/gestion_tontine?...
+db.username=prod_user
+db.password=MotDePasseSecurise789!
+
+# Développement Local
+db.url=jdbc:mysql://localhost:3306/gestion_tontine?...
+db.username=root
+db.password=
+```
+
+---
+
+<a name="execution"></a>
+## 7. Exécution
+
+### Méthode 1: Double-clic (Windows)
+
+1. Associer les fichiers `.jar` à Java
+2. Double-cliquer sur `gestion-tontine.jar`
+
+### Méthode 2: Ligne de Commande
+
+```bash
+# JAR avec dépendances
+java -jar gestion-tontine-1.0.0-jar-with-dependencies.jar
+
+# JAR normal (spécifier le classpath)
+# Windows
+java -cp "gestion-tontine.jar;lib/*" com.tontine.ui.MainFrame
+
+# Linux/macOS
+java -cp "gestion-tontine.jar:lib/*" com.tontine.ui.MainFrame
+```
+
+### Méthode 3: Script de Lancement
+
+**Windows** (`lancer.bat`):
+```batch
+@echo off
+echo Lancement de l'application Gestion Tontine...
+java -jar gestion-tontine-1.0.0-jar-with-dependencies.jar
+pause
+```
+
+**Linux/macOS** (`lancer.sh`):
+```bash
+#!/bin/bash
+echo "Lancement de l'application Gestion Tontine..."
+java -jar gestion-tontine-1.0.0-jar-with-dependencies.jar
+```
+
+Rendre exécutable:
+```bash
+chmod +x lancer.sh
+./lancer.sh
+```
+
+---
+
+<a name="tests"></a>
+## 8. Tests
+
+### Tests Fonctionnels de Base
+
+1. **Connexion Base de Données**
+   - Lancer l'application
+   - Vérifier message "Connexion établie" dans la console
+
+2. **Gestion des Membres**
+   ```
+   ✓ Ajouter un nouveau membre
+   ✓ Modifier un membre
+   ✓ Rechercher un membre
+   ✓ Supprimer un membre
+   ```
+
+3. **Gestion des Tontines**
+   ```
+   ✓ Créer une tontine
+   ✓ Ajouter des participants
+   ✓ Modifier une tontine
+   ```
+
+4. **Gestion des Séances**
+   ```
+   ✓ Créer une séance
+   ✓ Vérifier création automatique des cotisations
+   ✓ Enregistrer un paiement
+   ```
+
+5. **Gestion des Crédits**
+   ```
+   ✓ Accorder un crédit
+   ✓ Enregistrer un remboursement
+   ✓ Vérifier mise à jour automatique du statut
+   ```
+
+6. **Contrainte Tontine Optionnelle**
+   ```
+   ✓ Tenter d'attribuer un gain dépassant le total
+   ✓ Vérifier que l'erreur est bien levée
+   ```
+
+### Tests de Performance
+
+```sql
+-- Insérer 100 membres de test
+DELIMITER //
+CREATE PROCEDURE insert_test_members()
+BEGIN
+    DECLARE i INT DEFAULT 1;
+    WHILE i <= 100 DO
+        INSERT INTO Membre (nom, prenom, telephone, date_adhesion)
+        VALUES (
+            CONCAT('NOM', i),
+            CONCAT('PRENOM', i),
+            CONCAT('+23767000', LPAD(i, 4, '0')),
+            CURRENT_DATE
+        );
+        SET i = i + 1;
+    END WHILE;
+END//
+DELIMITER ;
+
+CALL insert_test_members();
+```
+
+---
+
+<a name="production"></a>
+## 9. Déploiement en Production
+
+### Checklist de Production
+
+- [ ] Base de données configurée avec utilisateur dédié
+- [ ] Mot de passe fort pour la base
+- [ ] Sauvegarde automatique configurée
+- [ ] Fichier database.properties sécurisé
+- [ ] JAR testé sur l'environnement cible
+- [ ] Documentation fournie
+- [ ] Formation des utilisateurs effectuée
+
+### Sécurisation
+
+1. **Base de Données**
+   ```sql
+   -- Créer un utilisateur avec privilèges limités
+   CREATE USER 'tontine_app'@'localhost' IDENTIFIED BY 'MotDePasseComplexe!123';
+   GRANT SELECT, INSERT, UPDATE ON gestion_tontine.* TO 'tontine_app'@'localhost';
+   -- Ne pas donner DELETE ni DROP
+   ```
+
+2. **Fichier de Configuration**
+   ```bash
+   # Permissions restrictives
+   chmod 600 database.properties
+   ```
+
+3. **Logs**
+   - Activer les logs applicatifs
+   - Configurer la rotation des logs
+   - Surveiller les erreurs
+
+### Sauvegarde Automatique
+
+**Script de sauvegarde quotidienne** (`backup.sh`):
+```bash
+#!/bin/bash
+DATE=$(date +%Y%m%d_%H%M%S)
+BACKUP_DIR="/home/tontine/backups"
+DB_NAME="gestion_tontine"
+DB_USER="root"
+
+# Créer le répertoire si inexistant
+mkdir -p $BACKUP_DIR
+
+# Sauvegarder
+mysqldump -u $DB_USER -p $DB_NAME > $BACKUP_DIR/backup_$DATE.sql
+
+# Compresser
+gzip $BACKUP_DIR/backup_$DATE.sql
+
+# Nettoyer les sauvegardes de plus de 30 jours
+find $BACKUP_DIR -name "backup_*.sql.gz" -mtime +30 -delete
+
+echo "Sauvegarde terminée: backup_$DATE.sql.gz"
+```
+
+**Ajouter au crontab**:
+```bash
+crontab -e
+# Ajouter:
+0 2 * * * /home/tontine/scripts/backup.sh
+```
+
+---
+
+<a name="maintenance"></a>
+## 10. Maintenance
+
+### Surveillance
+
+1. **Logs Applicatifs**
+   - Vérifier régulièrement
+   - Surveiller les erreurs
+
+2. **Base de Données**
+   ```sql
+   -- Taille de la base
+   SELECT 
+       table_schema AS 'Database',
+       ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS 'Size (MB)'
+   FROM information_schema.TABLES
+   WHERE table_schema = 'gestion_tontine'
+   GROUP BY table_schema;
+   
+   -- Tables les plus volumineuses
+   SELECT 
+       table_name,
+       ROUND(((data_length + index_length) / 1024 / 1024), 2) AS 'Size (MB)'
+   FROM information_schema.TABLES
+   WHERE table_schema = 'gestion_tontine'
+   ORDER BY (data_length + index_length) DESC;
+   ```
+
+3. **Performance**
+   ```sql
+   -- Requêtes lentes
+   SHOW VARIABLES LIKE 'slow_query_log';
+   SET GLOBAL slow_query_log = 'ON';
+   SET GLOBAL long_query_time = 2;
+   ```
+
+### Optimisation
+
+```sql
+-- Optimiser les tables
+OPTIMIZE TABLE Membre, Cotisation, Credit;
+
+-- Analyser les tables
+ANALYZE TABLE Membre, Cotisation, Credit;
+
+-- Vérifier les index manquants
+SHOW INDEX FROM Cotisation;
+```
+
+### Mise à Jour
+
+1. **Sauvegarder** avant toute mise à jour
+2. **Tester** sur environnement de développement
+3. **Planifier** la mise à jour hors heures de pointe
+4. **Documenter** les changements
+
+---
+
+## 11. Résolution de Problèmes
+
+### Problème: "Access denied for user"
+
+**Solution**:
+```sql
+-- Vérifier les privilèges
+SHOW GRANTS FOR 'tontine_user'@'localhost';
+
+-- Réinitialiser
+GRANT ALL PRIVILEGES ON gestion_tontine.* TO 'tontine_user'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+### Problème: "Table doesn't exist"
+
+**Solution**:
+```sql
+-- Vérifier la base active
+SELECT DATABASE();
+
+-- Réimporter le schéma
+SOURCE schema.sql;
+```
+
+### Problème: "Out of memory"
+
+**Solution**:
+```bash
+# Augmenter la mémoire Java
+java -Xmx512m -jar gestion-tontine.jar
+```
+
+---
+
+## Annexes
+
+### A. Commandes MySQL Utiles
+
+```sql
+-- Lister les utilisateurs
+SELECT user, host FROM mysql.user;
+
+-- Voir les connexions actives
+SHOW PROCESSLIST;
+
+-- Taille de la base
+SELECT table_schema, 
+       SUM(data_length + index_length) / 1024 / 1024 AS size_mb
+FROM information_schema.tables
+GROUP BY table_schema;
+
+-- Exporter une table
+SELECT * INTO OUTFILE '/tmp/membres.csv'
+FIELDS TERMINATED BY ','
+FROM Membre;
+```
+
+### B. Contacts et Support
+
+- **Projet**: INF2212 - Université de Yaoundé I
+- **Enseignant**: Etienne Kouokam
+- **Email**: etienne.kouokam@facsciences-uy1.cm
+
+---
+
+**Fin du Guide de Déploiement**

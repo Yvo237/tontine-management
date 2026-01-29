@@ -1,0 +1,64 @@
+@options
+@packages
+-classpath
+'/home/yvo/.m2/repository/org/postgresql/postgresql/42.7.1/postgresql-42.7.1.jar:/home/yvo/.m2/repository/com/zaxxer/HikariCP/5.1.0/HikariCP-5.1.0.jar:/home/yvo/.m2/repository/org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36.jar:/home/yvo/.m2/repository/com/formdev/flatlaf/3.4/flatlaf-3.4.jar:/home/yvo/.m2/repository/com/formdev/flatlaf-intellij-themes/3.4/flatlaf-intellij-themes-3.4.jar:/home/yvo/.m2/repository/com/toedter/jcalendar/1.4/jcalendar-1.4.jar'
+-encoding
+'UTF-8'
+-private
+--release
+11
+-sourcepath
+'/home/yvo/tontine-management/src:/home/yvo/tontine-management/target/generated-sources/annotations'
+-author
+-bottom
+'Copyright &#169; 2024&#x2013;2026 <a href="https://www.uy1.cm">Université de Yaoundé I</a>. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'/home/yvo/tontine-management/target/apidocs'
+-docencoding
+'UTF-8'
+-Xdoclint:none
+-doctitle
+'Tontine Management Elite 3.0.0-RELEASE API'
+-linkoffline
+'https://docs.oracle.com/en/java/javase/11/docs/api' '/home/yvo/tontine-management/target/javadoc-bundle-options'
+-use
+-version
+-windowtitle
+'Tontine Management Elite 3.0.0-RELEASE API'
+models
+ui
+ui.panels
+dao
+database
+/home/yvo/.m2/repository/org/postgresql/postgresql/42.7.1/postgresql-42.7.1.jar = 1701876361000
+/home/yvo/.m2/repository/com/zaxxer/HikariCP/5.1.0/HikariCP-5.1.0.jar = 1699102053000
+/home/yvo/.m2/repository/org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36.jar = 1644327230000
+/home/yvo/.m2/repository/com/formdev/flatlaf/3.4/flatlaf-3.4.jar = 1708382050000
+/home/yvo/.m2/repository/com/formdev/flatlaf-intellij-themes/3.4/flatlaf-intellij-themes-3.4.jar = 1708382079000
+/home/yvo/.m2/repository/com/toedter/jcalendar/1.4/jcalendar-1.4.jar = 1768905895780
+/home/yvo/tontine-management/src = 1769479418799
+/home/yvo/tontine-management/target/generated-sources/annotations = 1769469818013
+/home/yvo/tontine-management/target/apidocs/allpackages-index.html = 1769480139520
+/home/yvo/tontine-management/target/apidocs/allclasses-index.html = 1769480139518
+/home/yvo/tontine-management/target/apidocs/stylesheet.css = 1769480139617
+/home/yvo/tontine-management/target/apidocs/overview-tree.html = 1769480139456
+/home/yvo/tontine-management/target/apidocs/overview-summary.html = 1769480139606
+/home/yvo/tontine-management/target/apidocs/serialized-form.html = 1769480139301
+/home/yvo/tontine-management/target/apidocs/search-page.js = 1769480139621
+/home/yvo/tontine-management/target/apidocs/type-search-index.js = 1769480139521
+/home/yvo/tontine-management/target/apidocs/tag-search-index.js = 1769480139524
+/home/yvo/tontine-management/target/apidocs/index-all.html = 1769480139603
+/home/yvo/tontine-management/target/apidocs/constant-values.html = 1769480139262
+/home/yvo/tontine-management/target/apidocs/search.js = 1769480139620
+/home/yvo/tontine-management/target/apidocs/index.html = 1769480139459
+/home/yvo/tontine-management/target/apidocs/copy.svg = 1769480139619
+/home/yvo/tontine-management/target/apidocs/help-doc.html = 1769480139616
+/home/yvo/tontine-management/target/apidocs/module-search-index.js = 1769480139520
+/home/yvo/tontine-management/target/apidocs/member-search-index.js = 1769480139523
+/home/yvo/tontine-management/target/apidocs/script.js = 1769480139618
+/home/yvo/tontine-management/target/apidocs/search.html = 1769480139605
+/home/yvo/tontine-management/target/apidocs/package-search-index.js = 1769480139521
+/home/yvo/tontine-management/target/apidocs/element-list = 1769480139211
+/home/yvo/tontine-management/target/apidocs/link.svg = 1769480139619

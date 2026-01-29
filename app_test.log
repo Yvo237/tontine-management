@@ -1,0 +1,296 @@
+ Lancement de l'application de gestion de tontine...
+ Classpath: target/classes:resources:/home/yvo/.m2/repository/org/postgresql/postgresql/42.7.1/postgresql-42.7.1.jar:/home/yvo/.m2/repository/com/zaxxer/HikariCP/5.1.0/HikariCP-5.1.0.jar:/home/yvo/.m2/repository/org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36.jar:/home/yvo/.m2/repository/com/toedter/jcalendar/1.4/jcalendar-1.4.jar:/home/yvo/.m2/repository/com/formdev/flatlaf/3.4/flatlaf-3.4.jar:/home/yvo/.m2/repository/com/formdev/flatlaf-intellij-themes/3.4/flatlaf-intellij-themes-3.4.jar
+🔍 [DEBUG] Tentative de connexion à la base de données...
+🔍 [DEBUG] Driver: org.postgresql.Driver
+🔍 [DEBUG] Driver chargé avec succès
+🔍 [DEBUG] URL: jdbc:postgresql://localhost:5432/gestion_tontine
+🔍 [DEBUG] Username: tontine_user
+🔍 [DEBUG] Password: [MASQUÉ]
+✅ Connexion à la base de données établie avec succès
+🔍 [DEBUG] Connexion valide: true
+🔍 [DEBUG] Auto-commit: true
+🔍 [DEBUG] Tentative de connexion à la base de données...
+🔍 [DEBUG] Driver: org.postgresql.Driver
+🔍 [DEBUG] Driver chargé avec succès
+🔍 [DEBUG] URL: jdbc:postgresql://localhost:5432/gestion_tontine
+🔍 [DEBUG] Username: tontine_user
+🔍 [DEBUG] Password: [MASQUÉ]
+✅ Connexion à la base de données établie avec succès
+🔍 [DEBUG] Connexion valide: true
+🔍 [DEBUG] Auto-commit: true
+🔍 [TONTINE DEBUG] Recherche de toutes les tontines...
+  - SQL: SELECT t.*, tt.nom as type_nom, tt.description as type_description, tt.est_obligatoire, tt.montant_cotisation, tt.frequence FROM Tontine t JOIN typetontine tt ON t.id_type = tt.id_type ORDER BY t.date_debut DESC
+🔍 [DEBUG] Tentative de connexion à la base de données...
+🔍 [DEBUG] Driver: org.postgresql.Driver
+🔍 [DEBUG] Driver chargé avec succès
+🔍 [DEBUG] URL: jdbc:postgresql://localhost:5432/gestion_tontine
+🔍 [DEBUG] Username: tontine_user
+🔍 [DEBUG] Password: [MASQUÉ]
+✅ Connexion à la base de données établie avec succès
+🔍 [DEBUG] Connexion valide: true
+🔍 [DEBUG] Auto-commit: true
+🔍 [TONTINE DEBUG] Tontine trouvée: Tontine Optionnelle Spéciale (ID: 2)
+🔍 [TONTINE DEBUG] Tontine trouvée: Tontine de Présence Mensuelle (ID: 1)
+🔍 [TONTINE DEBUG] Total tontines trouvées: 2
+🔍 [DEBUG] Recherche de tous les crédits...
+🔍 [DEBUG] Requête SQL: SELECT c.*, m.nom as membre_nom, m.prenom as membre_prenom, t.nom as tontine_nom FROM Credit c JOIN Membre m ON c.id_membre = m.id_membre JOIN Tontine t ON c.id_tontine = t.id_tontine ORDER BY c.date_emprunt DESC
+🔍 [DEBUG] Tentative de connexion à la base de données...
+🔍 [DEBUG] Driver: org.postgresql.Driver
+🔍 [DEBUG] Driver chargé avec succès
+🔍 [DEBUG] URL: jdbc:postgresql://localhost:5432/gestion_tontine
+🔍 [DEBUG] Username: tontine_user
+🔍 [DEBUG] Password: [MASQUÉ]
+✅ Connexion à la base de données établie avec succès
+🔍 [DEBUG] Connexion valide: true
+🔍 [DEBUG] Auto-commit: true
+❌ [ERROR] Erreur lors de la récupération des crédits: ERROR: permission denied for table credit
+❌ [ERROR] SQL State: 42501
+org.postgresql.util.PSQLException: ERROR: permission denied for table credit
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2712)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2400)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:367)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:498)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:415)
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:335)
+	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:321)
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:297)
+	at org.postgresql.jdbc.PgStatement.executeQuery(PgStatement.java:246)
+	at dao.CreditDAO.findAll(CreditDAO.java:171)
+	at ui.panels.AccueilPanel.chargerStatistiques(AccueilPanel.java:421)
+	at ui.panels.AccueilPanel.<init>(AccueilPanel.java:65)
+	at ui.MainFrame.initializeComponents(MainFrame.java:129)
+	at ui.MainFrame.<init>(MainFrame.java:89)
+	at ui.MainFrame.lambda$2(MainFrame.java:543)
+	at java.desktop/java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:318)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:773)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:714)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:742)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+🔍 [DEBUG] Tentative de connexion à la base de données...
+🔍 [DEBUG] Driver: org.postgresql.Driver
+🔍 [DEBUG] Driver chargé avec succès
+🔍 [DEBUG] URL: jdbc:postgresql://localhost:5432/gestion_tontine
+🔍 [DEBUG] Username: tontine_user
+🔍 [DEBUG] Password: [MASQUÉ]
+✅ Connexion à la base de données établie avec succès
+🔍 [DEBUG] Connexion valide: true
+🔍 [DEBUG] Auto-commit: true
+🔍 [TONTINE DEBUG] Recherche de toutes les tontines...
+  - SQL: SELECT t.*, tt.nom as type_nom, tt.description as type_description, tt.est_obligatoire, tt.montant_cotisation, tt.frequence FROM Tontine t JOIN typetontine tt ON t.id_type = tt.id_type ORDER BY t.date_debut DESC
+🔍 [DEBUG] Tentative de connexion à la base de données...
+🔍 [DEBUG] Driver: org.postgresql.Driver
+🔍 [DEBUG] Driver chargé avec succès
+🔍 [DEBUG] URL: jdbc:postgresql://localhost:5432/gestion_tontine
+🔍 [DEBUG] Username: tontine_user
+🔍 [DEBUG] Password: [MASQUÉ]
+✅ Connexion à la base de données établie avec succès
+🔍 [DEBUG] Connexion valide: true
+🔍 [DEBUG] Auto-commit: true
+🔍 [TONTINE DEBUG] Tontine trouvée: Tontine Optionnelle Spéciale (ID: 2)
+🔍 [TONTINE DEBUG] Tontine trouvée: Tontine de Présence Mensuelle (ID: 1)
+🔍 [TONTINE DEBUG] Total tontines trouvées: 2
+🔍 [TONTINE DEBUG] Recherche de toutes les tontines...
+  - SQL: SELECT t.*, tt.nom as type_nom, tt.description as type_description, tt.est_obligatoire, tt.montant_cotisation, tt.frequence FROM Tontine t JOIN typetontine tt ON t.id_type = tt.id_type ORDER BY t.date_debut DESC
+🔍 [DEBUG] Tentative de connexion à la base de données...
+🔍 [DEBUG] Driver: org.postgresql.Driver
+🔍 [DEBUG] Driver chargé avec succès
+🔍 [DEBUG] URL: jdbc:postgresql://localhost:5432/gestion_tontine
+🔍 [DEBUG] Username: tontine_user
+🔍 [DEBUG] Password: [MASQUÉ]
+✅ Connexion à la base de données établie avec succès
+🔍 [DEBUG] Connexion valide: true
+🔍 [DEBUG] Auto-commit: true
+🔍 [TONTINE DEBUG] Tontine trouvée: Tontine Optionnelle Spéciale (ID: 2)
+🔍 [TONTINE DEBUG] Tontine trouvée: Tontine de Présence Mensuelle (ID: 1)
+🔍 [TONTINE DEBUG] Total tontines trouvées: 2
+🔍 [DEBUG] Tentative de connexion à la base de données...
+🔍 [DEBUG] Driver: org.postgresql.Driver
+🔍 [DEBUG] Driver chargé avec succès
+🔍 [DEBUG] URL: jdbc:postgresql://localhost:5432/gestion_tontine
+🔍 [DEBUG] Username: tontine_user
+🔍 [DEBUG] Password: [MASQUÉ]
+✅ Connexion à la base de données établie avec succès
+🔍 [DEBUG] Connexion valide: true
+🔍 [DEBUG] Auto-commit: true
+Erreur lors de la récupération des séances: ERROR: relation "seance" does not exist
+  Position: 83
+🔍 [DEBUG] Tentative de connexion à la base de données...
+🔍 [DEBUG] Driver: org.postgresql.Driver
+🔍 [DEBUG] Driver chargé avec succès
+🔍 [DEBUG] URL: jdbc:postgresql://localhost:5432/gestion_tontine
+🔍 [DEBUG] Username: tontine_user
+🔍 [DEBUG] Password: [MASQUÉ]
+✅ Connexion à la base de données établie avec succès
+🔍 [DEBUG] Connexion valide: true
+🔍 [DEBUG] Auto-commit: true
+🔍 [DEBUG] Recherche de tous les crédits...
+🔍 [DEBUG] Requête SQL: SELECT c.*, m.nom as membre_nom, m.prenom as membre_prenom, t.nom as tontine_nom FROM Credit c JOIN Membre m ON c.id_membre = m.id_membre JOIN Tontine t ON c.id_tontine = t.id_tontine ORDER BY c.date_emprunt DESC
+🔍 [DEBUG] Tentative de connexion à la base de données...
+🔍 [DEBUG] Driver: org.postgresql.Driver
+🔍 [DEBUG] Driver chargé avec succès
+🔍 [DEBUG] URL: jdbc:postgresql://localhost:5432/gestion_tontine
+🔍 [DEBUG] Username: tontine_user
+🔍 [DEBUG] Password: [MASQUÉ]
+✅ Connexion à la base de données établie avec succès
+🔍 [DEBUG] Connexion valide: true
+🔍 [DEBUG] Auto-commit: true
+❌ [ERROR] Erreur lors de la récupération des crédits: ERROR: permission denied for table credit
+❌ [ERROR] SQL State: 42501
+org.postgresql.util.PSQLException: ERROR: permission denied for table credit
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2712)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2400)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:367)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:498)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:415)
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:335)
+	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:321)
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:297)
+	at org.postgresql.jdbc.PgStatement.executeQuery(PgStatement.java:246)
+	at dao.CreditDAO.findAll(CreditDAO.java:171)
+	at ui.panels.CreditsPanel.chargerCredits(CreditsPanel.java:451)
+	at ui.panels.CreditsPanel.<init>(CreditsPanel.java:86)
+	at ui.MainFrame.initializeComponents(MainFrame.java:133)
+	at ui.MainFrame.<init>(MainFrame.java:89)
+	at ui.MainFrame.lambda$2(MainFrame.java:543)
+	at java.desktop/java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:318)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:773)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:714)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:742)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+🔍 [DEBUG] Tentative de connexion à la base de données...
+🔍 [DEBUG] Driver: org.postgresql.Driver
+🔍 [DEBUG] Driver chargé avec succès
+🔍 [DEBUG] URL: jdbc:postgresql://localhost:5432/gestion_tontine
+🔍 [DEBUG] Username: tontine_user
+🔍 [DEBUG] Password: [MASQUÉ]
+✅ Connexion à la base de données établie avec succès
+🔍 [DEBUG] Connexion valide: true
+🔍 [DEBUG] Auto-commit: true
+🔍 [DEBUG] Tentative de connexion à la base de données...
+🔍 [DEBUG] Driver: org.postgresql.Driver
+🔍 [DEBUG] Driver chargé avec succès
+🔍 [DEBUG] URL: jdbc:postgresql://localhost:5432/gestion_tontine
+🔍 [DEBUG] Username: tontine_user
+🔍 [DEBUG] Password: [MASQUÉ]
+✅ Connexion à la base de données établie avec succès
+🔍 [DEBUG] Connexion valide: true
+🔍 [DEBUG] Auto-commit: true
+🔍 [TONTINE DEBUG] Recherche de toutes les tontines...
+  - SQL: SELECT t.*, tt.nom as type_nom, tt.description as type_description, tt.est_obligatoire, tt.montant_cotisation, tt.frequence FROM Tontine t JOIN typetontine tt ON t.id_type = tt.id_type ORDER BY t.date_debut DESC
+🔍 [DEBUG] Tentative de connexion à la base de données...
+🔍 [DEBUG] Driver: org.postgresql.Driver
+🔍 [DEBUG] Driver chargé avec succès
+🔍 [DEBUG] URL: jdbc:postgresql://localhost:5432/gestion_tontine
+🔍 [DEBUG] Username: tontine_user
+🔍 [DEBUG] Password: [MASQUÉ]
+✅ Connexion à la base de données établie avec succès
+🔍 [DEBUG] Connexion valide: true
+🔍 [DEBUG] Auto-commit: true
+🔍 [TONTINE DEBUG] Tontine trouvée: Tontine Optionnelle Spéciale (ID: 2)
+🔍 [TONTINE DEBUG] Tontine trouvée: Tontine de Présence Mensuelle (ID: 1)
+🔍 [TONTINE DEBUG] Total tontines trouvées: 2
+🔍 [DEBUG] Recherche de tous les crédits...
+🔍 [DEBUG] Requête SQL: SELECT c.*, m.nom as membre_nom, m.prenom as membre_prenom, t.nom as tontine_nom FROM Credit c JOIN Membre m ON c.id_membre = m.id_membre JOIN Tontine t ON c.id_tontine = t.id_tontine ORDER BY c.date_emprunt DESC
+🔍 [DEBUG] Tentative de connexion à la base de données...
+🔍 [DEBUG] Driver: org.postgresql.Driver
+🔍 [DEBUG] Driver chargé avec succès
+🔍 [DEBUG] URL: jdbc:postgresql://localhost:5432/gestion_tontine
+🔍 [DEBUG] Username: tontine_user
+🔍 [DEBUG] Password: [MASQUÉ]
+✅ Connexion à la base de données établie avec succès
+🔍 [DEBUG] Connexion valide: true
+🔍 [DEBUG] Auto-commit: true
+❌ [ERROR] Erreur lors de la récupération des crédits: ERROR: permission denied for table credit
+❌ [ERROR] SQL State: 42501
+org.postgresql.util.PSQLException: ERROR: permission denied for table credit
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2712)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2400)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:367)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:498)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:415)
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:335)
+	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:321)
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:297)
+	at org.postgresql.jdbc.PgStatement.executeQuery(PgStatement.java:246)
+	at dao.CreditDAO.findAll(CreditDAO.java:171)
+	at ui.panels.AccueilPanel.chargerStatistiques(AccueilPanel.java:421)
+	at ui.panels.AccueilPanel.rafraichir(AccueilPanel.java:442)
+	at ui.MainFrame.refreshCurrentPanel(MainFrame.java:454)
+	at ui.MainFrame.showPanel(MainFrame.java:444)
+	at ui.MainFrame.initializeComponents(MainFrame.java:149)
+	at ui.MainFrame.<init>(MainFrame.java:89)
+	at ui.MainFrame.lambda$2(MainFrame.java:543)
+	at java.desktop/java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:318)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:773)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:714)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:742)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+🔍 [TONTINE DEBUG] Recherche de toutes les tontines...
+  - SQL: SELECT t.*, tt.nom as type_nom, tt.description as type_description, tt.est_obligatoire, tt.montant_cotisation, tt.frequence FROM Tontine t JOIN typetontine tt ON t.id_type = tt.id_type ORDER BY t.date_debut DESC
+🔍 [DEBUG] Tentative de connexion à la base de données...
+🔍 [DEBUG] Driver: org.postgresql.Driver
+🔍 [DEBUG] Driver chargé avec succès
+🔍 [DEBUG] URL: jdbc:postgresql://localhost:5432/gestion_tontine
+🔍 [DEBUG] Username: tontine_user
+🔍 [DEBUG] Password: [MASQUÉ]
+✅ Connexion à la base de données établie avec succès
+🔍 [DEBUG] Connexion valide: true
+🔍 [DEBUG] Auto-commit: true
+🔍 [TONTINE DEBUG] Tontine trouvée: Tontine Optionnelle Spéciale (ID: 2)
+🔍 [TONTINE DEBUG] Tontine trouvée: Tontine de Présence Mensuelle (ID: 1)
+🔍 [TONTINE DEBUG] Total tontines trouvées: 2
+🔍 [DEBUG] Tentative de connexion à la base de données...
+🔍 [DEBUG] Driver: org.postgresql.Driver
+🔍 [DEBUG] Driver chargé avec succès
+🔍 [DEBUG] URL: jdbc:postgresql://localhost:5432/gestion_tontine
+🔍 [DEBUG] Username: tontine_user
+🔍 [DEBUG] Password: [MASQUÉ]
+✅ Connexion à la base de données établie avec succès
+🔍 [DEBUG] Connexion valide: true
+🔍 [DEBUG] Auto-commit: true
+🔍 [DEBUG] Tentative de connexion à la base de données...
+🔍 [DEBUG] Driver: org.postgresql.Driver
+🔍 [DEBUG] Driver chargé avec succès
+🔍 [DEBUG] URL: jdbc:postgresql://localhost:5432/gestion_tontine
+🔍 [DEBUG] Username: tontine_user
+🔍 [DEBUG] Password: [MASQUÉ]
+✅ Connexion à la base de données établie avec succès
+🔍 [DEBUG] Connexion valide: true
+🔍 [DEBUG] Auto-commit: true
+Erreur lors de la mise à jour de la tontine: ERROR: new row for relation "tontine" violates check constraint "tontine_statut_check"
+  Detail: Failing row contains (1, Tontine de Présence Mensuelle, PRESENCE, 10000.00, MENSUELLE, 2024-01-01, 2024-12-31, active, Tontine obligatoire pour tous les membres actifs, 2026-01-26 10:01:29.66289, 1, 12, 1, null).
+🔍 [DEBUG] Tentative de connexion à la base de données...
+🔍 [DEBUG] Driver: org.postgresql.Driver
+🔍 [DEBUG] Driver chargé avec succès
+🔍 [DEBUG] URL: jdbc:postgresql://localhost:5432/gestion_tontine
+🔍 [DEBUG] Username: tontine_user
+🔍 [DEBUG] Password: [MASQUÉ]
+✅ Connexion à la base de données établie avec succès
+🔍 [DEBUG] Connexion valide: true
+🔍 [DEBUG] Auto-commit: true
+Erreur lors de la mise à jour de la tontine: ERROR: new row for relation "tontine" violates check constraint "tontine_statut_check"
+  Detail: Failing row contains (1, Tontine de Présence Mensuelle, PRESENCE, 10000.00, MENSUELLE, 2024-01-01, 2024-12-31, active, Tontine obligatoire pour tous les membres actifs, 2026-01-26 10:01:29.66289, 1, 12, 1, null).

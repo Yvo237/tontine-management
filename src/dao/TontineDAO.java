@@ -69,7 +69,31 @@ public class TontineDAO {
             pstmt.setString(4, "MENSUELLE");
             pstmt.setDate(5, Date.valueOf(tontine.getDateDebut()));
             pstmt.setDate(6, tontine.getDateFin() != null ? Date.valueOf(tontine.getDateFin()) : null);
-            pstmt.setString(7, tontine.getStatut());
+            // Normaliser le statut pour respecter la contrainte CHECK
+            String statutNormalise = tontine.getStatut();
+            if (statutNormalise != null) {
+                statutNormalise = statutNormalise.toLowerCase()
+                    .replace("é", "e")
+                    .replace("è", "e")
+                    .replace("ê", "e")
+                    .replace("à", "a")
+                    .replace("â", "a")
+                    .replace("ù", "u")
+                    .replace("û", "u")
+                    .replace("î", "i")
+                    .replace("ï", "i")
+                    .replace("ô", "o")
+                    .replace("ö", "o");
+                
+                // S'assurer que le statut est l'une des valeurs autorisées
+                if (!statutNormalise.equals("active") && 
+                    !statutNormalise.equals("terminee") && 
+                    !statutNormalise.equals("suspendue")) {
+                    statutNormalise = "active"; // Valeur par défaut sécurisée
+                }
+            }
+            
+            pstmt.setString(7, statutNormalise);
             pstmt.setInt(8, tontine.getIdType());
             pstmt.setInt(9, tontine.getNombreTours());
             pstmt.setInt(10, tontine.getTourActuel());

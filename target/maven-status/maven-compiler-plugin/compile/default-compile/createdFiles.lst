@@ -16,12 +16,14 @@ models/Membre.class
 ui/panels/CreditsPanel$2.class
 ui/panels/CreditsPanel.class
 ui/MainFrame$2.class
+ui/panels/ParticipantsDialog$5.class
 ui/panels/MembreDialog.class
 ui/panels/MembreDialog$2.class
 database/DatabaseConnection.class
 ui/panels/MembresPanel$4.class
 ui/panels/TontineDialog.class
 ui/panels/ParticipantsDialog$4.class
+ui/panels/ParticipantsDialog$7.class
 ui/panels/RapportsPanel$4.class
 ui/panels/SeancesPanel.class
 models/Cotisation.class
@@ -65,6 +67,7 @@ dao/CotisationDAO.class
 ui/panels/SeancesPanel$1.class
 ui/panels/CreditDialog.class
 ui/panels/SeanceDialog.class
+ui/panels/ParticipantsDialog$6.class
 ui/panels/TontinesPanel$1.class
 ui/panels/ParticipantsDialog.class
 ui/panels/AccueilPanel$1.class

@@ -314,7 +314,7 @@ public class TontinesPanel extends JPanel {
                             setForeground(PRIMARY_EMERALD);
                             setText("✅ Active");
                             break;
-                        case "terminée":
+                        case "terminee":
                             setForeground(PRIMARY_BLUE);
                             setText("🏁 Terminée");
                             break;
@@ -446,7 +446,7 @@ public class TontinesPanel extends JPanel {
         for (Tontine t : tontines) {
             String statut = t.getStatut();
             if ("active".equals(statut)) actives++;
-            else if ("terminée".equals(statut)) terminees++;
+            else if ("terminee".equals(statut)) terminees++;
         }
         
         if (lblStatTotal != null) lblStatTotal.setText(String.valueOf(total));
@@ -707,7 +707,7 @@ class TontineDialog extends JDialog {
         
         cmbStatut = createStyledComboBox();
         cmbStatut.addItem("active");
-        cmbStatut.addItem("terminée");
+        cmbStatut.addItem("terminee");
         cmbStatut.addItem("suspendue");
         
         // Ajouter les champs avec des espacements - utilisation de JLabel simples

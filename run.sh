@@ -14,6 +14,7 @@ CLASSPATH="$CLASSPATH:/home/yvo/.m2/repository/org/slf4j/slf4j-api/1.7.36/slf4j-
 CLASSPATH="$CLASSPATH:/home/yvo/.m2/repository/com/toedter/jcalendar/1.4/jcalendar-1.4.jar"
 CLASSPATH="$CLASSPATH:/home/yvo/.m2/repository/com/formdev/flatlaf/3.4/flatlaf-3.4.jar"
 CLASSPATH="$CLASSPATH:/home/yvo/.m2/repository/com/formdev/flatlaf-intellij-themes/3.4/flatlaf-intellij-themes-3.4.jar"
+CLASSPATH="$CLASSPATH:/home/yvo/.m2/repository/com/itextpdf/itextpdf/5.5.13.3/itextpdf-5.5.13.3.jar"
 
 echo " Classpath: $CLASSPATH"
 

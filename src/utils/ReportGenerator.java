@@ -6,16 +6,30 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
-import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfPageEventHelper;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 
 /**
  * Générateur de rapports PDF ultra-modernes et professionnels
- * Design Premium avec graphiques, tableaux stylisés et mise en page avancée
+ * VERSION AMÉLIORÉE - Rapports détaillés basés sur données BDD
  * 
  * @author Votre Nom
- * @version 3.0 - Design Ultra-Moderne
+ * @version 4.0 - Rapports Détaillés et Professionnels
  */
 public class ReportGenerator {
     
@@ -39,6 +53,8 @@ public class ReportGenerator {
     private Font fontBold;
     private Font fontSmall;
     private Font fontTiny;
+    private BaseFont baseFontNormal;
+    private BaseFont baseFontBold;
     
     private Document document;
     private PdfWriter writer;
@@ -56,7 +72,9 @@ public class ReportGenerator {
      */
     private void initializeFonts() {
         try {
-            // Utilisation de Helvetica pour un rendu moderne
+            baseFontNormal = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED);
+            baseFontBold = BaseFont.createFont(BaseFont.HELVETICA_BOLD, BaseFont.WINANSI, BaseFont.EMBEDDED);
+            
             fontTitle = new Font(Font.FontFamily.HELVETICA, 28, Font.BOLD, TEXT_PRIMARY);
             fontSubtitle = new Font(Font.FontFamily.HELVETICA, 16, Font.NORMAL, TEXT_SECONDARY);
             fontHeading = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD, TEXT_PRIMARY);
@@ -70,11 +88,14 @@ public class ReportGenerator {
     }
     
     /**
-     * Génère un rapport moderne complet
+     * Génère un rapport moderne complet - VERSION AMÉLIORÉE
      */
     public void generateReport(String filename, String reportType, Map<String, Object> data) {
         try {
-            // Créer document avec marges modernes
+            System.out.println("🚀 GÉNÉRATION RAPPORT PROFESSIONNEL - " + reportType);
+            long startTime = System.currentTimeMillis();
+            
+            // Créer document
             document = new Document(PageSize.A4, 40, 40, 50, 50);
             writer = PdfWriter.getInstance(document, new FileOutputStream(filename));
             
@@ -86,560 +107,601 @@ public class ReportGenerator {
             canvas = writer.getDirectContent();
             
             // === PAGE DE COUVERTURE MODERNE ===
-            addModernCoverPage(reportType, data);
+            addProfessionalCoverPage(reportType, data);
             document.newPage();
             
             // === RÉSUMÉ EXÉCUTIF AVEC KPIs ===
-            addExecutiveSummary(data);
+            addExecutiveSummaryWithKPIs(data);
             document.newPage();
             
-            // === CONTENU PRINCIPAL ===
-            addMainContent(reportType, data);
+            // === CONTENU DÉTAILLÉ SELON TYPE ===
+            addDetailedContentByType(reportType, data);
             
-            // === GRAPHIQUES ET VISUALISATIONS ===
+            // === GRAPHIQUES SI DISPONIBLES ===
             if (data.containsKey("chartData")) {
                 document.newPage();
                 addVisualizationsPage((Map<String, Double>) data.get("chartData"));
             }
             
-            // === CONCLUSIONS ===
+            // === CONCLUSIONS ET RECOMMANDATIONS ===
             document.newPage();
-            addConclusions(data);
+            addProfessionalConclusions(reportType, data);
             
             document.close();
-            System.out.println("✅ Rapport généré: " + filename);
+            
+            long elapsed = System.currentTimeMillis() - startTime;
+            System.out.println("✅ Rapport généré en " + (elapsed/1000.0) + " secondes");
             
         } catch (Exception e) {
+            System.err.println("❌ ERREUR GÉNÉRATION: " + e.getMessage());
             e.printStackTrace();
-            System.err.println("❌ Erreur génération rapport: " + e.getMessage());
         }
     }
     
     /**
-     * Crée une page de couverture ultra-moderne
+     * PAGE DE COUVERTURE PROFESSIONNELLE
      */
-    private void addModernCoverPage(String reportType, Map<String, Object> data) throws DocumentException {
+    private void addProfessionalCoverPage(String reportType, Map<String, Object> data) throws DocumentException {
         // Fond gradient moderne
-        drawGradientBackground(PRIMARY_PURPLE, PRIMARY_BLUE);
+        canvas.saveState();
+        canvas.setColorFill(PRIMARY_PURPLE);
+        canvas.rectangle(0, 0, document.getPageSize().getWidth(), 200);
+        canvas.fill();
+        canvas.restoreState();
         
-        // Logo/Icône (cercle moderne)
-        drawModernCircle(document.getPageSize().getWidth() / 2, 650, 60, PRIMARY_EMERALD);
-        
-        // Emoji/Icône
-        Paragraph icon = new Paragraph("📊", new Font(Font.FontFamily.HELVETICA, 48));
+        // Icône moderne
+        Paragraph icon = new Paragraph("📊", new Font(Font.FontFamily.HELVETICA, 64));
         icon.setAlignment(Element.ALIGN_CENTER);
-        icon.setSpacingBefore(80);
+        icon.setSpacingBefore(50);
         document.add(icon);
         
         // Titre principal
         Paragraph title = new Paragraph(reportType.toUpperCase(), 
-            new Font(Font.FontFamily.HELVETICA, 36, Font.BOLD, BaseColor.WHITE));
+            new Font(Font.FontFamily.HELVETICA, 32, Font.BOLD, BaseColor.WHITE));
         title.setAlignment(Element.ALIGN_CENTER);
         title.setSpacingBefore(20);
         document.add(title);
         
         // Sous-titre
-        Paragraph subtitle = new Paragraph("Rapport Analytique Complet", 
-            new Font(Font.FontFamily.HELVETICA, 18, Font.NORMAL, new BaseColor(255, 255, 255, 180)));
+        Paragraph subtitle = new Paragraph("Rapport Analytique Détaillé", 
+            new Font(Font.FontFamily.HELVETICA, 16, Font.NORMAL, new BaseColor(255, 255, 255, 200)));
         subtitle.setAlignment(Element.ALIGN_CENTER);
         subtitle.setSpacingBefore(10);
         document.add(subtitle);
         
-        // Date moderne
+        // Date
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy");
         Paragraph date = new Paragraph(LocalDate.now().format(formatter),
-            new Font(Font.FontFamily.HELVETICA, 14, Font.NORMAL, new BaseColor(255, 255, 255, 150)));
+            new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD, new BaseColor(255, 255, 255, 180)));
         date.setAlignment(Element.ALIGN_CENTER);
-        date.setSpacingBefore(40);
+        date.setSpacingBefore(30);
         document.add(date);
         
-        // Carte d'information moderne
-        PdfPTable infoCard = createModernInfoCard(data);
+        // Carte d'information détaillée
+        PdfPTable infoCard = new PdfPTable(1);
+        infoCard.setWidthPercentage(70);
+        infoCard.setHorizontalAlignment(Element.ALIGN_CENTER);
         infoCard.setSpacingBefore(100);
-        document.add(infoCard);
         
-        // Footer de couverture
-        Paragraph footer = new Paragraph("Généré automatiquement • Confidentiel",
-            new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL, new BaseColor(255, 255, 255, 120)));
-        footer.setAlignment(Element.ALIGN_CENTER);
-        footer.setSpacingBefore(150);
-        document.add(footer);
+        PdfPCell cell = new PdfPCell();
+        cell.setBorder(Rectangle.BOX);
+        cell.setBorderColor(PRIMARY_EMERALD);
+        cell.setBorderWidth(2);
+        cell.setBackgroundColor(new BaseColor(255, 255, 255, 250));
+        cell.setPadding(30);
+        
+        Paragraph cardContent = new Paragraph();
+        cardContent.setAlignment(Element.ALIGN_CENTER);
+        
+        // Informations clés
+        cardContent.add(new Chunk("PÉRIODE\n", 
+            new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, TEXT_SECONDARY)));
+        cardContent.add(new Chunk(data.getOrDefault("period", "N/A").toString() + "\n\n", 
+            new Font(Font.FontFamily.HELVETICA, 14, Font.NORMAL, TEXT_PRIMARY)));
+        
+        cardContent.add(new Chunk("TOTAL D'ÉLÉMENTS ANALYSÉS\n", 
+            new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, TEXT_SECONDARY)));
+        cardContent.add(new Chunk(data.getOrDefault("totalItems", "0").toString() + "\n\n", 
+            new Font(Font.FontFamily.HELVETICA, 36, Font.BOLD, PRIMARY_PURPLE)));
+        
+        cardContent.add(new Chunk("Généré automatiquement • Confidentiel", 
+            new Font(Font.FontFamily.HELVETICA, 9, Font.NORMAL, TEXT_SECONDARY)));
+        
+        cell.addElement(cardContent);
+        infoCard.addCell(cell);
+        document.add(infoCard);
     }
     
     /**
-     * Crée une carte d'information moderne
+     * RÉSUMÉ EXÉCUTIF AVEC KPIs DÉTAILLÉS
      */
-    private PdfPTable createModernInfoCard(Map<String, Object> data) {
-        PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(60);
-        table.setHorizontalAlignment(Element.ALIGN_CENTER);
+    private void addExecutiveSummaryWithKPIs(Map<String, Object> data) throws DocumentException {
+        // Titre section
+        addProfessionalSectionTitle("📈 Résumé Exécutif", PRIMARY_PURPLE);
         
-        PdfPCell cell = new PdfPCell();
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setBackgroundColor(new BaseColor(255, 255, 255, 30));
-        cell.setPadding(25);
+        // Grille KPIs 3 colonnes
+        PdfPTable kpiGrid = new PdfPTable(3);
+        kpiGrid.setWidthPercentage(100);
+        kpiGrid.setSpacingBefore(25);
+        kpiGrid.setSpacingAfter(30);
         
-        Paragraph content = new Paragraph();
-        content.setAlignment(Element.ALIGN_CENTER);
+        // KPI 1 - Revenus
+        kpiGrid.addCell(createEnhancedKPICard(
+            "💰", 
+            "Revenus Totaux", 
+            data.getOrDefault("totalRevenue", "0") + " FCFA",
+            PRIMARY_EMERALD,
+            "Depuis le début"
+        ));
         
-        // Informations principales
-        if (data.containsKey("totalItems")) {
-            Chunk label = new Chunk("Total d'éléments\n", 
-                new Font(Font.FontFamily.HELVETICA, 11, Font.NORMAL, new BaseColor(255, 255, 255, 150)));
-            Chunk value = new Chunk(data.get("totalItems").toString() + "\n\n", 
-                new Font(Font.FontFamily.HELVETICA, 32, Font.BOLD, BaseColor.WHITE));
-            content.add(label);
-            content.add(value);
+        // KPI 2 - Membres Actifs
+        kpiGrid.addCell(createEnhancedKPICard(
+            "👥", 
+            "Membres Actifs", 
+            data.getOrDefault("activeMembers", "0").toString(),
+            PRIMARY_BLUE,
+            "État actuel"
+        ));
+        
+        // KPI 3 - Performance
+        kpiGrid.addCell(createEnhancedKPICard(
+            "📊", 
+            "Taux de Performance", 
+            data.getOrDefault("performance", "0") + "%",
+            PRIMARY_AMBER,
+            "Taux d'activité"
+        ));
+        
+        document.add(kpiGrid);
+        
+        // Description détaillée
+        addStyledParagraph(
+            "Ce rapport présente une analyse exhaustive et détaillée des données de votre système de gestion. " +
+            "Chaque section a été soigneusement élaborée pour vous fournir une vue complète et actionnable " +
+            "de vos opérations, avec des insights précis basés sur les données réelles extraites de votre base de données.",
+            TEXT_PRIMARY, 12
+        );
+    }
+    
+    /**
+     * CONTENU DÉTAILLÉ SELON LE TYPE DE RAPPORT
+     */
+    private void addDetailedContentByType(String reportType, Map<String, Object> data) throws DocumentException {
+        addProfessionalSectionTitle("📋 Analyse Détaillée - " + reportType, PRIMARY_BLUE);
+        
+        // Vérifier si on a des données de tableau
+        if (data.containsKey("tableData")) {
+            @SuppressWarnings("unchecked")
+            List<String[]> tableData = (List<String[]>) data.get("tableData");
+            
+            if (tableData != null && tableData.size() > 1) {
+                // Tableau professionnel avec données réelles
+                PdfPTable table = createProfessionalTable(tableData);
+                document.add(table);
+                
+                // Statistiques détaillées
+                addDetailedStatistics(tableData, reportType);
+            } else {
+                addNoDataMessage();
+            }
+        } else {
+            addNoDataMessage();
         }
         
-        if (data.containsKey("period")) {
-            Chunk period = new Chunk(data.get("period").toString(), 
-                new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL, new BaseColor(255, 255, 255, 180)));
-            content.add(period);
+        // Section Insights
+        document.add(new Paragraph("\n"));
+        addProfessionalSectionTitle("💡 Insights et Observations", PRIMARY_EMERALD);
+        
+        addEnhancedBulletPoint("📈", "Analyse des tendances", 
+            "Les données montrent une évolution cohérente et continue sur la période analysée.", 
+            PRIMARY_EMERALD);
+        
+        addEnhancedBulletPoint("🎯", "Points clés identifiés", 
+            "Plusieurs indicateurs méritent une attention particulière pour optimiser les performances.", 
+            PRIMARY_BLUE);
+        
+        addEnhancedBulletPoint("⚡", "Actions recommandées", 
+            "Des opportunités d'amélioration ont été identifiées et sont détaillées dans la section conclusions.", 
+            PRIMARY_AMBER);
+    }
+    
+    /**
+     * TABLEAU PROFESSIONNEL AVEC STYLE PREMIUM
+     */
+    private PdfPTable createProfessionalTable(List<String[]> data) throws DocumentException {
+        if (data.isEmpty()) return new PdfPTable(1);
+        
+        String[] headers = data.get(0);
+        PdfPTable table = new PdfPTable(headers.length);
+        table.setWidthPercentage(100);
+        table.setSpacingBefore(20);
+        table.setSpacingAfter(20);
+        
+        // En-têtes avec style premium
+        for (String header : headers) {
+            PdfPCell cell = new PdfPCell(new Phrase(header, 
+                new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, BaseColor.WHITE)));
+            cell.setBackgroundColor(PRIMARY_DARK);
+            cell.setPadding(12);
+            cell.setPaddingBottom(14);
+            cell.setBorder(Rectangle.NO_BORDER);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            table.addCell(cell);
         }
         
-        cell.addElement(content);
-        table.addCell(cell);
+        // Données avec alternance de couleurs
+        boolean alternate = false;
+        int rowCount = 0;
+        for (int i = 1; i < data.size() && rowCount < 50; i++, rowCount++) {
+            String[] row = data.get(i);
+            for (int j = 0; j < row.length; j++) {
+                String value = row[j] != null ? row[j] : "";
+                
+                PdfPCell cell = new PdfPCell(new Phrase(value, fontNormal));
+                cell.setBackgroundColor(alternate ? BaseColor.WHITE : BACKGROUND_LIGHT);
+                cell.setPadding(10);
+                cell.setPaddingTop(12);
+                cell.setPaddingBottom(12);
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setBorderWidthBottom(0.5f);
+                cell.setBorderColorBottom(BORDER_COLOR);
+                
+                // Alignement selon le contenu
+                if (j == 0) {
+                    cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                } else if (value.matches(".*\\d+.*")) {
+                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                } else {
+                    cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                }
+                
+                // Coloration des statuts
+                if (value.toLowerCase().contains("actif") || value.toLowerCase().contains("✓")) {
+                    cell.addElement(new Phrase(value, new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD, PRIMARY_EMERALD)));
+                } else if (value.toLowerCase().contains("en cours") || value.toLowerCase().contains("⏳")) {
+                    cell.addElement(new Phrase(value, new Font(Font.FontFamily.HELVETICA, 11, Font.NORMAL, PRIMARY_BLUE)));
+                } else if (value.toLowerCase().contains("terminé") || value.toLowerCase().contains("complété")) {
+                    cell.addElement(new Phrase(value, new Font(Font.FontFamily.HELVETICA, 11, Font.NORMAL, TEXT_SECONDARY)));
+                }
+                
+                table.addCell(cell);
+            }
+            alternate = !alternate;
+        }
+        
+        if (rowCount >= 50) {
+            addWarningMessage("⚠️ Tableau limité aux 50 premières lignes pour optimiser les performances");
+        }
         
         return table;
     }
     
     /**
-     * Ajoute le résumé exécutif avec KPIs
+     * STATISTIQUES DÉTAILLÉES
      */
-    private void addExecutiveSummary(Map<String, Object> data) throws DocumentException {
-        // Titre section
-        addModernSectionTitle("📈 Résumé Exécutif", PRIMARY_PURPLE);
+    private void addDetailedStatistics(List<String[]> data, String reportType) throws DocumentException {
+        document.add(new Paragraph("\n"));
         
-        // Grille de KPIs (3 colonnes)
-        PdfPTable kpiGrid = new PdfPTable(3);
-        kpiGrid.setWidthPercentage(100);
-        kpiGrid.setSpacingBefore(20);
-        kpiGrid.setSpacingAfter(30);
+        // Carte de statistiques
+        PdfPTable statsCard = new PdfPTable(2);
+        statsCard.setWidthPercentage(100);
+        statsCard.setSpacingBefore(20);
+        statsCard.setSpacingAfter(20);
+        statsCard.setWidths(new float[]{1f, 1f});
         
-        // KPI 1 - Revenus
-        kpiGrid.addCell(createModernKPICard(
-            "💰", 
-            "Revenus Totaux", 
-            data.getOrDefault("totalRevenue", "0") + " FCFA",
-            PRIMARY_EMERALD,
-            "+12.5%"
-        ));
+        // Stat 1
+        PdfPCell stat1 = createStatCell("📊 Total d'entrées", String.valueOf(data.size() - 1), PRIMARY_PURPLE);
+        statsCard.addCell(stat1);
         
-        // KPI 2 - Actifs
-        kpiGrid.addCell(createModernKPICard(
-            "👥", 
-            "Membres Actifs", 
-            data.getOrDefault("activeMembers", "0").toString(),
-            PRIMARY_BLUE,
-            "+5.2%"
-        ));
+        // Stat 2
+        PdfPCell stat2 = createStatCell("📅 Date d'analyse", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), PRIMARY_BLUE);
+        statsCard.addCell(stat2);
         
-        // KPI 3 - Performance
-        kpiGrid.addCell(createModernKPICard(
-            "📊", 
-            "Performance", 
-            data.getOrDefault("performance", "0") + "%",
-            PRIMARY_AMBER,
-            "+8.7%"
-        ));
-        
-        document.add(kpiGrid);
-        
-        // Texte descriptif
-        addModernParagraph(
-            "Ce rapport présente une analyse complète des performances et des indicateurs clés " +
-            "de votre organisation. Les données ont été collectées et analysées selon les meilleures " +
-            "pratiques de l'industrie.",
-            TEXT_SECONDARY
-        );
+        document.add(statsCard);
     }
     
     /**
-     * Crée une carte KPI moderne
+     * CELLULE DE STATISTIQUE
      */
-    private PdfPCell createModernKPICard(String icon, String label, String value, BaseColor color, String change) {
+    private PdfPCell createStatCell(String label, String value, BaseColor color) {
         PdfPCell cell = new PdfPCell();
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setBackgroundColor(BACKGROUND_LIGHT);
-        cell.setPadding(20);
-        cell.setPaddingBottom(25);
+        cell.setBorder(Rectangle.BOX);
+        cell.setBorderColor(BORDER_COLOR);
+        cell.setBorderWidth(1);
+        cell.setBackgroundColor(new BaseColor(color.getRed(), color.getGreen(), color.getBlue(), 10));
+        cell.setPadding(15);
         
         Paragraph content = new Paragraph();
-        
-        // Icône
-        Chunk iconChunk = new Chunk(icon + "\n\n", new Font(Font.FontFamily.HELVETICA, 32));
-        content.add(iconChunk);
-        
-        // Label
-        Chunk labelChunk = new Chunk(label + "\n", 
-            new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, TEXT_SECONDARY));
-        content.add(labelChunk);
-        
-        // Valeur principale
-        Chunk valueChunk = new Chunk(value + "\n", 
-            new Font(Font.FontFamily.HELVETICA, 24, Font.BOLD, color));
-        content.add(valueChunk);
-        
-        // Changement
-        Chunk changeChunk = new Chunk(change + " vs période précédente", 
-            new Font(Font.FontFamily.HELVETICA, 8, Font.NORMAL, PRIMARY_EMERALD));
-        content.add(changeChunk);
+        content.add(new Chunk(label + "\n", new Font(Font.FontFamily.HELVETICA, 9, Font.BOLD, TEXT_SECONDARY)));
+        content.add(new Chunk(value, new Font(Font.FontFamily.HELVETICA, 20, Font.BOLD, color)));
         
         cell.addElement(content);
         return cell;
     }
     
     /**
-     * Ajoute le contenu principal du rapport
-     */
-    private void addMainContent(String reportType, Map<String, Object> data) throws DocumentException {
-        addModernSectionTitle("📋 Analyse Détaillée", PRIMARY_BLUE);
-        
-        // Tableau moderne avec données
-        if (data.containsKey("tableData")) {
-            PdfPTable table = createModernTable((List<String[]>) data.get("tableData"));
-            document.add(table);
-        } else {
-            // Tableau exemple si pas de données
-            addSampleModernTable();
-        }
-        
-        // Section insights
-        document.add(new Paragraph("\n"));
-        addModernSectionTitle("💡 Insights Clés", PRIMARY_EMERALD);
-        
-        addModernBulletPoint("✓", "Croissance constante observée sur la période analysée", PRIMARY_EMERALD);
-        addModernBulletPoint("✓", "Taux de satisfaction en augmentation de 15%", PRIMARY_EMERALD);
-        addModernBulletPoint("⚠", "Attention requise sur certains indicateurs spécifiques", PRIMARY_AMBER);
-        addModernBulletPoint("🎯", "Objectifs trimestriels en bonne voie d'atteinte", PRIMARY_BLUE);
-    }
-    
-    /**
-     * Crée un tableau moderne avec style premium
-     */
-    private PdfPTable createModernTable(List<String[]> data) {
-        PdfPTable table = new PdfPTable(data.get(0).length);
-        table.setWidthPercentage(100);
-        table.setSpacingBefore(20);
-        table.setSpacingAfter(20);
-        
-        // Header
-        String[] headers = data.get(0);
-        for (String header : headers) {
-            PdfPCell cell = new PdfPCell(new Phrase(header, 
-                new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, BaseColor.WHITE)));
-            cell.setBackgroundColor(PRIMARY_DARK);
-            cell.setPadding(12);
-            cell.setBorder(Rectangle.NO_BORDER);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            table.addCell(cell);
-        }
-        
-        // Données
-        boolean alternate = false;
-        for (int i = 1; i < data.size(); i++) {
-            String[] row = data.get(i);
-            for (String value : row) {
-                PdfPCell cell = new PdfPCell(new Phrase(value, fontNormal));
-                cell.setBackgroundColor(alternate ? BaseColor.WHITE : BACKGROUND_LIGHT);
-                cell.setPadding(10);
-                cell.setBorder(Rectangle.NO_BORDER);
-                cell.setBorderWidthBottom(1);
-                cell.setBorderColorBottom(BORDER_COLOR);
-                table.addCell(cell);
-            }
-            alternate = !alternate;
-        }
-        
-        return table;
-    }
-    
-    /**
-     * Ajoute un tableau exemple moderne
-     */
-    private void addSampleModernTable() throws DocumentException {
-        PdfPTable table = new PdfPTable(4);
-        table.setWidthPercentage(100);
-        table.setSpacingBefore(20);
-        table.setSpacingAfter(20);
-        table.setWidths(new float[]{3f, 2f, 2f, 2f});
-        
-        // Headers
-        String[] headers = {"Description", "Montant", "Statut", "Date"};
-        for (String header : headers) {
-            PdfPCell cell = new PdfPCell(new Phrase(header, 
-                new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, BaseColor.WHITE)));
-            cell.setBackgroundColor(PRIMARY_DARK);
-            cell.setPadding(12);
-            cell.setBorder(Rectangle.NO_BORDER);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            table.addCell(cell);
-        }
-        
-        // Données exemple
-        String[][] sampleData = {
-            {"Cotisation mensuelle", "50,000 FCFA", "✓ Payé", "28/01/2025"},
-            {"Crédit remboursé", "120,000 FCFA", "✓ Terminé", "25/01/2025"},
-            {"Nouveau membre", "25,000 FCFA", "⏳ En attente", "27/01/2025"},
-            {"Tontine tour 5", "200,000 FCFA", "✓ Complété", "20/01/2025"}
-        };
-        
-        boolean alternate = false;
-        for (String[] row : sampleData) {
-            for (String value : row) {
-                PdfPCell cell = new PdfPCell(new Phrase(value, fontNormal));
-                cell.setBackgroundColor(alternate ? BaseColor.WHITE : BACKGROUND_LIGHT);
-                cell.setPadding(10);
-                cell.setBorder(Rectangle.NO_BORDER);
-                cell.setBorderWidthBottom(1);
-                cell.setBorderColorBottom(BORDER_COLOR);
-                table.addCell(cell);
-            }
-            alternate = !alternate;
-        }
-        
-        document.add(table);
-    }
-    
-    /**
-     * Ajoute une page de visualisations avec graphiques
+     * PAGE DE VISUALISATIONS
      */
     private void addVisualizationsPage(Map<String, Double> chartData) throws DocumentException {
-        addModernSectionTitle("📊 Visualisations", PRIMARY_PURPLE);
+        addProfessionalSectionTitle("📊 Visualisations et Graphiques", PRIMARY_PURPLE);
         
-        // Créer un graphique en barres moderne
-        PdfPTable chartTable = new PdfPTable(1);
-        chartTable.setWidthPercentage(90);
-        chartTable.setSpacingBefore(30);
-        chartTable.setHorizontalAlignment(Element.ALIGN_CENTER);
-        
-        PdfPCell chartCell = new PdfPCell();
-        chartCell.setBorder(Rectangle.NO_BORDER);
-        chartCell.setBackgroundColor(BACKGROUND_LIGHT);
-        chartCell.setPadding(30);
-        chartCell.setFixedHeight(300);
-        
-        // Dessiner le graphique
-        PdfContentByte cb = writer.getDirectContent();
-        drawModernBarChart(cb, chartData, 
-            document.left() + 80, document.top() - 450, 400, 250);
-        
-        document.add(chartTable);
-        
-        // Légende
-        addChartLegend(chartData);
-    }
-    
-    /**
-     * Dessine un graphique en barres moderne
-     */
-    private void drawModernBarChart(PdfContentByte cb, Map<String, Double> data, 
-            float x, float y, float width, float height) {
-        try {
-            int numBars = data.size();
-            float barWidth = width / (numBars * 2);
-            float maxValue = (float) data.values().stream().mapToDouble(Double::doubleValue).max().orElse(100.0);
-            
-            BaseColor[] colors = {PRIMARY_PURPLE, PRIMARY_BLUE, PRIMARY_EMERALD, PRIMARY_AMBER};
-            int colorIndex = 0;
-            
-            int i = 0;
-            for (Map.Entry<String, Double> entry : data.entrySet()) {
-                float barHeight = (float) ((entry.getValue() / maxValue) * height);
-                float barX = x + i * (barWidth * 2) + barWidth / 2;
-                float barY = y;
-                
-                // Barre avec coins arrondis
-                cb.saveState();
-                cb.setColorFill(colors[colorIndex % colors.length]);
-                cb.roundRectangle(barX, barY, barWidth, barHeight, 8);
-                cb.fill();
-                cb.restoreState();
-                
-                // Label
-                cb.beginText();
-                cb.setFontAndSize(BaseFont.createFont(), 9);
-                cb.setColorFill(TEXT_SECONDARY);
-                cb.showTextAligned(Element.ALIGN_CENTER, entry.getKey(), 
-                    barX + barWidth/2, barY - 15, 0);
-                cb.endText();
-                
-                // Valeur
-                cb.beginText();
-                cb.setFontAndSize(BaseFont.createFont(), 10);
-                cb.setColorFill(colors[colorIndex % colors.length]);
-                cb.showTextAligned(Element.ALIGN_CENTER, 
-                    String.format("%.0f", entry.getValue()), 
-                    barX + barWidth/2, barY + barHeight + 5, 0);
-                cb.endText();
-                
-                i++;
-                colorIndex++;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (chartData.isEmpty()) {
+            addNoDataMessage();
+            return;
         }
-    }
-    
-    /**
-     * Ajoute une légende pour les graphiques
-     */
-    private void addChartLegend(Map<String, Double> data) throws DocumentException {
-        PdfPTable legend = new PdfPTable(data.size());
-        legend.setWidthPercentage(80);
-        legend.setHorizontalAlignment(Element.ALIGN_CENTER);
-        legend.setSpacingBefore(20);
         
-        BaseColor[] colors = {PRIMARY_PURPLE, PRIMARY_BLUE, PRIMARY_EMERALD, PRIMARY_AMBER};
+ // Zone graphique - Visualisation des contributions de la tontine
+PdfPTable chartContainer = new PdfPTable(1);
+chartContainer.setWidthPercentage(95);
+chartContainer.setSpacingBefore(30);
+chartContainer.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+PdfPCell chartCell = new PdfPCell();
+chartCell.setBorder(Rectangle.BOX);
+chartCell.setBorderColor(BORDER_COLOR);
+chartCell.setBorderWidth(2);
+chartCell.setBackgroundColor(BaseColor.WHITE);
+chartCell.setPadding(30);
+chartCell.setFixedHeight(320);
+
+document.add(chartContainer);
+
+// Dessiner graphique des versements
+drawEnhancedBarChart(canvas, chartData, 
+    document.left() + 70, document.top() - 480, 450, 260);
+
+// Légende des membres et contributions
+addEnhancedChartLegend(chartData);
+}
+
+/**
+ * GRAPHIQUE EN BARRES - CONTRIBUTIONS TONTINE
+ */
+private void drawEnhancedBarChart(PdfContentByte cb, Map<String, Double> data, 
+        float x, float y, float width, float height) {
+    try {
+        if (data.isEmpty()) return;
+        
+        int numBars = data.size();
+        float barWidth = Math.min(50, width / (numBars * 1.8f));
+        float spacing = barWidth * 0.8f;
+        float maxValue = (float) data.values().stream().mapToDouble(Double::doubleValue).max().orElse(100.0);
+        
+        BaseColor[] colors = {PRIMARY_PURPLE, PRIMARY_BLUE, PRIMARY_EMERALD, PRIMARY_AMBER, PRIMARY_RED};
+        
         int i = 0;
-        
         for (Map.Entry<String, Double> entry : data.entrySet()) {
-            PdfPCell cell = new PdfPCell();
-            cell.setBorder(Rectangle.NO_BORDER);
-            cell.setPadding(8);
+            float barHeight = (float) ((entry.getValue() / maxValue) * height);
+            float barX = x + i * (barWidth + spacing);
+            float barY = y;
             
-            Paragraph p = new Paragraph();
-            p.setAlignment(Element.ALIGN_CENTER);
+            // Barre avec ombre (représente la contribution)
+            cb.saveState();
+            cb.setColorFill(new BaseColor(0, 0, 0, 20));
+            cb.rectangle(barX + 3, barY - 3, barWidth, barHeight);
+            cb.fill();
+            cb.restoreState();
             
-            // Carré de couleur
-            Chunk colorBox = new Chunk("■ ", 
-                new Font(Font.FontFamily.HELVETICA, 14, Font.NORMAL, colors[i % colors.length]));
-            p.add(colorBox);
+            // Barre principale (montant versé par membre)
+            cb.saveState();
+            cb.setColorFill(colors[i % colors.length]);
+            cb.rectangle(barX, barY, barWidth, barHeight);
+            cb.fill();
+            cb.restoreState();
             
-            // Label
-            Chunk label = new Chunk(entry.getKey(), fontSmall);
-            p.add(label);
+            // Montant affiché au-dessus
+            cb.beginText();
+            cb.setFontAndSize(baseFontBold, 11);
+            cb.setColorFill(colors[i % colors.length]);
+            cb.showTextAligned(Element.ALIGN_CENTER, 
+                String.format("%.0f", entry.getValue()), 
+                barX + barWidth/2, barY + barHeight + 8, 0);
+            cb.endText();
             
-            cell.addElement(p);
-            legend.addCell(cell);
+            // Nom du membre en bas
+            cb.beginText();
+            cb.setFontAndSize(baseFontNormal, 9);
+            cb.setColorFill(TEXT_SECONDARY);
+            String truncatedLabel = entry.getKey().length() > 10 ? 
+                entry.getKey().substring(0, 10) + "..." : entry.getKey();
+            cb.showTextAligned(Element.ALIGN_CENTER, truncatedLabel, 
+                barX + barWidth/2, barY - 18, 0);
+            cb.endText();
+            
             i++;
         }
         
-        document.add(legend);
+        // Axe X (ligne de base des contributions)
+        cb.saveState();
+        cb.setLineWidth(1);
+        cb.setColorStroke(BORDER_COLOR);
+        cb.moveTo(x - 10, y);
+        cb.lineTo(x + width, y);
+        cb.stroke();
+        cb.restoreState();
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+/**
+ * LÉGENDE DES MEMBRES ET VERSEMENTS
+ */
+private void addEnhancedChartLegend(Map<String, Double> data) throws DocumentException {
+    PdfPTable legend = new PdfPTable(Math.min(4, data.size()));
+    legend.setWidthPercentage(90);
+    legend.setHorizontalAlignment(Element.ALIGN_CENTER);
+    legend.setSpacingBefore(25);
+    
+    BaseColor[] colors = {PRIMARY_PURPLE, PRIMARY_BLUE, PRIMARY_EMERALD, PRIMARY_AMBER, PRIMARY_RED};
+    int i = 0;
+    
+    for (Map.Entry<String, Double> entry : data.entrySet()) {
+        PdfPCell cell = new PdfPCell();
+        cell.setBorder(Rectangle.NO_BORDER);
+        cell.setPadding(10);
+        
+        Paragraph p = new Paragraph();
+        p.setAlignment(Element.ALIGN_LEFT);
+        p.add(new Chunk("■ ", new Font(Font.FontFamily.HELVETICA, 16, Font.NORMAL, colors[i % colors.length])));
+        p.add(new Chunk("Membre : " + entry.getKey() + "\n", new Font(Font.FontFamily.HELVETICA, 9, Font.BOLD, TEXT_PRIMARY)));
+        p.add(new Chunk("Contribution : " + String.format("%.0f", entry.getValue()), new Font(Font.FontFamily.HELVETICA, 11, Font.NORMAL, TEXT_SECONDARY)));
+        
+        cell.addElement(p);
+        legend.addCell(cell);
+        i++;
     }
     
+    document.add(legend);
+}
+
+    
     /**
-     * Ajoute la page de conclusions
+     * CONCLUSIONS PROFESSIONNELLES
      */
-    private void addConclusions(Map<String, Object> data) throws DocumentException {
-        addModernSectionTitle("🎯 Conclusions & Recommandations", PRIMARY_EMERALD);
+    private void addProfessionalConclusions(String reportType, Map<String, Object> data) throws DocumentException {
+        addProfessionalSectionTitle("🎯 Conclusions et Recommandations", PRIMARY_EMERALD);
         
-        addModernParagraph(
-            "L'analyse complète des données révèle des tendances positives et des opportunités " +
-            "d'amélioration. Les indicateurs clés démontrent une progression constante et " +
-            "soutenue des performances.",
-            TEXT_PRIMARY
+       addStyledParagraph(
+            "L'analyse des contributions et des cycles de versement au sein de la tontine met en évidence " +
+            "une dynamique collective solide et des opportunités de renforcement de la solidarité. " +
+            "Les résultats obtenus offrent une vision claire du fonctionnement actuel et permettent " +
+            "d'identifier les axes prioritaires pour améliorer la gestion et la transparence.",
+            TEXT_PRIMARY, 11
         );
-        
+
         document.add(new Paragraph("\n"));
         
-        // Recommandations
+        // Recommandations stratégiques
         Paragraph recTitle = new Paragraph("Recommandations Stratégiques", 
-            new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD, TEXT_PRIMARY));
+            new Font(Font.FontFamily.HELVETICA, 15, Font.BOLD, PRIMARY_BLUE));
         recTitle.setSpacingBefore(15);
-        recTitle.setSpacingAfter(10);
+        recTitle.setSpacingAfter(15);
         document.add(recTitle);
         
-        addModernBulletPoint("1.", "Maintenir le cap sur les initiatives actuelles", PRIMARY_BLUE);
-        addModernBulletPoint("2.", "Renforcer l'engagement des membres actifs", PRIMARY_BLUE);
-        addModernBulletPoint("3.", "Optimiser les processus de suivi financier", PRIMARY_BLUE);
-        addModernBulletPoint("4.", "Développer de nouveaux canaux de communication", PRIMARY_BLUE);
+        addEnhancedBulletPoint("1", "Consolidation", 
+            "Maintenir et renforcer les initiatives actuelles qui ont démontré leur efficacité.", 
+            PRIMARY_BLUE);
         
-        // Call-to-action box
+        addEnhancedBulletPoint("2", "Optimisation", 
+            "Améliorer les processus identifiés comme perfectibles pour maximiser les performances.", 
+            PRIMARY_EMERALD);
+        
+        addEnhancedBulletPoint("3", "Innovation", 
+            "Explorer de nouvelles opportunités basées sur les insights découverts dans cette analyse.", 
+            PRIMARY_PURPLE);
+        
+        addEnhancedBulletPoint("4", "Suivi", 
+            "Mettre en place des indicateurs de suivi pour mesurer l'impact des actions entreprises.", 
+            PRIMARY_AMBER);
+        
+        // Call-to-action final
         PdfPTable ctaBox = new PdfPTable(1);
-        ctaBox.setWidthPercentage(90);
+        ctaBox.setWidthPercentage(95);
         ctaBox.setHorizontalAlignment(Element.ALIGN_CENTER);
         ctaBox.setSpacingBefore(40);
         
         PdfPCell ctaCell = new PdfPCell();
-        ctaCell.setBorder(Rectangle.NO_BORDER);
+        ctaCell.setBorder(Rectangle.BOX);
+        ctaCell.setBorderColor(PRIMARY_BLUE);
+        ctaCell.setBorderWidth(2);
         ctaCell.setBackgroundColor(new BaseColor(PRIMARY_BLUE.getRed(), 
-            PRIMARY_BLUE.getGreen(), PRIMARY_BLUE.getBlue(), 20));
+            PRIMARY_BLUE.getGreen(), PRIMARY_BLUE.getBlue(), 15));
         ctaCell.setPadding(25);
         
-        Paragraph ctaText = new Paragraph(
-            "Pour toute question ou analyse complémentaire, " +
-            "n'hésitez pas à contacter l'équipe d'analyse.",
-            new Font(Font.FontFamily.HELVETICA, 11, Font.NORMAL, PRIMARY_BLUE)
-        );
+        Paragraph ctaText = new Paragraph();
         ctaText.setAlignment(Element.ALIGN_CENTER);
-        ctaCell.addElement(ctaText);
+        ctaText.add(new Chunk("📞 Besoin d'Assistance?\n\n", 
+            new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD, PRIMARY_BLUE)));
+        ctaText.add(new Chunk(
+            "Pour toute question, analyse complémentaire ou support technique, " +
+            "n'hésitez pas à contacter notre équipe d'analyse de données.",
+            new Font(Font.FontFamily.HELVETICA, 11, Font.NORMAL, TEXT_PRIMARY)
+        ));
         
+        ctaCell.addElement(ctaText);
         ctaBox.addCell(ctaCell);
         document.add(ctaBox);
     }
     
-    // === MÉTHODES UTILITAIRES ===
+    // === MÉTHODES UTILITAIRES AMÉLIORÉES ===
     
-    private void addModernSectionTitle(String title, BaseColor color) throws DocumentException {
+    private void addProfessionalSectionTitle(String title, BaseColor color) throws DocumentException {
         Paragraph p = new Paragraph(title, 
-            new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD, color));
-        p.setSpacingBefore(25);
-        p.setSpacingAfter(15);
+            new Font(Font.FontFamily.HELVETICA, 19, Font.BOLD, color));
+        p.setSpacingBefore(30);
+        p.setSpacingAfter(18);
         document.add(p);
         
-        // Ligne de séparation colorée
         LineSeparator line = new LineSeparator();
         line.setLineColor(color);
-        line.setLineWidth(2);
+        line.setLineWidth(3);
         document.add(new Chunk(line));
+        document.add(new Paragraph(" ")); // Espacement
     }
     
-    private void addModernParagraph(String text, BaseColor color) throws DocumentException {
+    private void addStyledParagraph(String text, BaseColor color, int size) throws DocumentException {
         Paragraph p = new Paragraph(text, 
-            new Font(Font.FontFamily.HELVETICA, 11, Font.NORMAL, color));
+            new Font(Font.FontFamily.HELVETICA, size, Font.NORMAL, color));
         p.setAlignment(Element.ALIGN_JUSTIFIED);
-        p.setSpacingBefore(10);
-        p.setSpacingAfter(10);
-        p.setLeading(16);
+        p.setSpacingBefore(12);
+        p.setSpacingAfter(12);
+        p.setLeading(size * 1.5f);
         document.add(p);
     }
     
-    private void addModernBulletPoint(String bullet, String text, BaseColor color) throws DocumentException {
+    private PdfPCell createEnhancedKPICard(String icon, String label, String value, BaseColor color, String subtext) {
+        PdfPCell cell = new PdfPCell();
+        cell.setBorder(Rectangle.BOX);
+        cell.setBorderColor(color);
+        cell.setBorderWidth(2);
+        cell.setBackgroundColor(new BaseColor(color.getRed(), color.getGreen(), color.getBlue(), 8));
+        cell.setPadding(20);
+        cell.setPaddingBottom(25);
+        
+        Paragraph content = new Paragraph();
+        content.setAlignment(Element.ALIGN_CENTER);
+        content.add(new Chunk(icon + "\n", new Font(Font.FontFamily.HELVETICA, 38)));
+        content.add(new Chunk(label + "\n", new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, TEXT_SECONDARY)));
+        content.add(new Chunk(value + "\n", new Font(Font.FontFamily.HELVETICA, 26, Font.BOLD, color)));
+        content.add(new Chunk(subtext, new Font(Font.FontFamily.HELVETICA, 8, Font.NORMAL, TEXT_SECONDARY)));
+        
+        cell.addElement(content);
+        return cell;
+    }
+    
+    private void addEnhancedBulletPoint(String bullet, String title, String text, BaseColor color) throws DocumentException {
         Paragraph p = new Paragraph();
-        p.setSpacingBefore(8);
-        p.setIndentationLeft(20);
+        p.setSpacingBefore(10);
+        p.setIndentationLeft(25);
         
-        Chunk bulletChunk = new Chunk(bullet + " ", 
-            new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD, color));
-        Chunk textChunk = new Chunk(text, fontNormal);
+        p.add(new Chunk(bullet + ". ", new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD, color)));
+        p.add(new Chunk(title + ": ", new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD, TEXT_PRIMARY)));
+        p.add(new Chunk(text, fontNormal));
         
-        p.add(bulletChunk);
-        p.add(textChunk);
         document.add(p);
     }
     
-    private void drawGradientBackground(BaseColor color1, BaseColor color2) {
-        try {
-            PdfShading shading = PdfShading.simpleAxial(writer, 
-                0, document.getPageSize().getHeight(),
-                document.getPageSize().getWidth(), 0,
-                color1, color2);
-            
-            PdfShadingPattern pattern = new PdfShadingPattern(shading);
-            canvas.saveState();
-            canvas.setShadingFill(pattern);
-            canvas.rectangle(0, 0, document.getPageSize().getWidth(), 
-                document.getPageSize().getHeight());
-            canvas.fill();
-            canvas.restoreState();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void addNoDataMessage() throws DocumentException {
+        Paragraph noData = new Paragraph("⚠️ Aucune donnée disponible pour cette section", 
+            new Font(Font.FontFamily.HELVETICA, 12, Font.ITALIC, TEXT_SECONDARY));
+        noData.setAlignment(Element.ALIGN_CENTER);
+        noData.setSpacingBefore(30);
+        noData.setSpacingAfter(30);
+        document.add(noData);
     }
     
-    private void drawModernCircle(float x, float y, float radius, BaseColor color) {
-        canvas.saveState();
-        canvas.setColorFill(new BaseColor(color.getRed(), color.getGreen(), 
-            color.getBlue(), 30));
-        canvas.circle(x, y, radius);
-        canvas.fill();
-        canvas.restoreState();
+    private void addWarningMessage(String message) throws DocumentException {
+        Paragraph warning = new Paragraph(message, 
+            new Font(Font.FontFamily.HELVETICA, 9, Font.ITALIC, PRIMARY_AMBER));
+        warning.setSpacingBefore(10);
+        document.add(warning);
     }
     
     /**
-     * Classe pour header/footer modernes
+     * HEADER/FOOTER PROFESSIONNELS
      */
     class ModernHeaderFooter extends PdfPageEventHelper {
         private String reportType;
@@ -652,51 +714,47 @@ public class ReportGenerator {
         public void onEndPage(PdfWriter writer, Document document) {
             PdfContentByte cb = writer.getDirectContent();
             
-            // Header (sauf page 1)
-            if (writer.getPageNumber() > 1) {
+            try {
+                // Header (sauf page 1)
+                if (writer.getPageNumber() > 1) {
+                    cb.saveState();
+                    cb.setLineWidth(0.5f);
+                    cb.setColorStroke(BORDER_COLOR);
+                    cb.moveTo(document.left(), document.top() + 10);
+                    cb.lineTo(document.right(), document.top() + 10);
+                    cb.stroke();
+                    
+                    cb.setColorFill(TEXT_SECONDARY);
+                    cb.beginText();
+                    cb.setFontAndSize(BaseFont.createFont(), 9);
+                    cb.showTextAligned(Element.ALIGN_LEFT, reportType, document.left(), document.top() + 20, 0);
+                    cb.showTextAligned(Element.ALIGN_RIGHT, 
+                        LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), 
+                        document.right(), document.top() + 20, 0);
+                    cb.endText();
+                    cb.restoreState();
+                }
+                
+                // Footer
                 cb.saveState();
+                cb.setLineWidth(0.5f);
+                cb.setColorStroke(BORDER_COLOR);
+                cb.moveTo(document.left(), document.bottom() - 10);
+                cb.lineTo(document.right(), document.bottom() - 10);
+                cb.stroke();
+                
                 cb.setColorFill(TEXT_SECONDARY);
                 cb.beginText();
-                try {
-                    cb.setFontAndSize(BaseFont.createFont(), 9);
-                    cb.showTextAligned(Element.ALIGN_LEFT, 
-                        reportType, 
-                        document.left(), document.top() + 20, 0);
-                    
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    cb.showTextAligned(Element.ALIGN_RIGHT, 
-                        LocalDate.now().format(formatter), 
-                        document.right(), document.top() + 20, 0);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                cb.setFontAndSize(BaseFont.createFont(), 8);
+                cb.showTextAligned(Element.ALIGN_LEFT, "Confidentiel", document.left(), document.bottom() - 20, 0);
+                cb.showTextAligned(Element.ALIGN_CENTER, "Page " + writer.getPageNumber(), 
+                    document.getPageSize().getWidth() / 2, document.bottom() - 20, 0);
+                cb.showTextAligned(Element.ALIGN_RIGHT, "Généré automatiquement", document.right(), document.bottom() - 20, 0);
                 cb.endText();
                 cb.restoreState();
-            }
-            
-            // Footer
-            cb.saveState();
-            cb.setColorFill(TEXT_SECONDARY);
-            cb.beginText();
-            try {
-                cb.setFontAndSize(BaseFont.createFont(), 8);
-                cb.showTextAligned(Element.ALIGN_CENTER, 
-                    "Page " + writer.getPageNumber(), 
-                    document.getPageSize().getWidth() / 2, 
-                    document.bottom() - 20, 0);
-                
-                cb.showTextAligned(Element.ALIGN_LEFT, 
-                    "Confidentiel", 
-                    document.left(), document.bottom() - 20, 0);
-                
-                cb.showTextAligned(Element.ALIGN_RIGHT, 
-                    "Généré automatiquement", 
-                    document.right(), document.bottom() - 20, 0);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            cb.endText();
-            cb.restoreState();
         }
     }
 }

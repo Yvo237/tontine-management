@@ -441,7 +441,10 @@ public class MainFrame extends JFrame {
                 break;
         }
         
-        refreshCurrentPanel();
+        // DÉSACTIVÉ : Plus de refresh automatique pour éviter la boucle infinie
+        // refreshCurrentPanel();
+        
+        System.out.println("✅ Panneau affiché: " + panelName + " (sans refresh automatique)");
     }
     
     /**

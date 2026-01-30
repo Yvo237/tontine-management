@@ -15,7 +15,9 @@ import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.geom.RoundRectangle2D;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -25,9 +27,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.AbstractBorder;
 
+import dao.CreditDAO;
 import dao.MembreDAO;
 import dao.TontineDAO;
-import dao.CreditDAO;
+import models.Credit;
+import models.Membre;
+import models.Tontine;
 import ui.MainFrame;
 
 /**
@@ -375,22 +380,46 @@ public class AccueilPanel extends JPanel {
     }
     
     /**
-     * Charge les statistiques depuis la base de données
+     * Charge les statistiques depuis la base de données (VERSION OPTIMISÉE)
      */
     private void chargerStatistiques() {
         try {
-            // Statistiques des membres
-            int nombreMembres = 0;
-            int membresActifs = 0;
+            System.out.println("📊 Chargement statistiques AccueilPanel...");
+            
+            // Récupération unique des données pour éviter les appels multiples
+            List<Membre> membres = null;
+            List<Tontine> tontines = null;
+            List<Credit> credits = null;
+            
             try {
-                nombreMembres = membreDAO.findAll().size();
-                // Compter les membres actifs
-                membresActifs = (int) membreDAO.findAll().stream()
-                    .filter(m -> "actif".equalsIgnoreCase(m.getStatut()))
-                    .count();
+                membres = membreDAO.findAll();
+                System.out.println("✅ Membres chargés: " + membres.size());
             } catch (Exception e) {
                 System.err.println("Erreur chargement membres: " + e.getMessage());
+                membres = new ArrayList<>();
             }
+            
+            try {
+                tontines = tontineDAO.findAll();
+                System.out.println("✅ Tontines chargées: " + tontines.size());
+            } catch (Exception e) {
+                System.err.println("Erreur chargement tontines: " + e.getMessage());
+                tontines = new ArrayList<>();
+            }
+            
+            try {
+                credits = creditDAO.findAll();
+                System.out.println("✅ Crédits chargés: " + credits.size());
+            } catch (Exception e) {
+                System.err.println("Erreur chargement crédits: " + e.getMessage());
+                credits = new ArrayList<>();
+            }
+            
+            // Statistiques des membres (calculées sur la liste déjà récupérée)
+            int nombreMembres = membres.size();
+            int membresActifs = (int) membres.stream()
+                .filter(m -> "actif".equalsIgnoreCase(m.getStatut()))
+                .count();
             
             if (lblNombreMembres != null) {
                 lblNombreMembres.setText(String.valueOf(nombreMembres));
@@ -400,38 +429,28 @@ public class AccueilPanel extends JPanel {
                 lblMembresActifs.setText(String.valueOf(membresActifs));
             }
             
-            // Statistiques des tontines
-            int tontinesActives = 0;
-            try {
-                tontinesActives = (int) tontineDAO.findAll().stream()
-                    .filter(t -> "active".equalsIgnoreCase(t.getStatut()))
-                    .count();
-            } catch (Exception e) {
-                System.err.println("Erreur chargement tontines: " + e.getMessage());
-                tontinesActives = 0;
-            }
+            // Statistiques des tontines (calculées sur la liste déjà récupérée)
+            int tontinesActives = (int) tontines.stream()
+                .filter(t -> "active".equalsIgnoreCase(t.getStatut()))
+                .count();
             
             if (lblTontinesActives != null) {
                 lblTontinesActives.setText(String.valueOf(tontinesActives));
             }
             
-            // Statistiques des crédits
-            int creditsEnCours = 0;
-            try {
-                creditsEnCours = (int) creditDAO.findAll().stream()
-                    .filter(c -> "en_cours".equalsIgnoreCase(c.getStatut()))
-                    .count();
-            } catch (Exception e) {
-                System.err.println("Erreur chargement crédits: " + e.getMessage());
-                creditsEnCours = 0;
-            }
+            // Statistiques des crédits (calculées sur la liste déjà récupérée)
+            int creditsEnCours = (int) credits.stream()
+                .filter(c -> "en_cours".equalsIgnoreCase(c.getStatut()))
+                .count();
             
             if (lblCreditsEnCours != null) {
                 lblCreditsEnCours.setText(String.valueOf(creditsEnCours));
             }
             
+            System.out.println("✅ Statistiques AccueilPanel mises à jour avec succès");
+            
         } catch (Exception e) {
-            System.err.println("Erreur lors du chargement des statistiques: " + e.getMessage());
+            System.err.println("Erreur générale chargement statistiques: " + e.getMessage());
         }
     }
     

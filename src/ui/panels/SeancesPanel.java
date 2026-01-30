@@ -36,9 +36,12 @@ import javax.swing.table.JTableHeader;
 import dao.CotisationDAO;
 import dao.SeanceDAO;
 import dao.TontineDAO;
+import models.Cotisation;
 import models.Seance;
 import models.Tontine;
 import ui.MainFrame;
+import utils.ThemeColors;
+import utils.UIUtils;
 import ui.panels.CotisationsDialog;
 
 /**
@@ -59,18 +62,6 @@ public class SeancesPanel extends JPanel {
     private JLabel lblStatPlanifiees;
     private JLabel lblStatTerminees;
     
-    // Palette de couleurs cohérente
-    private static final Color PRIMARY_DARK = new Color(15, 23, 42);
-    private static final Color PRIMARY_PURPLE = new Color(139, 92, 246);
-    private static final Color PRIMARY_BLUE = new Color(59, 130, 246);
-    private static final Color PRIMARY_EMERALD = new Color(16, 185, 129);
-    private static final Color PRIMARY_RED = new Color(239, 68, 68);
-    private static final Color PRIMARY_AMBER = new Color(251, 146, 60);
-    private static final Color BACKGROUND = new Color(241, 245, 249);
-    private static final Color CARD_BG = new Color(255, 255, 255);
-    private static final Color TEXT_PRIMARY = new Color(15, 23, 42);
-    private static final Color TEXT_SECONDARY = new Color(100, 116, 139);
-    private static final Color BORDER_COLOR = new Color(226, 232, 240);
     
     public SeancesPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -86,11 +77,11 @@ public class SeancesPanel extends JPanel {
      */
     private void initComponents() {
         setLayout(new BorderLayout(0, 0));
-        setBackground(BACKGROUND);
+        setBackground(ThemeColors.BACKGROUND);
         
         // Container principal
         JPanel mainContainer = new JPanel(new BorderLayout(0, 24));
-        mainContainer.setBackground(BACKGROUND);
+        mainContainer.setBackground(ThemeColors.BACKGROUND);
         mainContainer.setBorder(BorderFactory.createEmptyBorder(32, 32, 32, 32));
         
         // En-tête moderne
@@ -99,7 +90,7 @@ public class SeancesPanel extends JPanel {
         
         // Corps avec statistiques et tableau
         JPanel bodyPanel = new JPanel(new BorderLayout(0, 24));
-        bodyPanel.setBackground(BACKGROUND);
+        bodyPanel.setBackground(ThemeColors.BACKGROUND);
         
         // Statistiques rapides
         JPanel statsPanel = createStatsPanel();
@@ -123,17 +114,17 @@ public class SeancesPanel extends JPanel {
      */
     private JPanel createModernHeader() {
         JPanel header = new JPanel(new BorderLayout());
-        header.setBackground(CARD_BG);
-        header.setBorder(new RoundedBorder(20, BORDER_COLOR, 1));
+        header.setBackground(ThemeColors.CARD_BG);
+        header.setBorder(new UIUtils.RoundedBorder(20, ThemeColors.BORDER_COLOR, 1));
         
         JPanel innerPanel = new JPanel(new BorderLayout());
-        innerPanel.setBackground(CARD_BG);
+        innerPanel.setBackground(ThemeColors.CARD_BG);
         innerPanel.setBorder(BorderFactory.createEmptyBorder(24, 28, 24, 28));
         
         // Section gauche - Titre
         JPanel leftSection = new JPanel();
         leftSection.setLayout(new BoxLayout(leftSection, BoxLayout.Y_AXIS));
-        leftSection.setBackground(CARD_BG);
+        leftSection.setBackground(ThemeColors.CARD_BG);
         
         JLabel iconLabel = new JLabel("📅");
         iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 32));
@@ -141,12 +132,12 @@ public class SeancesPanel extends JPanel {
         
         lblTitre = new JLabel("Gestion des Séances");
         lblTitre.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        lblTitre.setForeground(TEXT_PRIMARY);
+        lblTitre.setForeground(ThemeColors.TEXT_PRIMARY);
         lblTitre.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         JLabel subtitleLabel = new JLabel("Planification et suivi des rencontres");
         subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        subtitleLabel.setForeground(TEXT_SECONDARY);
+        subtitleLabel.setForeground(ThemeColors.TEXT_SECONDARY);
         subtitleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         leftSection.add(iconLabel);
@@ -158,20 +149,20 @@ public class SeancesPanel extends JPanel {
         // Section droite - Filtre
         JPanel rightSection = new JPanel();
         rightSection.setLayout(new BoxLayout(rightSection, BoxLayout.Y_AXIS));
-        rightSection.setBackground(CARD_BG);
+        rightSection.setBackground(ThemeColors.CARD_BG);
         
         JLabel filterLabel = new JLabel("Filtrer par tontine");
         filterLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        filterLabel.setForeground(TEXT_SECONDARY);
+        filterLabel.setForeground(ThemeColors.TEXT_SECONDARY);
         filterLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
         
         cmbFiltreTontine = new JComboBox<>();
         cmbFiltreTontine.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         cmbFiltreTontine.setPreferredSize(new Dimension(250, 40));
         cmbFiltreTontine.setMaximumSize(new Dimension(250, 40));
-        cmbFiltreTontine.setBackground(CARD_BG);
+        cmbFiltreTontine.setBackground(ThemeColors.CARD_BG);
         cmbFiltreTontine.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(BORDER_COLOR, 1),
+            BorderFactory.createLineBorder(ThemeColors.BORDER_COLOR, 1),
             BorderFactory.createEmptyBorder(5, 10, 5, 10)
         ));
         cmbFiltreTontine.addItem(null);
@@ -203,18 +194,18 @@ public class SeancesPanel extends JPanel {
      */
     private JPanel createStatsPanel() {
         JPanel panel = new JPanel(new GridLayout(1, 3, 20, 0));
-        panel.setBackground(BACKGROUND);
+        panel.setBackground(ThemeColors.BACKGROUND);
         
         // Carte Total Séances
-        JPanel cardTotal = createMiniStatCard("Total Séances", "0", "📊", PRIMARY_PURPLE);
+        JPanel cardTotal = createMiniStatCard("Total Séances", "0", "📊", ThemeColors.PRIMARY_PURPLE);
         lblStatTotal = (JLabel) ((JPanel)((JPanel)((JPanel)cardTotal.getComponent(0)).getComponent(1)).getComponent(0)).getComponent(0);
         
         // Carte Planifiées
-        JPanel cardPlanifiees = createMiniStatCard("Planifiées", "0", "📋", PRIMARY_BLUE);
+        JPanel cardPlanifiees = createMiniStatCard("Planifiées", "0", "📋", ThemeColors.PRIMARY_BLUE);
         lblStatPlanifiees = (JLabel) ((JPanel)((JPanel)((JPanel)cardPlanifiees.getComponent(0)).getComponent(1)).getComponent(0)).getComponent(0);
         
         // Carte Terminées
-        JPanel cardTerminees = createMiniStatCard("Terminées", "0", "✅", PRIMARY_EMERALD);
+        JPanel cardTerminees = createMiniStatCard("Terminées", "0", "✅", ThemeColors.PRIMARY_EMERALD);
         lblStatTerminees = (JLabel) ((JPanel)((JPanel)((JPanel)cardTerminees.getComponent(0)).getComponent(1)).getComponent(0)).getComponent(0);
         
         panel.add(cardTotal);
@@ -229,15 +220,15 @@ public class SeancesPanel extends JPanel {
      */
     private JPanel createMiniStatCard(String titre, String valeur, String icone, Color color) {
         JPanel card = new JPanel(new BorderLayout());
-        card.setBackground(CARD_BG);
-        card.setBorder(new RoundedBorder(12, BORDER_COLOR, 1));
+        card.setBackground(ThemeColors.CARD_BG);
+        card.setBorder(new UIUtils.RoundedBorder(12, ThemeColors.BORDER_COLOR, 1));
         
         JPanel innerPanel = new JPanel(new BorderLayout());
-        innerPanel.setBackground(CARD_BG);
+        innerPanel.setBackground(ThemeColors.CARD_BG);
         innerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
         JPanel contentPanel = new JPanel(new BorderLayout());
-        contentPanel.setBackground(CARD_BG);
+        contentPanel.setBackground(ThemeColors.CARD_BG);
         
         JLabel iconLabel = new JLabel(icone);
         iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 24));
@@ -245,16 +236,16 @@ public class SeancesPanel extends JPanel {
         
         JPanel valuePanel = new JPanel();
         valuePanel.setLayout(new BoxLayout(valuePanel, BoxLayout.Y_AXIS));
-        valuePanel.setBackground(CARD_BG);
+        valuePanel.setBackground(ThemeColors.CARD_BG);
         
         JLabel valueLabel = new JLabel(valeur);
         valueLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        valueLabel.setForeground(TEXT_PRIMARY);
+        valueLabel.setForeground(ThemeColors.TEXT_PRIMARY);
         valueLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         JLabel titleLabel = new JLabel(titre);
         titleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        titleLabel.setForeground(TEXT_SECONDARY);
+        titleLabel.setForeground(ThemeColors.TEXT_SECONDARY);
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         valuePanel.add(valueLabel);
@@ -265,7 +256,7 @@ public class SeancesPanel extends JPanel {
         contentPanel.add(Box.createHorizontalStrut(12), BorderLayout.CENTER);
         
         JPanel rightPanel = new JPanel(new BorderLayout());
-        rightPanel.setBackground(CARD_BG);
+        rightPanel.setBackground(ThemeColors.CARD_BG);
         rightPanel.add(valuePanel, BorderLayout.CENTER);
         
         innerPanel.add(contentPanel, BorderLayout.WEST);
@@ -280,11 +271,11 @@ public class SeancesPanel extends JPanel {
      */
     private JPanel createTablePanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(CARD_BG);
-        panel.setBorder(new RoundedBorder(16, BORDER_COLOR, 1));
+        panel.setBackground(ThemeColors.CARD_BG);
+        panel.setBorder(new UIUtils.RoundedBorder(16, ThemeColors.BORDER_COLOR, 1));
         
         JPanel innerPanel = new JPanel(new BorderLayout());
-        innerPanel.setBackground(CARD_BG);
+        innerPanel.setBackground(ThemeColors.CARD_BG);
         innerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
         // Créer le tableau
@@ -292,8 +283,8 @@ public class SeancesPanel extends JPanel {
         
         JScrollPane scrollPane = new JScrollPane(tableSeances);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        scrollPane.getViewport().setBackground(CARD_BG);
-        scrollPane.setBackground(CARD_BG);
+        scrollPane.getViewport().setBackground(ThemeColors.CARD_BG);
+        scrollPane.setBackground(ThemeColors.CARD_BG);
         
         innerPanel.add(scrollPane, BorderLayout.CENTER);
         panel.add(innerPanel);
@@ -319,17 +310,17 @@ public class SeancesPanel extends JPanel {
         tableSeances.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         tableSeances.setShowGrid(false);
         tableSeances.setIntercellSpacing(new Dimension(0, 0));
-        tableSeances.setBackground(CARD_BG);
+        tableSeances.setBackground(ThemeColors.CARD_BG);
         tableSeances.setSelectionBackground(new Color(237, 233, 254));
-        tableSeances.setSelectionForeground(TEXT_PRIMARY);
+        tableSeances.setSelectionForeground(ThemeColors.TEXT_PRIMARY);
         
         // Style du header
         JTableHeader header = tableSeances.getTableHeader();
         header.setFont(new Font("Segoe UI", Font.BOLD, 12));
         header.setBackground(new Color(248, 250, 252));
-        header.setForeground(TEXT_SECONDARY);
+        header.setForeground(ThemeColors.TEXT_SECONDARY);
         header.setPreferredSize(new Dimension(header.getPreferredSize().width, 45));
-        header.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, BORDER_COLOR));
+        header.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, ThemeColors.BORDER_COLOR));
         
         // Renderer personnalisé
         tableSeances.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
@@ -339,7 +330,7 @@ public class SeancesPanel extends JPanel {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 
                 if (!isSelected) {
-                    c.setBackground(row % 2 == 0 ? CARD_BG : new Color(248, 250, 252));
+                    c.setBackground(row % 2 == 0 ? ThemeColors.CARD_BG : new Color(248, 250, 252));
                 }
                 
                 setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
@@ -349,22 +340,22 @@ public class SeancesPanel extends JPanel {
                     String statut = value.toString();
                     switch (statut.toLowerCase()) {
                         case "planifiée":
-                            setForeground(PRIMARY_BLUE);
+                            setForeground(ThemeColors.PRIMARY_BLUE);
                             setText("📋 Planifiée");
                             break;
                         case "en_cours":
-                            setForeground(PRIMARY_AMBER);
+                            setForeground(ThemeColors.PRIMARY_AMBER);
                             setText("⏳ En cours");
                             break;
                         case "terminée":
-                            setForeground(PRIMARY_EMERALD);
+                            setForeground(ThemeColors.PRIMARY_EMERALD);
                             setText("✅ Terminée");
                             break;
                         default:
-                            setForeground(TEXT_PRIMARY);
+                            setForeground(ThemeColors.TEXT_PRIMARY);
                     }
                 } else if (!isSelected) {
-                    setForeground(TEXT_PRIMARY);
+                    setForeground(ThemeColors.TEXT_PRIMARY);
                 }
                 
                 return c;
@@ -385,13 +376,13 @@ public class SeancesPanel extends JPanel {
      */
     private JPanel createActionPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
-        panel.setBackground(BACKGROUND);
+        panel.setBackground(ThemeColors.BACKGROUND);
         
-        JButton btnNouvelle = createModernButton("➕ Nouvelle Séance", PRIMARY_PURPLE, new Color(237, 233, 254));
-        JButton btnCotisations = createModernButton("💰 Cotisations", PRIMARY_AMBER, new Color(254, 243, 199));
-        JButton btnModifier = createModernButton("✏️ Modifier", PRIMARY_BLUE, new Color(219, 234, 254));
-        JButton btnSupprimer = createModernButton("🗑️ Supprimer", PRIMARY_RED, new Color(254, 226, 226));
-        JButton btnRafraichir = createModernButton("🔄 Actualiser", TEXT_SECONDARY, new Color(241, 245, 249));
+        JButton btnNouvelle = createModernButton("➕ Nouvelle Séance", ThemeColors.PRIMARY_PURPLE, new Color(237, 233, 254));
+        JButton btnCotisations = createModernButton("💰 Cotisations", ThemeColors.PRIMARY_AMBER, new Color(254, 243, 199));
+        JButton btnModifier = createModernButton("✏️ Modifier", ThemeColors.PRIMARY_BLUE, new Color(219, 234, 254));
+        JButton btnSupprimer = createModernButton("🗑️ Supprimer", ThemeColors.PRIMARY_RED, new Color(254, 226, 226));
+        JButton btnRafraichir = createModernButton("🔄 Actualiser", ThemeColors.TEXT_SECONDARY, new Color(241, 245, 249));
         
         btnNouvelle.addActionListener(e -> nouvelleSeance());
         btnCotisations.addActionListener(e -> gererCotisations());
@@ -635,44 +626,4 @@ public class SeancesPanel extends JPanel {
         chargerSeances();
     }
     
-    /**
-     * Classe pour créer des bordures arrondies
-     */
-    private static class RoundedBorder extends AbstractBorder {
-        private int radius;
-        private Color borderColor;
-        private int thickness;
-        
-        public RoundedBorder(int radius, Color borderColor, int thickness) {
-            this.radius = radius;
-            this.borderColor = borderColor;
-            this.thickness = thickness;
-        }
-        
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            Graphics2D g2d = (Graphics2D) g.create();
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            
-            if (thickness > 0) {
-                g2d.setColor(borderColor);
-                g2d.setStroke(new BasicStroke(thickness));
-                g2d.draw(new RoundRectangle2D.Double(
-                    x + thickness/2.0, 
-                    y + thickness/2.0, 
-                    width - thickness, 
-                    height - thickness, 
-                    radius, 
-                    radius
-                ));
-            }
-            
-            g2d.dispose();
-        }
-        
-        @Override
-        public Insets getBorderInsets(Component c) {
-            return new Insets(thickness, thickness, thickness, thickness);
-        }
-    }
 }

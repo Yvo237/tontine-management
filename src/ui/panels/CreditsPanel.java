@@ -48,6 +48,8 @@ import models.Credit;
 import models.Membre;
 import models.Tontine;
 import ui.MainFrame;
+import utils.ThemeColors;
+import utils.UIUtils;
 
 /**
  * Panneau de gestion des crédits avec design ultra-moderne
@@ -66,17 +68,6 @@ public class CreditsPanel extends JPanel {
     private JLabel lblMontantTotal;
     private JLabel lblCreditsActifs;
     
-    // Palette de couleurs cohérente
-    private static final Color PRIMARY_DARK = new Color(15, 23, 42);
-    private static final Color PRIMARY_PURPLE = new Color(139, 92, 246);
-    private static final Color PRIMARY_BLUE = new Color(59, 130, 246);
-    private static final Color PRIMARY_EMERALD = new Color(16, 185, 129);
-    private static final Color PRIMARY_RED = new Color(239, 68, 68);
-    private static final Color PRIMARY_AMBER = new Color(251, 146, 60);
-    private static final Color BACKGROUND = new Color(241, 245, 249);
-    private static final Color CARD_BG = new Color(255, 255, 255);
-    private static final Color TEXT_PRIMARY = new Color(15, 23, 42);
-    private static final Color TEXT_SECONDARY = new Color(100, 116, 139);
     
     public CreditsPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -91,11 +82,11 @@ public class CreditsPanel extends JPanel {
      */
     private void initComponents() {
         setLayout(new BorderLayout(0, 0));
-        setBackground(BACKGROUND);
+        setBackground(ThemeColors.BACKGROUND);
         
         // Container principal
         JPanel mainContainer = new JPanel(new BorderLayout(0, 24));
-        mainContainer.setBackground(BACKGROUND);
+        mainContainer.setBackground(ThemeColors.BACKGROUND);
         mainContainer.setBorder(BorderFactory.createEmptyBorder(32, 32, 32, 32));
         
         // En-tête moderne
@@ -104,7 +95,7 @@ public class CreditsPanel extends JPanel {
         
         // Corps avec statistiques et tableau
         JPanel bodyPanel = new JPanel(new BorderLayout(0, 24));
-        bodyPanel.setBackground(BACKGROUND);
+        bodyPanel.setBackground(ThemeColors.BACKGROUND);
         
         // Statistiques rapides
         JPanel statsPanel = createStatsPanel();
@@ -128,17 +119,17 @@ public class CreditsPanel extends JPanel {
      */
     private JPanel createModernHeader() {
         JPanel header = new JPanel(new BorderLayout());
-        header.setBackground(CARD_BG);
-        header.setBorder(new RoundedBorder(20, new Color(226, 232, 240), 1));
+        header.setBackground(ThemeColors.CARD_BG);
+        header.setBorder(new UIUtils.RoundedBorder(20, new Color(226, 232, 240), 1));
         
         JPanel innerPanel = new JPanel(new BorderLayout());
-        innerPanel.setBackground(CARD_BG);
+        innerPanel.setBackground(ThemeColors.CARD_BG);
         innerPanel.setBorder(BorderFactory.createEmptyBorder(24, 28, 24, 28));
         
         // Section gauche - Titre
         JPanel leftSection = new JPanel();
         leftSection.setLayout(new BoxLayout(leftSection, BoxLayout.Y_AXIS));
-        leftSection.setBackground(CARD_BG);
+        leftSection.setBackground(ThemeColors.CARD_BG);
         
         JLabel iconLabel = new JLabel("💳");
         iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 32));
@@ -146,12 +137,12 @@ public class CreditsPanel extends JPanel {
         
         lblTitre = new JLabel("Gestion des Crédits");
         lblTitre.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        lblTitre.setForeground(TEXT_PRIMARY);
+        lblTitre.setForeground(ThemeColors.TEXT_PRIMARY);
         lblTitre.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         JLabel subtitleLabel = new JLabel("Suivi des emprunts et remboursements");
         subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        subtitleLabel.setForeground(TEXT_SECONDARY);
+        subtitleLabel.setForeground(ThemeColors.TEXT_SECONDARY);
         subtitleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         leftSection.add(iconLabel);
@@ -163,18 +154,18 @@ public class CreditsPanel extends JPanel {
         // Section droite - Filtres
         JPanel rightSection = new JPanel();
         rightSection.setLayout(new BoxLayout(rightSection, BoxLayout.Y_AXIS));
-        rightSection.setBackground(CARD_BG);
+        rightSection.setBackground(ThemeColors.CARD_BG);
         
         JLabel filterLabel = new JLabel("Filtrer par membre");
         filterLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        filterLabel.setForeground(TEXT_SECONDARY);
+        filterLabel.setForeground(ThemeColors.TEXT_SECONDARY);
         filterLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
         
         cmbFiltreMembre = new JComboBox<>();
         cmbFiltreMembre.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         cmbFiltreMembre.setPreferredSize(new Dimension(250, 40));
         cmbFiltreMembre.setMaximumSize(new Dimension(250, 40));
-        cmbFiltreMembre.setBackground(CARD_BG);
+        cmbFiltreMembre.setBackground(ThemeColors.CARD_BG);
         cmbFiltreMembre.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(226, 232, 240), 1),
             BorderFactory.createEmptyBorder(5, 10, 5, 10)
@@ -208,18 +199,18 @@ public class CreditsPanel extends JPanel {
      */
     private JPanel createStatsPanel() {
         JPanel panel = new JPanel(new GridLayout(1, 3, 20, 0));
-        panel.setBackground(BACKGROUND);
+        panel.setBackground(ThemeColors.BACKGROUND);
         
         // Carte Total Crédits
-        JPanel cardTotal = createMiniStatCard("Total Crédits", "0", "📊", PRIMARY_PURPLE);
+        JPanel cardTotal = createMiniStatCard("Total Crédits", "0", "📊", ThemeColors.PRIMARY_PURPLE);
         lblTotalCredits = (JLabel) ((JPanel)((JPanel)((JPanel)cardTotal.getComponent(0)).getComponent(1)).getComponent(0)).getComponent(0);
         
         // Carte Montant Total
-        JPanel cardMontant = createMiniStatCard("Montant Total", "0 FCFA", "💰", PRIMARY_AMBER);
+        JPanel cardMontant = createMiniStatCard("Montant Total", "0 FCFA", "💰", ThemeColors.PRIMARY_AMBER);
         lblMontantTotal = (JLabel) ((JPanel)((JPanel)((JPanel)cardMontant.getComponent(0)).getComponent(1)).getComponent(0)).getComponent(0);
         
         // Carte Crédits Actifs
-        JPanel cardActifs = createMiniStatCard("En Cours", "0", "⚡", PRIMARY_EMERALD);
+        JPanel cardActifs = createMiniStatCard("En Cours", "0", "⚡", ThemeColors.PRIMARY_EMERALD);
         lblCreditsActifs = (JLabel) ((JPanel)((JPanel)((JPanel)cardActifs.getComponent(0)).getComponent(1)).getComponent(0)).getComponent(0);
         
         panel.add(cardTotal);
@@ -234,16 +225,16 @@ public class CreditsPanel extends JPanel {
      */
     private JPanel createMiniStatCard(String titre, String valeur, String icone, Color color) {
         JPanel card = new JPanel(new BorderLayout());
-        card.setBackground(CARD_BG);
-        card.setBorder(new RoundedBorder(12, new Color(226, 232, 240), 1));
+        card.setBackground(ThemeColors.CARD_BG);
+        card.setBorder(new UIUtils.RoundedBorder(12, new Color(226, 232, 240), 1));
         
         JPanel innerPanel = new JPanel(new BorderLayout());
-        innerPanel.setBackground(CARD_BG);
+        innerPanel.setBackground(ThemeColors.CARD_BG);
         innerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
         // Icône et valeur
         JPanel contentPanel = new JPanel(new BorderLayout());
-        contentPanel.setBackground(CARD_BG);
+        contentPanel.setBackground(ThemeColors.CARD_BG);
         
         JLabel iconLabel = new JLabel(icone);
         iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 24));
@@ -251,16 +242,16 @@ public class CreditsPanel extends JPanel {
         
         JPanel valuePanel = new JPanel();
         valuePanel.setLayout(new BoxLayout(valuePanel, BoxLayout.Y_AXIS));
-        valuePanel.setBackground(CARD_BG);
+        valuePanel.setBackground(ThemeColors.CARD_BG);
         
         JLabel valueLabel = new JLabel(valeur);
         valueLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        valueLabel.setForeground(TEXT_PRIMARY);
+        valueLabel.setForeground(ThemeColors.TEXT_PRIMARY);
         valueLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         JLabel titleLabel = new JLabel(titre);
         titleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        titleLabel.setForeground(TEXT_SECONDARY);
+        titleLabel.setForeground(ThemeColors.TEXT_SECONDARY);
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         valuePanel.add(valueLabel);
@@ -271,7 +262,7 @@ public class CreditsPanel extends JPanel {
         contentPanel.add(Box.createHorizontalStrut(12), BorderLayout.CENTER);
         
         JPanel rightPanel = new JPanel(new BorderLayout());
-        rightPanel.setBackground(CARD_BG);
+        rightPanel.setBackground(ThemeColors.CARD_BG);
         rightPanel.add(valuePanel, BorderLayout.CENTER);
         
         innerPanel.add(contentPanel, BorderLayout.WEST);
@@ -286,11 +277,11 @@ public class CreditsPanel extends JPanel {
      */
     private JPanel createTablePanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(CARD_BG);
-        panel.setBorder(new RoundedBorder(16, new Color(226, 232, 240), 1));
+        panel.setBackground(ThemeColors.CARD_BG);
+        panel.setBorder(new UIUtils.RoundedBorder(16, new Color(226, 232, 240), 1));
         
         JPanel innerPanel = new JPanel(new BorderLayout());
-        innerPanel.setBackground(CARD_BG);
+        innerPanel.setBackground(ThemeColors.CARD_BG);
         innerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
         // Créer le tableau
@@ -298,8 +289,8 @@ public class CreditsPanel extends JPanel {
         
         JScrollPane scrollPane = new JScrollPane(tableCredits);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        scrollPane.getViewport().setBackground(CARD_BG);
-        scrollPane.setBackground(CARD_BG);
+        scrollPane.getViewport().setBackground(ThemeColors.CARD_BG);
+        scrollPane.setBackground(ThemeColors.CARD_BG);
         
         innerPanel.add(scrollPane, BorderLayout.CENTER);
         panel.add(innerPanel);
@@ -325,15 +316,15 @@ public class CreditsPanel extends JPanel {
         tableCredits.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         tableCredits.setShowGrid(false);
         tableCredits.setIntercellSpacing(new Dimension(0, 0));
-        tableCredits.setBackground(CARD_BG);
+        tableCredits.setBackground(ThemeColors.CARD_BG);
         tableCredits.setSelectionBackground(new Color(237, 233, 254));
-        tableCredits.setSelectionForeground(TEXT_PRIMARY);
+        tableCredits.setSelectionForeground(ThemeColors.TEXT_PRIMARY);
         
         // Style du header
         JTableHeader header = tableCredits.getTableHeader();
         header.setFont(new Font("Segoe UI", Font.BOLD, 12));
         header.setBackground(new Color(248, 250, 252));
-        header.setForeground(TEXT_SECONDARY);
+        header.setForeground(ThemeColors.TEXT_SECONDARY);
         header.setPreferredSize(new Dimension(header.getPreferredSize().width, 45));
         header.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(226, 232, 240)));
         
@@ -345,7 +336,7 @@ public class CreditsPanel extends JPanel {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 
                 if (!isSelected) {
-                    c.setBackground(row % 2 == 0 ? CARD_BG : new Color(248, 250, 252));
+                    c.setBackground(row % 2 == 0 ? ThemeColors.CARD_BG : new Color(248, 250, 252));
                 }
                 
                 setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
@@ -354,14 +345,14 @@ public class CreditsPanel extends JPanel {
                 if (column == 5 && value != null) {
                     String statut = value.toString();
                     if (statut.equals("en_cours")) {
-                        setForeground(PRIMARY_BLUE);
+                        setForeground(ThemeColors.PRIMARY_BLUE);
                     } else if (statut.equals("rembourse")) {
-                        setForeground(PRIMARY_EMERALD);
+                        setForeground(ThemeColors.PRIMARY_EMERALD);
                     } else if (statut.equals("en_retard")) {
-                        setForeground(PRIMARY_RED);
+                        setForeground(ThemeColors.PRIMARY_RED);
                     }
                 } else if (!isSelected) {
-                    setForeground(TEXT_PRIMARY);
+                    setForeground(ThemeColors.TEXT_PRIMARY);
                 }
                 
                 return c;
@@ -383,13 +374,13 @@ public class CreditsPanel extends JPanel {
      */
     private JPanel createActionPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
-        panel.setBackground(BACKGROUND);
+        panel.setBackground(ThemeColors.BACKGROUND);
         
-        JButton btnNouveau = createModernButton("➕ Nouveau Crédit", PRIMARY_PURPLE, new Color(237, 233, 254));
-        JButton btnModifier = createModernButton("✏️ Modifier", PRIMARY_BLUE, new Color(219, 234, 254));
-        JButton btnPaiement = createModernButton("💰 Enregistrer Paiement", PRIMARY_EMERALD, new Color(209, 250, 229));
-        JButton btnSupprimer = createModernButton("🗑️ Supprimer", PRIMARY_RED, new Color(254, 226, 226));
-        JButton btnRafraichir = createModernButton("🔄 Actualiser", TEXT_SECONDARY, new Color(241, 245, 249));
+        JButton btnNouveau = createModernButton("➕ Nouveau Crédit", ThemeColors.PRIMARY_PURPLE, new Color(237, 233, 254));
+        JButton btnModifier = createModernButton("✏️ Modifier", ThemeColors.PRIMARY_BLUE, new Color(219, 234, 254));
+        JButton btnPaiement = createModernButton("💰 Enregistrer Paiement", ThemeColors.PRIMARY_EMERALD, new Color(209, 250, 229));
+        JButton btnSupprimer = createModernButton("🗑️ Supprimer", ThemeColors.PRIMARY_RED, new Color(254, 226, 226));
+        JButton btnRafraichir = createModernButton("🔄 Actualiser", ThemeColors.TEXT_SECONDARY, new Color(241, 245, 249));
         
         btnNouveau.addActionListener(e -> nouveauCredit());
         btnModifier.addActionListener(e -> modifierCredit());
@@ -693,46 +684,6 @@ public class CreditsPanel extends JPanel {
         chargerCredits();
     }
     
-    /**
-     * Classe pour créer des bordures arrondies
-     */
-    private static class RoundedBorder extends AbstractBorder {
-        private int radius;
-        private Color borderColor;
-        private int thickness;
-        
-        public RoundedBorder(int radius, Color borderColor, int thickness) {
-            this.radius = radius;
-            this.borderColor = borderColor;
-            this.thickness = thickness;
-        }
-        
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            Graphics2D g2d = (Graphics2D) g.create();
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            
-            if (thickness > 0) {
-                g2d.setColor(borderColor);
-                g2d.setStroke(new BasicStroke(thickness));
-                g2d.draw(new RoundRectangle2D.Double(
-                    x + thickness/2.0, 
-                    y + thickness/2.0, 
-                    width - thickness, 
-                    height - thickness, 
-                    radius, 
-                    radius
-                ));
-            }
-            
-            g2d.dispose();
-        }
-        
-        @Override
-        public Insets getBorderInsets(Component c) {
-            return new Insets(thickness, thickness, thickness, thickness);
-        }
-    }
 }
 
 /**
@@ -757,14 +708,14 @@ class CreditDialog extends JDialog {
     private JLabel lblValidationMessage;
     
     // Couleurs
-    private static final Color PRIMARY_PURPLE = new Color(139, 92, 246);
+    private static final Color DIALOG_PURPLE = new Color(139, 92, 246);
     private static final Color SUCCESS_GREEN = new Color(16, 185, 129);
     private static final Color ERROR_RED = new Color(239, 68, 68);
     private static final Color WARNING_AMBER = new Color(251, 146, 60);
-    private static final Color TEXT_PRIMARY = new Color(15, 23, 42);
-    private static final Color TEXT_SECONDARY = new Color(100, 116, 139);
-    private static final Color BACKGROUND = new Color(248, 250, 252);
-    private static final Color CARD_BG = new Color(255, 255, 255);
+    private static final Color DIALOG_TEXT_PRIMARY = new Color(15, 23, 42);
+    private static final Color DIALOG_TEXT_SECONDARY = new Color(100, 116, 139);
+    private static final Color DIALOG_BACKGROUND = new Color(248, 250, 252);
+    private static final Color DIALOG_CARD_BG = new Color(255, 255, 255);
     
     public CreditDialog(Frame parent, Credit credit, MembreDAO membreDAO) {
         super(parent, credit == null ? "Nouveau Crédit" : "Modifier Crédit", true);
@@ -779,7 +730,7 @@ class CreditDialog extends JDialog {
         setLayout(new BorderLayout(0, 0));
         setSize(600, 680);
         setLocationRelativeTo(getParent());
-        getContentPane().setBackground(BACKGROUND);
+        getContentPane().setBackground(ThemeColors.BACKGROUND);
         
         // Titre du dialogue
         JPanel titlePanel = createTitlePanel();
@@ -815,7 +766,7 @@ class CreditDialog extends JDialog {
         
         JLabel titleLabel = new JLabel(credit == null ? "Nouveau Crédit" : "Modifier Crédit");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        titleLabel.setForeground(TEXT_PRIMARY);
+        titleLabel.setForeground(ThemeColors.TEXT_PRIMARY);
         titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 12, 0, 0));
         
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -829,11 +780,11 @@ class CreditDialog extends JDialog {
     
     private JPanel createFormPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(BACKGROUND);
+        panel.setBackground(ThemeColors.BACKGROUND);
         
         // Panel principal avec formulaire et aperçu
         JPanel mainPanel = new JPanel(new GridBagLayout());
-        mainPanel.setBackground(BACKGROUND);
+        mainPanel.setBackground(ThemeColors.BACKGROUND);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(28, 28, 28, 28));
         
         GridBagConstraints gbc = new GridBagConstraints();
@@ -843,7 +794,7 @@ class CreditDialog extends JDialog {
         
         // Panel formulaire à gauche
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBackground(BACKGROUND);
+        formPanel.setBackground(ThemeColors.BACKGROUND);
         
         // Initialiser les composants
         initializeComponents();
@@ -973,7 +924,7 @@ class CreditDialog extends JDialog {
      */
     private JPanel createPreviewPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(CARD_BG);
+        panel.setBackground(ThemeColors.CARD_BG);
         panel.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(226, 232, 240), 1),
             BorderFactory.createEmptyBorder(20, 20, 20, 20)
@@ -982,19 +933,19 @@ class CreditDialog extends JDialog {
         // Titre
         JLabel title = new JLabel("💰 Aperçu du crédit");
         title.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        title.setForeground(TEXT_PRIMARY);
+        title.setForeground(ThemeColors.TEXT_PRIMARY);
         title.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
         panel.add(title, BorderLayout.NORTH);
         
         // Détails du calcul
         JPanel detailsPanel = new JPanel(new GridBagLayout());
-        detailsPanel.setBackground(CARD_BG);
+        detailsPanel.setBackground(ThemeColors.CARD_BG);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(8, 0, 8, 0);
         
         // Montant total
-        addPreviewRow(detailsPanel, gbc, 0, "Montant emprunté:", "0 FCFA", TEXT_PRIMARY);
+        addPreviewRow(detailsPanel, gbc, 0, "Montant emprunté:", "0 FCFA", ThemeColors.TEXT_PRIMARY);
         lblMontantTotal = (JLabel) ((JPanel)detailsPanel.getComponent(0)).getComponent(1);
         
         // Total intérêts
@@ -1002,7 +953,7 @@ class CreditDialog extends JDialog {
         lblTotalInteret = (JLabel) ((JPanel)detailsPanel.getComponent(1)).getComponent(1);
         
         // Montant total avec intérêts
-        addPreviewRow(detailsPanel, gbc, 2, "Montant total:", "0 FCFA", PRIMARY_PURPLE);
+        addPreviewRow(detailsPanel, gbc, 2, "Montant total:", "0 FCFA", ThemeColors.PRIMARY_PURPLE);
         
         // Mensualité
         addPreviewRow(detailsPanel, gbc, 3, "Mensualité:", "0 FCFA", SUCCESS_GREEN);
@@ -1018,11 +969,11 @@ class CreditDialog extends JDialog {
      */
     private void addPreviewRow(JPanel parent, GridBagConstraints gbc, int row, String label, String value, Color valueColor) {
         JPanel rowPanel = new JPanel(new BorderLayout());
-        rowPanel.setBackground(CARD_BG);
+        rowPanel.setBackground(ThemeColors.CARD_BG);
         
         JLabel lbl = new JLabel(label);
         lbl.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        lbl.setForeground(TEXT_SECONDARY);
+        lbl.setForeground(ThemeColors.TEXT_SECONDARY);
         
         JLabel val = new JLabel(value);
         val.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -1047,17 +998,17 @@ class CreditDialog extends JDialog {
         
         // Panel pour le label et l'aide
         JPanel labelPanel = new JPanel(new BorderLayout());
-        labelPanel.setBackground(BACKGROUND);
+        labelPanel.setBackground(ThemeColors.BACKGROUND);
         
         JLabel label = new JLabel(labelText + (required ? " *" : ""));
         label.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        label.setForeground(TEXT_PRIMARY);
+        label.setForeground(ThemeColors.TEXT_PRIMARY);
         labelPanel.add(label, BorderLayout.NORTH);
         
         if (helpText != null && !helpText.isEmpty()) {
             JLabel help = new JLabel(helpText);
             help.setFont(new Font("Segoe UI", Font.ITALIC, 11));
-            help.setForeground(TEXT_SECONDARY);
+            help.setForeground(ThemeColors.TEXT_SECONDARY);
             help.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
             labelPanel.add(help, BorderLayout.CENTER);
         }
@@ -1215,7 +1166,7 @@ class CreditDialog extends JDialog {
             BorderFactory.createEmptyBorder(20, 20, 20, 20)
         ));
         
-        JButton btnSave = createDialogButton("💾 Enregistrer", PRIMARY_PURPLE, Color.WHITE);
+        JButton btnSave = createDialogButton("💾 Enregistrer", ThemeColors.PRIMARY_PURPLE, Color.WHITE);
         JButton btnCancel = createDialogButton("✕ Annuler", new Color(148, 163, 184), Color.WHITE);
         
         btnSave.addActionListener(e -> enregistrer());

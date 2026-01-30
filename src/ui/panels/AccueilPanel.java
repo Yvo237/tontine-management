@@ -1,6 +1,5 @@
 package ui.panels;
 
-import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -8,12 +7,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.RenderingHints;
-import java.awt.geom.RoundRectangle2D;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,7 +19,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.AbstractBorder;
 
 import dao.CreditDAO;
 import dao.MembreDAO;
@@ -34,6 +27,8 @@ import models.Credit;
 import models.Membre;
 import models.Tontine;
 import ui.MainFrame;
+import utils.ThemeColors;
+import utils.UIUtils;
 
 /**
  * Panneau d'accueil avec tableau de bord ultra-moderne
@@ -50,16 +45,6 @@ public class AccueilPanel extends JPanel {
     private JLabel lblTontinesActives;
     private JLabel lblCreditsEnCours;
     
-    // Palette de couleurs moderne et sophistiquée
-    private static final Color PRIMARY_DARK = new Color(15, 23, 42);      // Slate 900
-    private static final Color PRIMARY_PURPLE = new Color(139, 92, 246);  // Violet 500
-    private static final Color PRIMARY_BLUE = new Color(59, 130, 246);    // Blue 500
-    private static final Color PRIMARY_EMERALD = new Color(16, 185, 129); // Emerald 500
-    private static final Color PRIMARY_AMBER = new Color(251, 146, 60);   // Orange 400
-    private static final Color BACKGROUND = new Color(241, 245, 249);     // Slate 100
-    private static final Color CARD_BG = new Color(255, 255, 255);
-    private static final Color TEXT_PRIMARY = new Color(15, 23, 42);
-    private static final Color TEXT_SECONDARY = new Color(100, 116, 139);
     
     public AccueilPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -75,11 +60,11 @@ public class AccueilPanel extends JPanel {
      */
     private void initComponents() {
         setLayout(new BorderLayout(0, 0));
-        setBackground(BACKGROUND);
+        setBackground(ThemeColors.BACKGROUND);
         
         // Container principal avec padding
         JPanel mainContainer = new JPanel(new BorderLayout(0, 24));
-        mainContainer.setBackground(BACKGROUND);
+        mainContainer.setBackground(ThemeColors.BACKGROUND);
         mainContainer.setBorder(BorderFactory.createEmptyBorder(32, 32, 32, 32));
         
         // En-tête sophistiqué avec gradient visuel
@@ -88,7 +73,7 @@ public class AccueilPanel extends JPanel {
         
         // Corps principal avec grille de cartes
         JPanel bodyPanel = new JPanel(new BorderLayout(0, 24));
-        bodyPanel.setBackground(BACKGROUND);
+        bodyPanel.setBackground(ThemeColors.BACKGROUND);
         
         // Grille des statistiques premium
         JPanel statsGrid = createPremiumStatsGrid();
@@ -107,32 +92,32 @@ public class AccueilPanel extends JPanel {
      */
     private JPanel createUltraModernHeader() {
         JPanel header = new JPanel(new BorderLayout());
-        header.setBackground(CARD_BG);
-        header.setBorder(new RoundedBorder(20, new Color(226, 232, 240), 1));
+        header.setBackground(ThemeColors.CARD_BG);
+        header.setBorder(new UIUtils.RoundedBorder(20, ThemeColors.BORDER_COLOR, 1));
         
         // Panneau interne avec padding
         JPanel innerPanel = new JPanel(new BorderLayout());
-        innerPanel.setBackground(CARD_BG);
+        innerPanel.setBackground(ThemeColors.CARD_BG);
         innerPanel.setBorder(BorderFactory.createEmptyBorder(28, 32, 28, 32));
         
         // Section gauche - Titre et sous-titre
         JPanel leftSection = new JPanel();
         leftSection.setLayout(new BoxLayout(leftSection, BoxLayout.Y_AXIS));
-        leftSection.setBackground(CARD_BG);
+        leftSection.setBackground(ThemeColors.CARD_BG);
         
-        JLabel welcomeLabel = new JLabel("Bonjour, Administrateur 👋");
+        JLabel welcomeLabel = new JLabel("Bonjour, 👋");
         welcomeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        welcomeLabel.setForeground(TEXT_SECONDARY);
+        welcomeLabel.setForeground(ThemeColors.TEXT_SECONDARY);
         welcomeLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         JLabel titleLabel = new JLabel("Tableau de Bord");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 36));
-        titleLabel.setForeground(TEXT_PRIMARY);
+        titleLabel.setForeground(ThemeColors.TEXT_PRIMARY);
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         JLabel subtitleLabel = new JLabel("Gestion Financière & Tontines");
         subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        subtitleLabel.setForeground(PRIMARY_PURPLE);
+        subtitleLabel.setForeground(ThemeColors.PRIMARY_PURPLE);
         subtitleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         leftSection.add(welcomeLabel);
@@ -144,19 +129,19 @@ public class AccueilPanel extends JPanel {
         // Section droite - Date et heure
         JPanel rightSection = new JPanel();
         rightSection.setLayout(new BoxLayout(rightSection, BoxLayout.Y_AXIS));
-        rightSection.setBackground(CARD_BG);
+        rightSection.setBackground(ThemeColors.CARD_BG);
         
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE dd MMMM yyyy");
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
         
         JLabel dateLabel = new JLabel(dateFormat.format(new Date()));
         dateLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        dateLabel.setForeground(TEXT_SECONDARY);
+        dateLabel.setForeground(ThemeColors.TEXT_SECONDARY);
         dateLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
         
         JLabel timeLabel = new JLabel(timeFormat.format(new Date()));
         timeLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        timeLabel.setForeground(TEXT_PRIMARY);
+        timeLabel.setForeground(ThemeColors.TEXT_PRIMARY);
         timeLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
         
         rightSection.add(dateLabel);
@@ -173,38 +158,41 @@ public class AccueilPanel extends JPanel {
     /**
      * Crée la grille premium des cartes statistiques
      */
-    private JPanel createPremiumStatsGrid() {
-        JPanel grid = new JPanel(new GridLayout(2, 2, 24, 24));
-        grid.setBackground(BACKGROUND);
-        
-        // Cartes avec couleurs distinctives
-        JPanel cardMembres = createPremiumStatCard(
-            "Total Membres", "0", "👥", 
-            PRIMARY_PURPLE, new Color(237, 233, 254)
-        );
-        
-        JPanel cardActifs = createPremiumStatCard(
-            "Membres Actifs", "0", "⚡", 
-            PRIMARY_BLUE, new Color(219, 234, 254)
-        );
-        
-        JPanel cardTontines = createPremiumStatCard(
-            "Tontines Actives", "0", "💎", 
-            PRIMARY_EMERALD, new Color(209, 250, 229)
-        );
-        
-        JPanel cardCredits = createPremiumStatCard(
-            "Crédits en Cours", "0", "💰", 
-            PRIMARY_AMBER, new Color(254, 243, 199)
-        );
-        
-        grid.add(cardMembres);
-        grid.add(cardActifs);
-        grid.add(cardTontines);
-        grid.add(cardCredits);
-        
-        return grid;
-    }
+
+        private JPanel createPremiumStatsGrid() {
+    JPanel grid = new JPanel(new GridLayout(2, 2, 24, 24));
+    grid.setBackground(ThemeColors.BACKGROUND);
+    
+    // Cartes avec couleurs distinctives
+    JPanel cardMembres = createPremiumStatCard(
+        "Total Membres", "0", "👥", 
+        ThemeColors.PRIMARY_PURPLE, new Color(250, 245, 255)
+    );
+    
+    JPanel cardActifs = createPremiumStatCard(
+        "Membres Actifs", "0", "⚡", 
+        ThemeColors.PRIMARY_BLUE, new Color(235, 248, 255)
+    );
+    
+    JPanel cardTontines = createPremiumStatCard(
+        "Tontines Actives", "0", "💎", 
+        ThemeColors.PRIMARY_EMERALD, new Color(240, 255, 250)
+    );
+    
+    JPanel cardCredits = createPremiumStatCard(
+        "Crédits en Cours", "0", "💰", 
+        ThemeColors.PRIMARY_AMBER, new Color(255, 252, 235)
+    );
+    
+    grid.add(cardMembres);
+    grid.add(cardActifs);
+    grid.add(cardTontines);
+    grid.add(cardCredits);
+    
+    return grid;
+}
+
+
     
     /**
      * Crée une carte statistique premium avec design moderne
@@ -212,24 +200,24 @@ public class AccueilPanel extends JPanel {
     private JPanel createPremiumStatCard(String titre, String valeur, String icone, 
                                          Color accentColor, Color bgColor) {
         JPanel card = new JPanel(new BorderLayout());
-        card.setBackground(CARD_BG);
-        card.setBorder(new RoundedBorder(16, new Color(226, 232, 240), 1));
+        card.setBackground(ThemeColors.CARD_BG);
+        card.setBorder(new UIUtils.RoundedBorder(16, new Color(226, 232, 240), 1));
         card.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
         // Container interne
         JPanel innerContainer = new JPanel(new BorderLayout());
-        innerContainer.setBackground(CARD_BG);
+        innerContainer.setBackground(ThemeColors.CARD_BG);
         innerContainer.setBorder(BorderFactory.createEmptyBorder(24, 24, 24, 24));
         
         // En-tête de la carte
         JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(CARD_BG);
+        headerPanel.setBackground(ThemeColors.CARD_BG);
         
         // Badge icône avec fond coloré
         JPanel iconBadge = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         iconBadge.setPreferredSize(new Dimension(56, 56));
         iconBadge.setBackground(bgColor);
-        iconBadge.setBorder(new RoundedBorder(12, bgColor, 0));
+        iconBadge.setBorder(new UIUtils.RoundedBorder(12, bgColor, 0));
         
         JLabel iconLabel = new JLabel(icone);
         iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 28));
@@ -238,12 +226,12 @@ public class AccueilPanel extends JPanel {
         // Panneau titre
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
-        titlePanel.setBackground(CARD_BG);
+        titlePanel.setBackground(ThemeColors.CARD_BG);
         titlePanel.setBorder(BorderFactory.createEmptyBorder(0, 16, 0, 0));
         
         JLabel titleLabel = new JLabel(titre);
         titleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        titleLabel.setForeground(TEXT_SECONDARY);
+        titleLabel.setForeground(ThemeColors.TEXT_SECONDARY);
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         titlePanel.add(Box.createVerticalGlue());
@@ -255,21 +243,21 @@ public class AccueilPanel extends JPanel {
         
         // Valeur principale
         JPanel valuePanel = new JPanel(new BorderLayout());
-        valuePanel.setBackground(CARD_BG);
+        valuePanel.setBackground(ThemeColors.CARD_BG);
         valuePanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
         
         JLabel valueLabel = new JLabel(valeur);
         valueLabel.setFont(new Font("Segoe UI", Font.BOLD, 42));
-        valueLabel.setForeground(TEXT_PRIMARY);
+        valueLabel.setForeground(ThemeColors.TEXT_PRIMARY);
         
         // Footer avec trend indicator
         JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        footerPanel.setBackground(CARD_BG);
+        footerPanel.setBackground(ThemeColors.CARD_BG);
         footerPanel.setBorder(BorderFactory.createEmptyBorder(12, 0, 0, 0));
         
         JLabel trendLabel = new JLabel("↗ +12% ce mois");
         trendLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        trendLabel.setForeground(PRIMARY_EMERALD);
+        trendLabel.setForeground(ThemeColors.PRIMARY_EMERALD);
         footerPanel.add(trendLabel);
         
         valuePanel.add(valueLabel, BorderLayout.CENTER);
@@ -292,7 +280,7 @@ public class AccueilPanel extends JPanel {
         
         // Effets hover sophistiqués
         card.addMouseListener(new java.awt.event.MouseAdapter() {
-            private Color originalBg = CARD_BG;
+            private Color originalBg = ThemeColors.CARD_BG;
             
             public void mouseEntered(java.awt.event.MouseEvent e) {
                 card.setBackground(new Color(249, 250, 251));
@@ -301,7 +289,7 @@ public class AccueilPanel extends JPanel {
                 titlePanel.setBackground(new Color(249, 250, 251));
                 valuePanel.setBackground(new Color(249, 250, 251));
                 footerPanel.setBackground(new Color(249, 250, 251));
-                card.setBorder(new RoundedBorder(16, accentColor, 2));
+                card.setBorder(new UIUtils.RoundedBorder(16, accentColor, 2));
             }
             
             public void mouseExited(java.awt.event.MouseEvent e) {
@@ -311,7 +299,7 @@ public class AccueilPanel extends JPanel {
                 titlePanel.setBackground(originalBg);
                 valuePanel.setBackground(originalBg);
                 footerPanel.setBackground(originalBg);
-                card.setBorder(new RoundedBorder(16, new Color(226, 232, 240), 1));
+                card.setBorder(new UIUtils.RoundedBorder(16, new Color(226, 232, 240), 1));
             }
         });
         
@@ -323,27 +311,27 @@ public class AccueilPanel extends JPanel {
      */
     private JPanel createQuickActionsPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(CARD_BG);
-        panel.setBorder(new RoundedBorder(16, new Color(226, 232, 240), 1));
+        panel.setBackground(ThemeColors.CARD_BG);
+        panel.setBorder(new UIUtils.RoundedBorder(16, new Color(226, 232, 240), 1));
         
         JPanel innerPanel = new JPanel(new BorderLayout());
-        innerPanel.setBackground(CARD_BG);
+        innerPanel.setBackground(ThemeColors.CARD_BG);
         innerPanel.setBorder(BorderFactory.createEmptyBorder(24, 28, 24, 28));
         
         // Titre de la section
         JLabel titleLabel = new JLabel("🚀 Actions Rapides");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        titleLabel.setForeground(TEXT_PRIMARY);
+        titleLabel.setForeground(ThemeColors.TEXT_PRIMARY);
         titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 16, 0));
         
         // Grille de boutons
         JPanel buttonsGrid = new JPanel(new GridLayout(1, 4, 16, 0));
-        buttonsGrid.setBackground(CARD_BG);
+        buttonsGrid.setBackground(ThemeColors.CARD_BG);
         
-        buttonsGrid.add(createActionButton("➕ Nouveau Membre", PRIMARY_PURPLE));
-        buttonsGrid.add(createActionButton("💰 Créer Tontine", PRIMARY_BLUE));
-        buttonsGrid.add(createActionButton("📅 Planifier Séance", PRIMARY_EMERALD));
-        buttonsGrid.add(createActionButton("📊 Voir Rapports", PRIMARY_AMBER));
+        buttonsGrid.add(createActionButton("➕ Nouveau Membre", ThemeColors.PRIMARY_PURPLE));
+        buttonsGrid.add(createActionButton("💰 Créer Tontine", ThemeColors.PRIMARY_BLUE));
+        buttonsGrid.add(createActionButton("📅 Planifier Séance", ThemeColors.PRIMARY_EMERALD));
+        buttonsGrid.add(createActionButton("📊 Voir Rapports", ThemeColors.PRIMARY_AMBER));
         
         innerPanel.add(titleLabel, BorderLayout.NORTH);
         innerPanel.add(buttonsGrid, BorderLayout.CENTER);
@@ -461,50 +449,4 @@ public class AccueilPanel extends JPanel {
         chargerStatistiques();
     }
     
-    /**
-     * Classe pour créer des bordures arrondies personnalisées
-     */
-    private static class RoundedBorder extends AbstractBorder {
-        private int radius;
-        private Color borderColor;
-        private int thickness;
-        
-        public RoundedBorder(int radius, Color borderColor, int thickness) {
-            this.radius = radius;
-            this.borderColor = borderColor;
-            this.thickness = thickness;
-        }
-        
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            Graphics2D g2d = (Graphics2D) g.create();
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            
-            if (thickness > 0) {
-                g2d.setColor(borderColor);
-                g2d.setStroke(new BasicStroke(thickness));
-                g2d.draw(new RoundRectangle2D.Double(
-                    x + thickness/2.0, 
-                    y + thickness/2.0, 
-                    width - thickness, 
-                    height - thickness, 
-                    radius, 
-                    radius
-                ));
-            }
-            
-            g2d.dispose();
-        }
-        
-        @Override
-        public Insets getBorderInsets(Component c) {
-            return new Insets(thickness, thickness, thickness, thickness);
-        }
-        
-        @Override
-        public Insets getBorderInsets(Component c, Insets insets) {
-            insets.left = insets.right = insets.top = insets.bottom = thickness;
-            return insets;
-        }
-    }
 }

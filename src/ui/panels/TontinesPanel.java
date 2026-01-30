@@ -43,6 +43,8 @@ import dao.ParticipationDAO;
 import dao.TontineDAO;
 import models.Tontine;
 import ui.MainFrame;
+import utils.ThemeColors;
+import utils.UIUtils;
 
 /**
  * Panneau de gestion des tontines avec design ultra-moderne
@@ -60,18 +62,6 @@ public class TontinesPanel extends JPanel {
     private JLabel lblStatActives;
     private JLabel lblStatTerminees;
     
-    // Palette de couleurs cohérente
-    private static final Color PRIMARY_DARK = new Color(15, 23, 42);
-    private static final Color PRIMARY_PURPLE = new Color(139, 92, 246);
-    private static final Color PRIMARY_BLUE = new Color(59, 130, 246);
-    private static final Color PRIMARY_EMERALD = new Color(16, 185, 129);
-    private static final Color PRIMARY_RED = new Color(239, 68, 68);
-    private static final Color PRIMARY_AMBER = new Color(251, 146, 60);
-    private static final Color BACKGROUND = new Color(241, 245, 249);
-    private static final Color CARD_BG = new Color(255, 255, 255);
-    private static final Color TEXT_PRIMARY = new Color(15, 23, 42);
-    private static final Color TEXT_SECONDARY = new Color(100, 116, 139);
-    private static final Color BORDER_COLOR = new Color(226, 232, 240);
     
     public TontinesPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -86,11 +76,11 @@ public class TontinesPanel extends JPanel {
      */
     private void initComponents() {
         setLayout(new BorderLayout(0, 0));
-        setBackground(BACKGROUND);
+        setBackground(ThemeColors.BACKGROUND);
         
         // Container principal
         JPanel mainContainer = new JPanel(new BorderLayout(0, 24));
-        mainContainer.setBackground(BACKGROUND);
+        mainContainer.setBackground(ThemeColors.BACKGROUND);
         mainContainer.setBorder(BorderFactory.createEmptyBorder(32, 32, 32, 32));
         
         // En-tête moderne
@@ -99,7 +89,7 @@ public class TontinesPanel extends JPanel {
         
         // Corps avec statistiques et tableau
         JPanel bodyPanel = new JPanel(new BorderLayout(0, 24));
-        bodyPanel.setBackground(BACKGROUND);
+        bodyPanel.setBackground(ThemeColors.BACKGROUND);
         
         // Statistiques rapides
         JPanel statsPanel = createStatsPanel();
@@ -123,17 +113,17 @@ public class TontinesPanel extends JPanel {
      */
     private JPanel createModernHeader() {
         JPanel header = new JPanel(new BorderLayout());
-        header.setBackground(CARD_BG);
-        header.setBorder(new RoundedBorder(20, BORDER_COLOR, 1));
+        header.setBackground(ThemeColors.CARD_BG);
+        header.setBorder(new UIUtils.RoundedBorder(20, ThemeColors.BORDER_COLOR, 1));
         
         JPanel innerPanel = new JPanel(new BorderLayout());
-        innerPanel.setBackground(CARD_BG);
+        innerPanel.setBackground(ThemeColors.CARD_BG);
         innerPanel.setBorder(BorderFactory.createEmptyBorder(24, 28, 24, 28));
         
         // Section gauche - Titre
         JPanel leftSection = new JPanel();
         leftSection.setLayout(new BoxLayout(leftSection, BoxLayout.Y_AXIS));
-        leftSection.setBackground(CARD_BG);
+        leftSection.setBackground(ThemeColors.CARD_BG);
         
         JLabel iconLabel = new JLabel("💰");
         iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 32));
@@ -141,12 +131,12 @@ public class TontinesPanel extends JPanel {
         
         lblTitre = new JLabel("Gestion des Tontines");
         lblTitre.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        lblTitre.setForeground(TEXT_PRIMARY);
+        lblTitre.setForeground(ThemeColors.TEXT_PRIMARY);
         lblTitre.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         JLabel subtitleLabel = new JLabel("Organisation et suivi des épargnes collectives");
         subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        subtitleLabel.setForeground(TEXT_SECONDARY);
+        subtitleLabel.setForeground(ThemeColors.TEXT_SECONDARY);
         subtitleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         leftSection.add(iconLabel);
@@ -165,18 +155,18 @@ public class TontinesPanel extends JPanel {
      */
     private JPanel createStatsPanel() {
         JPanel panel = new JPanel(new GridLayout(1, 3, 20, 0));
-        panel.setBackground(BACKGROUND);
+        panel.setBackground(ThemeColors.BACKGROUND);
         
         // Carte Total Tontines
-        JPanel cardTotal = createMiniStatCard("Total Tontines", "0", "📊", PRIMARY_PURPLE);
+        JPanel cardTotal = createMiniStatCard("Total Tontines", "0", "📊", ThemeColors.PRIMARY_PURPLE);
         lblStatTotal = (JLabel) ((JPanel)((JPanel)((JPanel)cardTotal.getComponent(0)).getComponent(1)).getComponent(0)).getComponent(0);
         
         // Carte Actives
-        JPanel cardActives = createMiniStatCard("Actives", "0", "✅", PRIMARY_EMERALD);
+        JPanel cardActives = createMiniStatCard("Actives", "0", "✅", ThemeColors.PRIMARY_EMERALD);
         lblStatActives = (JLabel) ((JPanel)((JPanel)((JPanel)cardActives.getComponent(0)).getComponent(1)).getComponent(0)).getComponent(0);
         
         // Carte Terminées
-        JPanel cardTerminees = createMiniStatCard("Terminées", "0", "🏁", PRIMARY_BLUE);
+        JPanel cardTerminees = createMiniStatCard("Terminées", "0", "🏁", ThemeColors.PRIMARY_BLUE);
         lblStatTerminees = (JLabel) ((JPanel)((JPanel)((JPanel)cardTerminees.getComponent(0)).getComponent(1)).getComponent(0)).getComponent(0);
         
         panel.add(cardTotal);
@@ -191,15 +181,15 @@ public class TontinesPanel extends JPanel {
      */
     private JPanel createMiniStatCard(String titre, String valeur, String icone, Color color) {
         JPanel card = new JPanel(new BorderLayout());
-        card.setBackground(CARD_BG);
-        card.setBorder(new RoundedBorder(12, BORDER_COLOR, 1));
+        card.setBackground(ThemeColors.CARD_BG);
+        card.setBorder(new UIUtils.RoundedBorder(12, ThemeColors.BORDER_COLOR, 1));
         
         JPanel innerPanel = new JPanel(new BorderLayout());
-        innerPanel.setBackground(CARD_BG);
+        innerPanel.setBackground(ThemeColors.CARD_BG);
         innerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
         JPanel contentPanel = new JPanel(new BorderLayout());
-        contentPanel.setBackground(CARD_BG);
+        contentPanel.setBackground(ThemeColors.CARD_BG);
         
         JLabel iconLabel = new JLabel(icone);
         iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 24));
@@ -207,16 +197,16 @@ public class TontinesPanel extends JPanel {
         
         JPanel valuePanel = new JPanel();
         valuePanel.setLayout(new BoxLayout(valuePanel, BoxLayout.Y_AXIS));
-        valuePanel.setBackground(CARD_BG);
+        valuePanel.setBackground(ThemeColors.CARD_BG);
         
         JLabel valueLabel = new JLabel(valeur);
         valueLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        valueLabel.setForeground(TEXT_PRIMARY);
+        valueLabel.setForeground(ThemeColors.TEXT_PRIMARY);
         valueLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         JLabel titleLabel = new JLabel(titre);
         titleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        titleLabel.setForeground(TEXT_SECONDARY);
+        titleLabel.setForeground(ThemeColors.TEXT_SECONDARY);
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         valuePanel.add(valueLabel);
@@ -227,7 +217,7 @@ public class TontinesPanel extends JPanel {
         contentPanel.add(Box.createHorizontalStrut(12), BorderLayout.CENTER);
         
         JPanel rightPanel = new JPanel(new BorderLayout());
-        rightPanel.setBackground(CARD_BG);
+        rightPanel.setBackground(ThemeColors.CARD_BG);
         rightPanel.add(valuePanel, BorderLayout.CENTER);
         
         innerPanel.add(contentPanel, BorderLayout.WEST);
@@ -242,11 +232,11 @@ public class TontinesPanel extends JPanel {
      */
     private JPanel createTablePanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(CARD_BG);
-        panel.setBorder(new RoundedBorder(16, BORDER_COLOR, 1));
+        panel.setBackground(ThemeColors.CARD_BG);
+        panel.setBorder(new UIUtils.RoundedBorder(16, ThemeColors.BORDER_COLOR, 1));
         
         JPanel innerPanel = new JPanel(new BorderLayout());
-        innerPanel.setBackground(CARD_BG);
+        innerPanel.setBackground(ThemeColors.CARD_BG);
         innerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
         // Créer le tableau
@@ -254,8 +244,8 @@ public class TontinesPanel extends JPanel {
         
         JScrollPane scrollPane = new JScrollPane(tableTontines);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        scrollPane.getViewport().setBackground(CARD_BG);
-        scrollPane.setBackground(CARD_BG);
+        scrollPane.getViewport().setBackground(ThemeColors.CARD_BG);
+        scrollPane.setBackground(ThemeColors.CARD_BG);
         
         innerPanel.add(scrollPane, BorderLayout.CENTER);
         panel.add(innerPanel);
@@ -281,17 +271,17 @@ public class TontinesPanel extends JPanel {
         tableTontines.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         tableTontines.setShowGrid(false);
         tableTontines.setIntercellSpacing(new Dimension(0, 0));
-        tableTontines.setBackground(CARD_BG);
+        tableTontines.setBackground(ThemeColors.CARD_BG);
         tableTontines.setSelectionBackground(new Color(237, 233, 254));
-        tableTontines.setSelectionForeground(TEXT_PRIMARY);
+        tableTontines.setSelectionForeground(ThemeColors.TEXT_PRIMARY);
         
         // Style du header
         JTableHeader header = tableTontines.getTableHeader();
         header.setFont(new Font("Segoe UI", Font.BOLD, 12));
         header.setBackground(new Color(248, 250, 252));
-        header.setForeground(TEXT_SECONDARY);
+        header.setForeground(ThemeColors.TEXT_SECONDARY);
         header.setPreferredSize(new Dimension(header.getPreferredSize().width, 45));
-        header.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, BORDER_COLOR));
+        header.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, ThemeColors.BORDER_COLOR));
         
         // Renderer personnalisé
         tableTontines.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
@@ -301,7 +291,7 @@ public class TontinesPanel extends JPanel {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 
                 if (!isSelected) {
-                    c.setBackground(row % 2 == 0 ? CARD_BG : new Color(248, 250, 252));
+                    c.setBackground(row % 2 == 0 ? ThemeColors.CARD_BG : new Color(248, 250, 252));
                 }
                 
                 setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
@@ -311,22 +301,22 @@ public class TontinesPanel extends JPanel {
                     String statut = value.toString().toLowerCase();
                     switch (statut) {
                         case "active":
-                            setForeground(PRIMARY_EMERALD);
+                            setForeground(ThemeColors.PRIMARY_EMERALD);
                             setText("✅ Active");
                             break;
                         case "terminee":
-                            setForeground(PRIMARY_BLUE);
+                            setForeground(ThemeColors.PRIMARY_BLUE);
                             setText("🏁 Terminée");
                             break;
                         case "suspendue":
-                            setForeground(PRIMARY_AMBER);
+                            setForeground(ThemeColors.PRIMARY_AMBER);
                             setText("⏸️ Suspendue");
                             break;
                         default:
-                            setForeground(TEXT_PRIMARY);
+                            setForeground(ThemeColors.TEXT_PRIMARY);
                     }
                 } else if (!isSelected) {
-                    setForeground(TEXT_PRIMARY);
+                    setForeground(ThemeColors.TEXT_PRIMARY);
                 }
                 
                 return c;
@@ -348,13 +338,13 @@ public class TontinesPanel extends JPanel {
      */
     private JPanel createActionPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
-        panel.setBackground(BACKGROUND);
+        panel.setBackground(ThemeColors.BACKGROUND);
         
-        JButton btnNouvelle = createModernButton("➕ Nouvelle Tontine", PRIMARY_PURPLE, new Color(237, 233, 254));
-        JButton btnModifier = createModernButton("✏️ Modifier", PRIMARY_BLUE, new Color(219, 234, 254));
-        JButton btnParticipants = createModernButton("👥 Participants", PRIMARY_EMERALD, new Color(209, 250, 229));
-        JButton btnSupprimer = createModernButton("🗑️ Supprimer", PRIMARY_RED, new Color(254, 226, 226));
-        JButton btnRafraichir = createModernButton("🔄 Actualiser", TEXT_SECONDARY, new Color(241, 245, 249));
+        JButton btnNouvelle = createModernButton("➕ Nouvelle Tontine", ThemeColors.PRIMARY_PURPLE, new Color(237, 233, 254));
+        JButton btnModifier = createModernButton("✏️ Modifier", ThemeColors.PRIMARY_BLUE, new Color(219, 234, 254));
+        JButton btnParticipants = createModernButton("👥 Participants", ThemeColors.PRIMARY_EMERALD, new Color(209, 250, 229));
+        JButton btnSupprimer = createModernButton("🗑️ Supprimer", ThemeColors.PRIMARY_RED, new Color(254, 226, 226));
+        JButton btnRafraichir = createModernButton("🔄 Actualiser", ThemeColors.TEXT_SECONDARY, new Color(241, 245, 249));
         
         btnNouvelle.addActionListener(e -> nouvelleTontine());
         btnModifier.addActionListener(e -> modifierTontine());
@@ -573,46 +563,6 @@ public class TontinesPanel extends JPanel {
         chargerTontines();
     }
     
-    /**
-     * Classe pour créer des bordures arrondies
-     */
-    private static class RoundedBorder extends AbstractBorder {
-        private int radius;
-        private Color borderColor;
-        private int thickness;
-        
-        public RoundedBorder(int radius, Color borderColor, int thickness) {
-            this.radius = radius;
-            this.borderColor = borderColor;
-            this.thickness = thickness;
-        }
-        
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            Graphics2D g2d = (Graphics2D) g.create();
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            
-            if (thickness > 0) {
-                g2d.setColor(borderColor);
-                g2d.setStroke(new BasicStroke(thickness));
-                g2d.draw(new RoundRectangle2D.Double(
-                    x + thickness/2.0, 
-                    y + thickness/2.0, 
-                    width - thickness, 
-                    height - thickness, 
-                    radius, 
-                    radius
-                ));
-            }
-            
-            g2d.dispose();
-        }
-        
-        @Override
-        public Insets getBorderInsets(Component c) {
-            return new Insets(thickness, thickness, thickness, thickness);
-        }
-    }
 }
 
 /**
@@ -628,11 +578,11 @@ class TontineDialog extends JDialog {
     private JComboBox<String> cmbStatut;
     private com.toedter.calendar.JDateChooser dateDebut;
     
-    private static final Color PRIMARY_PURPLE = new Color(139, 92, 246);
-    private static final Color TEXT_PRIMARY = new Color(15, 23, 42);
-    private static final Color TEXT_SECONDARY = new Color(100, 116, 139);
-    private static final Color BACKGROUND = new Color(248, 250, 252);
-    private static final Color BORDER_COLOR = new Color(226, 232, 240);
+    private static final Color DIALOG_PURPLE = new Color(139, 92, 246);
+    private static final Color DIALOG_TEXT_PRIMARY = new Color(15, 23, 42);
+    private static final Color DIALOG_TEXT_SECONDARY = new Color(100, 116, 139);
+    private static final Color DIALOG_BACKGROUND = new Color(248, 250, 252);
+    private static final Color DIALOG_BORDER_COLOR = new Color(226, 232, 240);
     
     public TontineDialog(Frame parent, Tontine tontine) {
         super(parent, tontine == null ? "Nouvelle Tontine" : "Modifier Tontine", true);
@@ -645,7 +595,7 @@ class TontineDialog extends JDialog {
         setLayout(new BorderLayout(0, 0));
         setSize(600, 600);
         setLocationRelativeTo(getParent());
-        getContentPane().setBackground(BACKGROUND);
+        getContentPane().setBackground(ThemeColors.BACKGROUND);
         
         // Titre du dialogue
         JPanel titlePanel = createTitlePanel();
@@ -668,7 +618,7 @@ class TontineDialog extends JDialog {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
         panel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(0, 0, 1, 0, BORDER_COLOR),
+            BorderFactory.createMatteBorder(0, 0, 1, 0, ThemeColors.BORDER_COLOR),
             BorderFactory.createEmptyBorder(24, 28, 24, 28)
         ));
         
@@ -677,7 +627,7 @@ class TontineDialog extends JDialog {
         
         JLabel titleLabel = new JLabel(tontine == null ? "Nouvelle Tontine" : "Modifier Tontine");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        titleLabel.setForeground(TEXT_PRIMARY);
+        titleLabel.setForeground(ThemeColors.TEXT_PRIMARY);
         titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 12, 0, 0));
         
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -692,7 +642,7 @@ class TontineDialog extends JDialog {
     private JPanel createFormPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(BACKGROUND);
+        panel.setBackground(ThemeColors.BACKGROUND);
         panel.setBorder(BorderFactory.createEmptyBorder(28, 28, 28, 28));
         
         // Créer les champs
@@ -713,7 +663,7 @@ class TontineDialog extends JDialog {
         // Ajouter les champs avec des espacements - utilisation de JLabel simples
         JLabel lblNom = new JLabel("Nom de la tontine *");
         lblNom.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        lblNom.setForeground(TEXT_PRIMARY);
+        lblNom.setForeground(ThemeColors.TEXT_PRIMARY);
         lblNom.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(lblNom);
         panel.add(Box.createVerticalStrut(4));
@@ -722,7 +672,7 @@ class TontineDialog extends JDialog {
         
         JLabel lblType = new JLabel("Type *");
         lblType.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        lblType.setForeground(TEXT_PRIMARY);
+        lblType.setForeground(ThemeColors.TEXT_PRIMARY);
         lblType.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(lblType);
         panel.add(Box.createVerticalStrut(4));
@@ -731,7 +681,7 @@ class TontineDialog extends JDialog {
         
         JLabel lblDate = new JLabel("Date de début *");
         lblDate.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        lblDate.setForeground(TEXT_PRIMARY);
+        lblDate.setForeground(ThemeColors.TEXT_PRIMARY);
         lblDate.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(lblDate);
         panel.add(Box.createVerticalStrut(4));
@@ -740,7 +690,7 @@ class TontineDialog extends JDialog {
         
         JLabel lblTours = new JLabel("Nombre de tours *");
         lblTours.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        lblTours.setForeground(TEXT_PRIMARY);
+        lblTours.setForeground(ThemeColors.TEXT_PRIMARY);
         lblTours.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(lblTours);
         panel.add(Box.createVerticalStrut(4));
@@ -749,7 +699,7 @@ class TontineDialog extends JDialog {
         
         JLabel lblStatut = new JLabel("Statut");
         lblStatut.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        lblStatut.setForeground(TEXT_PRIMARY);
+        lblStatut.setForeground(ThemeColors.TEXT_PRIMARY);
         lblStatut.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(lblStatut);
         panel.add(Box.createVerticalStrut(4));
@@ -775,16 +725,16 @@ class TontineDialog extends JDialog {
     private JPanel createFieldLabel(String label, String description) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(BACKGROUND);
+        panel.setBackground(ThemeColors.BACKGROUND);
         
         JLabel mainLabel = new JLabel(label);
         mainLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        mainLabel.setForeground(TEXT_PRIMARY);
+        mainLabel.setForeground(ThemeColors.TEXT_PRIMARY);
         mainLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         JLabel descLabel = new JLabel(description);
         descLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        descLabel.setForeground(TEXT_SECONDARY);
+        descLabel.setForeground(ThemeColors.TEXT_SECONDARY);
         descLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         panel.add(mainLabel);
@@ -799,7 +749,7 @@ class TontineDialog extends JDialog {
         field.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         field.setPreferredSize(new Dimension(300, 42));
         field.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(BORDER_COLOR, 1),
+            BorderFactory.createLineBorder(ThemeColors.BORDER_COLOR, 1),
             BorderFactory.createEmptyBorder(8, 12, 8, 12)
         ));
         return field;
@@ -811,7 +761,7 @@ class TontineDialog extends JDialog {
         combo.setBackground(Color.WHITE);
         combo.setPreferredSize(new Dimension(300, 42));
         combo.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(BORDER_COLOR, 1),
+            BorderFactory.createLineBorder(ThemeColors.BORDER_COLOR, 1),
             BorderFactory.createEmptyBorder(8, 12, 8, 12)
         ));
         return combo;
@@ -822,7 +772,7 @@ class TontineDialog extends JDialog {
         chooser.setDateFormatString("dd/MM/yyyy");
         chooser.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         chooser.setPreferredSize(new Dimension(300, 42));
-        chooser.setBorder(BorderFactory.createLineBorder(BORDER_COLOR, 1));
+        chooser.setBorder(BorderFactory.createLineBorder(ThemeColors.BORDER_COLOR, 1));
         return chooser;
     }
     
@@ -830,11 +780,11 @@ class TontineDialog extends JDialog {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
         panel.setBackground(Color.WHITE);
         panel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(1, 0, 0, 0, BORDER_COLOR),
+            BorderFactory.createMatteBorder(1, 0, 0, 0, ThemeColors.BORDER_COLOR),
             BorderFactory.createEmptyBorder(20, 20, 20, 20)
         ));
         
-        JButton btnSave = createDialogButton("💾 Enregistrer", PRIMARY_PURPLE, Color.WHITE);
+        JButton btnSave = createDialogButton("💾 Enregistrer", ThemeColors.PRIMARY_PURPLE, Color.WHITE);
         JButton btnCancel = createDialogButton("✕ Annuler", new Color(148, 163, 184), Color.WHITE);
         
         btnSave.addActionListener(e -> enregistrer());

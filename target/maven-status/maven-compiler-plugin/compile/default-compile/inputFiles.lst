@@ -24,3 +24,5 @@
 /home/yvo/tontine-management/src/ui/panels/SeancesPanel.java
 /home/yvo/tontine-management/src/ui/panels/TontinesPanel.java
 /home/yvo/tontine-management/src/utils/ReportGenerator.java
+/home/yvo/tontine-management/src/utils/ThemeColors.java
+/home/yvo/tontine-management/src/utils/UIUtils.java

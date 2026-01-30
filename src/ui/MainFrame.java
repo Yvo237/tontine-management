@@ -7,6 +7,7 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -194,11 +196,27 @@ public class MainFrame extends JFrame {
         header.setBorder(BorderFactory.createEmptyBorder(32, 24, 32, 24));
         header.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
         
-        // Logo
-        JLabel logoLabel = new JLabel("💎");
-        logoLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 48));
-        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
+        // Logo - Charger l'image PNG
+        JLabel logoLabel;
+        try {
+            // Utiliser un chemin absolu pour garantir le chargement
+            String logoPath = System.getProperty("user.dir") + "/src/ui/logo/logo.png";
+            ImageIcon logoIcon = new ImageIcon(logoPath);
+            if (logoIcon.getImage() == null || logoIcon.getIconWidth() <= 0) {
+                throw new Exception("Image non trouvée ou invalide: " + logoPath);
+            }
+            // Redimensionner le logo à une taille appropriée (48x48 pixels)
+            Image scaledImage = logoIcon.getImage().getScaledInstance(48, 48, Image.SCALE_SMOOTH);
+            logoLabel = new JLabel(new ImageIcon(scaledImage));
+            logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            System.out.println("✅ Logo chargé avec succès depuis: " + logoPath);
+        } catch (Exception e) {
+            System.err.println("❌ Erreur lors du chargement du logo: " + e.getMessage());
+            // Fallback : utiliser l'emoji si le logo ne peut pas être chargé
+            logoLabel = new JLabel("💎");
+            logoLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 48));
+            logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        }
         // Titre
         JLabel titleLabel = new JLabel("Tontine Elite");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
@@ -381,7 +399,7 @@ public class MainFrame extends JFrame {
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         infoPanel.setBackground(SIDEBAR_BG);
         
-        JLabel nameLabel = new JLabel("Administrateur");
+        JLabel nameLabel = new JLabel("Hello, User");
         nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
         nameLabel.setForeground(Color.WHITE);
         nameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -441,14 +459,14 @@ public class MainFrame extends JFrame {
                 break;
         }
         
-        // DÉSACTIVÉ : Plus de refresh automatique pour éviter la boucle infinie
-        // refreshCurrentPanel();
+        // RÉACTIVÉ : Refresh automatique pour afficher les données BDD
+        refreshCurrentPanel();
         
-        System.out.println("✅ Panneau affiché: " + panelName + " (sans refresh automatique)");
+        System.out.println("✅ Panneau affiché: " + panelName + " (avec données BDD)");
     }
     
     /**
-     * Rafraîchit le panneau actuel
+     * Rafraîchit le panneau actuel avec les données BDD
      */
     private void refreshCurrentPanel() {
         for (Component comp : contentPanel.getComponents()) {
@@ -470,6 +488,7 @@ public class MainFrame extends JFrame {
             }
         }
     }
+    
     
     /**
      * Configure les gestionnaires d'événements

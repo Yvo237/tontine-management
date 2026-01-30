@@ -17,8 +17,6 @@ import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.geom.RoundRectangle2D;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -60,6 +58,8 @@ import models.Membre;
 import models.Seance;
 import models.Tontine;
 import utils.ReportGenerator;
+import utils.ThemeColors;
+import utils.UIUtils;
 import ui.MainFrame;
 
 /**
@@ -85,18 +85,6 @@ public class RapportsPanel extends JPanel {
     private JLabel lblStatTontines;
     private JLabel lblStatCredits;
     
-    // Palette de couleurs cohérente
-    private static final Color PRIMARY_DARK = new Color(15, 23, 42);
-    private static final Color PRIMARY_PURPLE = new Color(139, 92, 246);
-    private static final Color PRIMARY_BLUE = new Color(59, 130, 246);
-    private static final Color PRIMARY_EMERALD = new Color(16, 185, 129);
-    private static final Color PRIMARY_RED = new Color(239, 68, 68);
-    private static final Color PRIMARY_AMBER = new Color(251, 146, 60);
-    private static final Color BACKGROUND = new Color(241, 245, 249);
-    private static final Color CARD_BG = new Color(255, 255, 255);
-    private static final Color TEXT_PRIMARY = new Color(15, 23, 42);
-    private static final Color TEXT_SECONDARY = new Color(100, 116, 139);
-    private static final Color BORDER_COLOR = new Color(226, 232, 240);
     
     public RapportsPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -105,9 +93,8 @@ public class RapportsPanel extends JPanel {
         this.creditDAO = new CreditDAO();
         this.seanceDAO = new SeanceDAO();
         initComponents();
-        
-        // INITIALISATION UNIQUE : Pas d'appels BDD automatiques
-        System.out.println("✅ RapportsPanel initialisé (sans appels BDD automatiques)");
+        chargerDonnees();
+        System.out.println("✅ RapportsPanel initialisé avec données BDD");
     }
     
     /**
@@ -115,11 +102,11 @@ public class RapportsPanel extends JPanel {
      */
     private void initComponents() {
         setLayout(new BorderLayout(0, 0));
-        setBackground(BACKGROUND);
+        setBackground(ThemeColors.BACKGROUND);
         
         // Container principal
         JPanel mainContainer = new JPanel(new BorderLayout(0, 24));
-        mainContainer.setBackground(BACKGROUND);
+        mainContainer.setBackground(ThemeColors.BACKGROUND);
         mainContainer.setBorder(BorderFactory.createEmptyBorder(32, 32, 32, 32));
         
         // En-tête moderne
@@ -128,7 +115,7 @@ public class RapportsPanel extends JPanel {
         
         // Corps avec statistiques et contenu
         JPanel bodyPanel = new JPanel(new BorderLayout(0, 24));
-        bodyPanel.setBackground(BACKGROUND);
+        bodyPanel.setBackground(ThemeColors.BACKGROUND);
         
         // Statistiques rapides
         JPanel statsPanel = createStatsPanel();
@@ -152,17 +139,17 @@ public class RapportsPanel extends JPanel {
      */
     private JPanel createModernHeader() {
         JPanel header = new JPanel(new BorderLayout());
-        header.setBackground(CARD_BG);
-        header.setBorder(new RoundedBorder(20, BORDER_COLOR, 1));
+        header.setBackground(ThemeColors.CARD_BG);
+        header.setBorder(new UIUtils.RoundedBorder(20, ThemeColors.BORDER_COLOR, 1));
         
         JPanel innerPanel = new JPanel(new BorderLayout());
-        innerPanel.setBackground(CARD_BG);
+        innerPanel.setBackground(ThemeColors.CARD_BG);
         innerPanel.setBorder(BorderFactory.createEmptyBorder(24, 28, 24, 28));
         
         // Section gauche - Titre
         JPanel leftSection = new JPanel();
         leftSection.setLayout(new BoxLayout(leftSection, BoxLayout.Y_AXIS));
-        leftSection.setBackground(CARD_BG);
+        leftSection.setBackground(ThemeColors.CARD_BG);
         
         JLabel iconLabel = new JLabel("📊");
         iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 32));
@@ -170,12 +157,12 @@ public class RapportsPanel extends JPanel {
         
         lblTitre = new JLabel("Rapports & Statistiques");
         lblTitre.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        lblTitre.setForeground(TEXT_PRIMARY);
+        lblTitre.setForeground(ThemeColors.TEXT_PRIMARY);
         lblTitre.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         JLabel subtitleLabel = new JLabel("Analyses et exportations de données");
         subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        subtitleLabel.setForeground(TEXT_SECONDARY);
+        subtitleLabel.setForeground(ThemeColors.TEXT_SECONDARY);
         subtitleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         leftSection.add(iconLabel);
@@ -200,12 +187,12 @@ public class RapportsPanel extends JPanel {
     private JPanel createFiltersPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(CARD_BG);
+        panel.setBackground(ThemeColors.CARD_BG);
         
         // Type de rapport
         JLabel typeLabel = new JLabel("Type de rapport");
         typeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        typeLabel.setForeground(TEXT_SECONDARY);
+        typeLabel.setForeground(ThemeColors.TEXT_SECONDARY);
         typeLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         cmbTypeRapport = new JComboBox<>(new String[]{
@@ -216,18 +203,18 @@ public class RapportsPanel extends JPanel {
             "Séances du Mois"
         });
         cmbTypeRapport.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        cmbTypeRapport.setBackground(CARD_BG);
+        cmbTypeRapport.setBackground(ThemeColors.CARD_BG);
         cmbTypeRapport.setPreferredSize(new Dimension(250, 40));
         cmbTypeRapport.setMaximumSize(new Dimension(250, 40));
         cmbTypeRapport.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(BORDER_COLOR, 1),
+            BorderFactory.createLineBorder(ThemeColors.BORDER_COLOR, 1),
             BorderFactory.createEmptyBorder(5, 10, 5, 10)
         ));
         cmbTypeRapport.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         // Dates
         JPanel datesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
-        datesPanel.setBackground(CARD_BG);
+        datesPanel.setBackground(ThemeColors.CARD_BG);
         datesPanel.setMaximumSize(new Dimension(250, 50));
         
         dateDebut = createStyledDateChooser();
@@ -235,11 +222,11 @@ public class RapportsPanel extends JPanel {
         
         JLabel fromLabel = new JLabel("Du");
         fromLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        fromLabel.setForeground(TEXT_SECONDARY);
+        fromLabel.setForeground(ThemeColors.TEXT_SECONDARY);
         
         JLabel toLabel = new JLabel("Au");
         toLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        toLabel.setForeground(TEXT_SECONDARY);
+        toLabel.setForeground(ThemeColors.TEXT_SECONDARY);
         
         datesPanel.add(fromLabel);
         datesPanel.add(dateDebut);
@@ -263,7 +250,7 @@ public class RapportsPanel extends JPanel {
         chooser.setDateFormatString("dd/MM/yyyy");
         chooser.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         chooser.setPreferredSize(new Dimension(100, 32));
-        chooser.setBorder(BorderFactory.createLineBorder(BORDER_COLOR, 1));
+        chooser.setBorder(BorderFactory.createLineBorder(ThemeColors.BORDER_COLOR, 1));
         return chooser;
     }
     
@@ -272,18 +259,18 @@ public class RapportsPanel extends JPanel {
      */
     private JPanel createStatsPanel() {
         JPanel panel = new JPanel(new GridLayout(1, 3, 20, 0));
-        panel.setBackground(BACKGROUND);
+        panel.setBackground(ThemeColors.BACKGROUND);
         
         // Carte Membres
-        JPanel cardMembres = createVisualStatCard("Membres", "0/0", "👥", PRIMARY_PURPLE, PRIMARY_BLUE);
+        JPanel cardMembres = createVisualStatCard("Membres", "0/0", "👥", new Color(100, 50, 150), new Color(50, 100, 150));
         lblStatMembres = (JLabel) ((JPanel)((JPanel)((JPanel)cardMembres.getComponent(0)).getComponent(1)).getComponent(0)).getComponent(0);
         
         // Carte Tontines
-        JPanel cardTontines = createVisualStatCard("Tontines", "0/0", "💰", PRIMARY_BLUE, PRIMARY_EMERALD);
+        JPanel cardTontines = createVisualStatCard("Tontines", "0/0", "💰", new Color(50, 100, 150), new Color(150, 100, 50));
         lblStatTontines = (JLabel) ((JPanel)((JPanel)((JPanel)cardTontines.getComponent(0)).getComponent(1)).getComponent(0)).getComponent(0);
         
         // Carte Crédits
-        JPanel cardCredits = createVisualStatCard("Crédits", "0/0", "💳", PRIMARY_EMERALD, PRIMARY_AMBER);
+        JPanel cardCredits = createVisualStatCard("Crédits", "0/0", "💳", new Color(150, 100, 50), new Color(200, 150, 50));
         lblStatCredits = (JLabel) ((JPanel)((JPanel)((JPanel)cardCredits.getComponent(0)).getComponent(1)).getComponent(0)).getComponent(0);
         
         panel.add(cardMembres);
@@ -314,7 +301,7 @@ public class RapportsPanel extends JPanel {
             }
         };
         card.setOpaque(false);
-        card.setBorder(new RoundedBorder(12, BORDER_COLOR, 1));
+        card.setBorder(new UIUtils.RoundedBorder(12, new Color(200, 200, 200), 1));
         
         JPanel innerPanel = new JPanel(new BorderLayout());
         innerPanel.setOpaque(false);
@@ -332,12 +319,12 @@ public class RapportsPanel extends JPanel {
         
         JLabel valueLabel = new JLabel(valeur);
         valueLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        valueLabel.setForeground(TEXT_PRIMARY);
+        valueLabel.setForeground(new Color(100, 100, 100));
         valueLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         JLabel titleLabel = new JLabel(titre);
         titleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        titleLabel.setForeground(TEXT_SECONDARY);
+        titleLabel.setForeground(new Color(150, 150, 150));
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         valuePanel.add(valueLabel);
@@ -363,7 +350,7 @@ public class RapportsPanel extends JPanel {
      */
     private JPanel createContentPanel() {
         JPanel panel = new JPanel(new GridLayout(1, 2, 20, 0));
-        panel.setBackground(BACKGROUND);
+        panel.setBackground(ThemeColors.CARD_BG);
         
         // Panneau résultat texte
         JPanel resultPanel = createResultPanel();
@@ -381,29 +368,29 @@ public class RapportsPanel extends JPanel {
      */
     private JPanel createResultPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(CARD_BG);
-        panel.setBorder(new RoundedBorder(16, BORDER_COLOR, 1));
+        panel.setBackground(ThemeColors.CARD_BG);
+        panel.setBorder(new UIUtils.RoundedBorder(16, ThemeColors.BORDER_COLOR, 1));
         
         JPanel innerPanel = new JPanel(new BorderLayout());
-        innerPanel.setBackground(CARD_BG);
+        innerPanel.setBackground(ThemeColors.CARD_BG);
         innerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
         JLabel titleLabel = new JLabel("📄 Résumé du Rapport");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        titleLabel.setForeground(TEXT_PRIMARY);
+        titleLabel.setForeground(ThemeColors.TEXT_PRIMARY);
         titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 16, 0));
         
         txtResultat = new JTextArea();
         txtResultat.setEditable(false);
         txtResultat.setFont(new Font("Consolas", Font.PLAIN, 12));
-        txtResultat.setBackground(new Color(248, 250, 252));
-        txtResultat.setForeground(TEXT_PRIMARY);
+        txtResultat.setBackground(ThemeColors.BACKGROUND);
+        txtResultat.setForeground(ThemeColors.TEXT_PRIMARY);
         txtResultat.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
         txtResultat.setLineWrap(true);
         txtResultat.setWrapStyleWord(true);
         
         JScrollPane scrollPane = new JScrollPane(txtResultat);
-        scrollPane.setBorder(BorderFactory.createLineBorder(BORDER_COLOR, 1));
+        scrollPane.setBorder(BorderFactory.createLineBorder(ThemeColors.BORDER_COLOR, 1));
         
         innerPanel.add(titleLabel, BorderLayout.NORTH);
         innerPanel.add(scrollPane, BorderLayout.CENTER);
@@ -417,22 +404,22 @@ public class RapportsPanel extends JPanel {
      */
     private JPanel createTablePanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(CARD_BG);
-        panel.setBorder(new RoundedBorder(16, BORDER_COLOR, 1));
+        panel.setBackground(ThemeColors.CARD_BG);
+        panel.setBorder(new UIUtils.RoundedBorder(16, ThemeColors.BORDER_COLOR, 1));
         
         JPanel innerPanel = new JPanel(new BorderLayout());
-        innerPanel.setBackground(CARD_BG);
+        innerPanel.setBackground(ThemeColors.CARD_BG);
         innerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
         JLabel titleLabel = new JLabel("📋 Détails");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        titleLabel.setForeground(TEXT_PRIMARY);
+        titleLabel.setForeground(ThemeColors.TEXT_PRIMARY);
         titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 16, 0));
         
         createModernTable();
         JScrollPane scrollPane = new JScrollPane(tableRapports);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        scrollPane.getViewport().setBackground(CARD_BG);
+        scrollPane.getViewport().setBackground(ThemeColors.CARD_BG);
         
         innerPanel.add(titleLabel, BorderLayout.NORTH);
         innerPanel.add(scrollPane, BorderLayout.CENTER);
@@ -459,17 +446,17 @@ public class RapportsPanel extends JPanel {
         tableRapports.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         tableRapports.setShowGrid(false);
         tableRapports.setIntercellSpacing(new Dimension(0, 0));
-        tableRapports.setBackground(CARD_BG);
-        tableRapports.setSelectionBackground(new Color(237, 233, 254));
-        tableRapports.setSelectionForeground(TEXT_PRIMARY);
+        tableRapports.setBackground(ThemeColors.CARD_BG);
+        tableRapports.setSelectionBackground(ThemeColors.PRIMARY_PURPLE);
+        tableRapports.setSelectionForeground(ThemeColors.TEXT_PRIMARY);
         
         // Style du header
         JTableHeader header = tableRapports.getTableHeader();
         header.setFont(new Font("Segoe UI", Font.BOLD, 11));
         header.setBackground(new Color(248, 250, 252));
-        header.setForeground(TEXT_SECONDARY);
+        header.setForeground(ThemeColors.TEXT_SECONDARY);
         header.setPreferredSize(new Dimension(header.getPreferredSize().width, 40));
-        header.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, BORDER_COLOR));
+        header.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, ThemeColors.BORDER_COLOR));
         
         // Renderer personnalisé
         tableRapports.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
@@ -479,7 +466,7 @@ public class RapportsPanel extends JPanel {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 
                 if (!isSelected) {
-                    c.setBackground(row % 2 == 0 ? CARD_BG : new Color(248, 250, 252));
+                    c.setBackground(row % 2 == 0 ? ThemeColors.CARD_BG : ThemeColors.BACKGROUND);
                 }
                 
                 setBorder(BorderFactory.createEmptyBorder(6, 10, 6, 10));
@@ -488,14 +475,14 @@ public class RapportsPanel extends JPanel {
                 if (column == 5 && value != null && !isSelected) {
                     String statut = value.toString().toLowerCase();
                     if (statut.contains("actif") || statut.contains("terminée")) {
-                        setForeground(PRIMARY_EMERALD);
+                        setForeground(ThemeColors.PRIMARY_EMERALD);
                     } else if (statut.contains("cours") || statut.contains("planifiée")) {
-                        setForeground(PRIMARY_BLUE);
+                        setForeground(ThemeColors.PRIMARY_BLUE);
                     } else {
-                        setForeground(TEXT_PRIMARY);
+                        setForeground(ThemeColors.TEXT_PRIMARY);
                     }
                 } else if (!isSelected) {
-                    setForeground(TEXT_PRIMARY);
+                    setForeground(ThemeColors.TEXT_PRIMARY);
                 }
                 
                 return c;
@@ -508,12 +495,12 @@ public class RapportsPanel extends JPanel {
      */
     private JPanel createActionPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
-        panel.setBackground(BACKGROUND);
+        panel.setBackground(ThemeColors.BACKGROUND);
         
-        JButton btnGenerer = createModernButton("📊 Générer", PRIMARY_PURPLE, new Color(237, 233, 254));
-        JButton btnExporter = createModernButton("💾 Exporter", PRIMARY_BLUE, new Color(219, 234, 254));
-        JButton btnImprimer = createModernButton("🖨️ Imprimer", PRIMARY_AMBER, new Color(254, 243, 199));
-        JButton btnRafraichir = createModernButton("🔄 Rafraîchir", TEXT_SECONDARY, new Color(241, 245, 249));
+        JButton btnGenerer = createModernButton("📊 Générer", ThemeColors.PRIMARY_PURPLE, new Color(237, 233, 254));
+        JButton btnExporter = createModernButton("💾 Exporter", ThemeColors.PRIMARY_BLUE, new Color(219, 234, 254));
+        JButton btnImprimer = createModernButton("🖨️ Imprimer", ThemeColors.PRIMARY_AMBER, new Color(254, 243, 199));
+        JButton btnRafraichir = createModernButton("🔄 Rafraîchir", ThemeColors.TEXT_SECONDARY, new Color(241, 245, 249));
         
         btnGenerer.addActionListener(e -> genererRapport());
         btnExporter.addActionListener(e -> exporterRapport());
@@ -565,30 +552,10 @@ public class RapportsPanel extends JPanel {
     }
     
     /**
-     * Met à jour les statistiques visuelles (VERSION SANS APPELS BDD)
+     * Met à jour les statistiques visuelles (AVEC DONNÉES BDD)
      */
     private void updateVisualStats() {
-        try {
-            // VERSION SIMPLE : Affiche des statiques ou des placeholders
-            // Plus d'appels BDD pour éviter la boucle infinie
-            
-            if (lblStatMembres != null) {
-                lblStatMembres.setText("📊 Calcul...");
-            }
-            
-            if (lblStatTontines != null) {
-                lblStatTontines.setText("📊 Calcul...");
-            }
-            
-            if (lblStatCredits != null) {
-                lblStatCredits.setText("📊 Calcul...");
-            }
-            
-            System.out.println("ℹ️ Stats visuelles mises à jour (version sans BDD)");
-            
-        } catch (Exception e) {
-            System.err.println("Erreur mise à jour stats: " + e.getMessage());
-        }
+        chargerDonnees();
     }
     
     /**
@@ -797,7 +764,7 @@ public class RapportsPanel extends JPanel {
             resultat.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
             resultat.append("  • Total tontines: ").append(total).append("\n");
             resultat.append("  • Tontines actives: ").append(actives).append("\n");
-            resultat.append("  • Taux d'activité: ").append(total > 0 ? String.format("%.1f%%", (actifs * 100.0 / total)) : "0%").append("\n");
+            resultat.append("  • Taux d'activité: ").append(total > 0 ? String.format("%.1f%%", (actives * 100.0 / total)) : "0%").append("\n");
             
         } catch (Exception e) {
             resultat.append("❌ Erreur: ").append(e.getMessage());
@@ -1136,7 +1103,7 @@ public class RapportsPanel extends JPanel {
         dialog.setResizable(false);
         
         JPanel panel = new JPanel(new BorderLayout(20, 20));
-        panel.setBackground(CARD_BG);
+        panel.setBackground(ThemeColors.CARD_BG);
         panel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
         
         // Icône animée
@@ -1147,20 +1114,20 @@ public class RapportsPanel extends JPanel {
         // Message
         JLabel messageLabel = new JLabel("Génération du rapport PDF en cours...");
         messageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        messageLabel.setForeground(TEXT_PRIMARY);
+        messageLabel.setForeground(ThemeColors.TEXT_PRIMARY);
         messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         
         // Progress bar
         JProgressBar progressBar = new JProgressBar();
         progressBar.setIndeterminate(true);
         progressBar.setPreferredSize(new Dimension(300, 8));
-        progressBar.setBackground(BACKGROUND);
-        progressBar.setForeground(PRIMARY_PURPLE);
+        progressBar.setBackground(ThemeColors.BACKGROUND);
+        progressBar.setForeground(ThemeColors.PRIMARY_PURPLE);
         progressBar.setBorderPainted(false);
         
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-        contentPanel.setBackground(CARD_BG);
+        contentPanel.setBackground(ThemeColors.CARD_BG);
         
         iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -1269,43 +1236,40 @@ public class RapportsPanel extends JPanel {
     }
     
     /**
-     * Classe pour bordures arrondies
+     * Charge les données depuis la base de données
      */
-    private static class RoundedBorder extends AbstractBorder {
-        private int radius;
-        private Color borderColor;
-        private int thickness;
-        
-        public RoundedBorder(int radius, Color borderColor, int thickness) {
-            this.radius = radius;
-            this.borderColor = borderColor;
-            this.thickness = thickness;
-        }
-        
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            Graphics2D g2d = (Graphics2D) g.create();
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    private void chargerDonnees() {
+        try {
+            // Charger les statistiques pour les labels visuels
+            int totalMembres = membreDAO.findAll().size();
+            int membresActifs = (int) membreDAO.findAll().stream()
+                .filter(m -> "actif".equals(m.getStatut()))
+                .count();
             
-            if (thickness > 0) {
-                g2d.setColor(borderColor);
-                g2d.setStroke(new BasicStroke(thickness));
-                g2d.draw(new RoundRectangle2D.Double(
-                    x + thickness/2.0, 
-                    y + thickness/2.0, 
-                    width - thickness, 
-                    height - thickness, 
-                    radius, 
-                    radius
-                ));
-            }
+            int totalTontines = tontineDAO.findAll().size();
+            int tontinesActives = (int) tontineDAO.findAll().stream()
+                .filter(t -> "active".equals(t.getStatut()))
+                .count();
             
-            g2d.dispose();
-        }
-        
-        @Override
-        public Insets getBorderInsets(Component c) {
-            return new Insets(thickness, thickness, thickness, thickness);
+            int totalCredits = creditDAO.findAll().size();
+            int creditsActifs = (int) creditDAO.findAll().stream()
+                .filter(c -> "en_cours".equals(c.getStatut()))
+                .count();
+            
+            // Mettre à jour les labels
+            lblStatMembres.setText(String.format("%d/%d", membresActifs, totalMembres));
+            lblStatTontines.setText(String.format("%d/%d", tontinesActives, totalTontines));
+            lblStatCredits.setText(String.format("%d/%d", creditsActifs, totalCredits));
+            
+            System.out.println("ℹ️ Stats visuelles mises à jour avec données BDD");
+            
+        } catch (Exception e) {
+            System.err.println("❌ Erreur lors du chargement des données: " + e.getMessage());
+            // Valeurs par défaut en cas d'erreur
+            lblStatMembres.setText("0/0");
+            lblStatTontines.setText("0/0");
+            lblStatCredits.setText("0/0");
         }
     }
+    
 }

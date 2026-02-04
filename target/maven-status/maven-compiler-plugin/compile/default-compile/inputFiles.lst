@@ -4,6 +4,7 @@
 /home/yvo/tontine-management/src/dao/CreditDAO.java
 /home/yvo/tontine-management/src/dao/MembreDAO.java
 /home/yvo/tontine-management/src/dao/ParticipationDAO.java
+/home/yvo/tontine-management/src/dao/PenaliteDAO.java
 /home/yvo/tontine-management/src/dao/ProjetFIACDAO.java
 /home/yvo/tontine-management/src/dao/SeanceDAO.java
 /home/yvo/tontine-management/src/dao/TontineDAO.java
@@ -14,6 +15,7 @@
 /home/yvo/tontine-management/src/models/Credit.java
 /home/yvo/tontine-management/src/models/Membre.java
 /home/yvo/tontine-management/src/models/Participation.java
+/home/yvo/tontine-management/src/models/Penalite.java
 /home/yvo/tontine-management/src/models/ProjetFIAC.java
 /home/yvo/tontine-management/src/models/Seance.java
 /home/yvo/tontine-management/src/models/Tontine.java
@@ -27,12 +29,14 @@
 /home/yvo/tontine-management/src/ui/panels/MembreDialog.java
 /home/yvo/tontine-management/src/ui/panels/MembresPanel.java
 /home/yvo/tontine-management/src/ui/panels/ParticipantsDialog.java
+/home/yvo/tontine-management/src/ui/panels/PenalitesPanel.java
 /home/yvo/tontine-management/src/ui/panels/ProjetFIACDialog.java
 /home/yvo/tontine-management/src/ui/panels/ProjetsFIACPanel.java
 /home/yvo/tontine-management/src/ui/panels/RapportsPanel.java
 /home/yvo/tontine-management/src/ui/panels/SeanceDialog.java
 /home/yvo/tontine-management/src/ui/panels/SeancesPanel.java
 /home/yvo/tontine-management/src/ui/panels/TontinesPanel.java
+/home/yvo/tontine-management/src/utils/PenaliteCalculator.java
 /home/yvo/tontine-management/src/utils/ReportGenerator.java
 /home/yvo/tontine-management/src/utils/ThemeColors.java
 /home/yvo/tontine-management/src/utils/UIUtils.java

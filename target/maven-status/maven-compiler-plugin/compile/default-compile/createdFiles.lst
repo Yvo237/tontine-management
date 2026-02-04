@@ -3,6 +3,7 @@ ui/panels/ProjetsFIACPanel.class
 utils/UIUtils$RoundedBorder.class
 dao/SeanceDAO.class
 ui/panels/CreditDialog$3.class
+ui/panels/PenalitesPanel$2.class
 ui/panels/SeanceDialog$FieldValidationListener.class
 models/TypeTontine.class
 ui/panels/RapportsPanel$2.class
@@ -16,6 +17,7 @@ ui/panels/MembresPanel$4.class
 utils/ReportGenerator.class
 models/ContributionFIAC.class
 ui/panels/TontineDialog.class
+utils/PenaliteCalculator.class
 ui/panels/BeneficiaireDialog$1.class
 models/Cotisation.class
 ui/panels/MembreDialog$4.class
@@ -42,6 +44,7 @@ dao/CotisationDAO.class
 ui/panels/SeancesPanel$1.class
 ui/panels/SeanceDialog.class
 ui/panels/TontinesPanel$1.class
+ui/panels/PenalitesPanel.class
 ui/panels/AccueilPanel$1.class
 models/Tontine.class
 ui/panels/ProjetsFIACPanel$2.class
@@ -70,6 +73,7 @@ dao/BeneficiaireDAO.class
 ui/panels/ParticipantsDialog$4.class
 dao/ContributionFIACDAO.class
 ui/panels/ParticipantsDialog$7.class
+ui/panels/PenalitesPanel$3.class
 ui/panels/RapportsPanel$4.class
 ui/panels/SeancesPanel.class
 ui/panels/RapportsPanel.class
@@ -80,6 +84,7 @@ ui/panels/ParticipantsDialog$1.class
 ui/panels/CotisationsDialog$3.class
 ui/panels/TontinesPanel$3.class
 dao/ProjetFIACDAO.class
+dao/PenaliteDAO.class
 ui/panels/ContributionsDialog$1.class
 ui/panels/CotisationsDialog$2.class
 dao/ParticipationDAO.class
@@ -89,9 +94,12 @@ ui/panels/CreditDialog$1.class
 dao/MembreDAO.class
 ui/panels/MembreDialog$RoundedBorder.class
 utils/ReportGenerator$ModernHeaderFooter.class
+ui/panels/PenalitesPanel$1.class
 ui/panels/CotisationsDialog$1.class
+ui/panels/PenalitesPanel$RoundedBorder.class
 ui/MainFrame.class
 models/Participation.class
+models/Penalite.class
 ui/panels/CreditDialog.class
 ui/panels/ParticipantsDialog$6.class
 ui/panels/ParticipantsDialog.class

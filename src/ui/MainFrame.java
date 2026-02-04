@@ -34,6 +34,7 @@ import database.DatabaseConnection;
 import ui.panels.AccueilPanel;
 import ui.panels.CreditsPanel;
 import ui.panels.MembresPanel;
+import ui.panels.PenalitesPanel;
 import ui.panels.ProjetsFIACPanel;
 import ui.panels.RapportsPanel;
 import ui.panels.SeancesPanel;
@@ -56,6 +57,7 @@ public class MainFrame extends JFrame {
     private TontinesPanel tontinesPanel;
     private SeancesPanel seancesPanel;
     private CreditsPanel creditsPanel;
+    private PenalitesPanel penalitesPanel;
     private ProjetsFIACPanel projetsFIACPanel;
     private RapportsPanel rapportsPanel;
     
@@ -124,6 +126,7 @@ public class MainFrame extends JFrame {
         tontinesPanel = new TontinesPanel(this);
         seancesPanel = new SeancesPanel(this);
         creditsPanel = new CreditsPanel(this);
+        penalitesPanel = new PenalitesPanel(this);
         projetsFIACPanel = new ProjetsFIACPanel(this);
         rapportsPanel = new RapportsPanel(this);
         
@@ -132,6 +135,7 @@ public class MainFrame extends JFrame {
         contentPanel.add(tontinesPanel, "tontines");
         contentPanel.add(seancesPanel, "seances");
         contentPanel.add(creditsPanel, "credits");
+        contentPanel.add(penalitesPanel, "penalites");
         contentPanel.add(projetsFIACPanel, "projets");
         contentPanel.add(rapportsPanel, "rapports");
         
@@ -246,6 +250,7 @@ public class MainFrame extends JFrame {
         JButton btnTontines = createNavButton("Tontines", "💰", "tontines", false);
         JButton btnSeances = createNavButton("Séances", "📅", "seances", false);
         JButton btnCredits = createNavButton("Crédits", "💳", "credits", false);
+        JButton btnPenalites = createNavButton("Pénalités", "⚠️", "penalites", false);
         JButton btnProjets = createNavButton("Projets FIAC", "🏗️", "projets", false);
         JButton btnRapports = createNavButton("Rapports", "📊", "rapports", false);
         
@@ -260,6 +265,8 @@ public class MainFrame extends JFrame {
         nav.add(btnSeances);
         nav.add(Box.createVerticalStrut(4));
         nav.add(btnCredits);
+        nav.add(Box.createVerticalStrut(4));
+        nav.add(btnPenalites);
         nav.add(Box.createVerticalStrut(4));
         nav.add(btnProjets);
         nav.add(Box.createVerticalStrut(4));

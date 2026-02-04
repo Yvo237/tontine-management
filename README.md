@@ -1,301 +1,114 @@
-# Application de Gestion de Tontine
+# Tontine Management Elite
 
-## INF2212 - Implémentation des Bases de Données
-### Université de Yaoundé I - Faculté des Sciences
+## Étapes d'installation et de lancement
 
----
-
-## 📋 Description du Projet
-
-Application complète de gestion de tontine développée en Java avec MySQL, permettant de gérer :
-- Les membres de la tontine
-- Les tontines (présence obligatoire et optionnelles)
-- Les séances et cotisations
-- Les crédits internes
-- Les pénalités
-- Les projets collectifs (FIAC)
-
----
-
-## 🛠️ Technologies Utilisées
-
-- **Langage** : Java 8+
-- **Base de données** : MySQL 8.0+
-- **Interface graphique** : Java Swing
-- **Driver JDBC** : MySQL Connector/J 8.0+
-- **Architecture** : MVC (Modèle-Vue-Contrôleur)
-
----
-
-## 📦 Structure du Projet
-
-```
-gestion-tontine/
-│
-├── src/
-│   ├── DatabaseConnection.java
-│   ├── models/
-│   │   ├── Membre.java
-│   │   ├── Tontine.java
-│   │   ├── Seance.java
-│   │   └── Credit.java
-│           ├── dao/
-│           │   ├── MembreDAO.java
-│           │   ├── TontineDAO.java
-│           │   ├── SeanceDAO.java
-│           │   └── CreditDAO.java
-│           └── ui/
-│               ├── MainFrame.java
-│               └── panels/
-│                   ├── AccueilPanel.java
-│                   ├── MembresPanel.java
-│                   ├── TontinesPanel.java
-│                   ├── SeancesPanel.java
-│                   ├── CreditsPanel.java
-│                   └── RapportsPanel.java
-│
-├── resources/
-│   └── database.properties
-│
-├── sql/
-│   └── schema.sql
-│
-└── lib/
-    └── mysql-connector-java-8.0.x.jar
-```
-
----
-
-## 🚀 Installation et Configuration
-
-### Prérequis
-
-1. **Java JDK 8 ou supérieur**
-   - Télécharger depuis : https://www.oracle.com/java/technologies/downloads/
-   - Vérifier l'installation : `java -version`
-
-2. **MySQL Server 8.0 ou supérieur**
-   - Télécharger depuis : https://dev.mysql.com/downloads/mysql/
-   - Installer et démarrer le service MySQL
-
-3. **MySQL Connector/J (Driver JDBC)**
-   - Télécharger depuis : https://dev.mysql.com/downloads/connector/j/
-   - Ou utiliser Maven/Gradle pour la gestion des dépendances
-
-### Étape 1 : Installation de la Base de Données
-
-1. Connectez-vous à MySQL :
-```bash
-mysql -u root -p
-```
-
-2. Exécutez le script SQL fourni :
-```sql
-source /chemin/vers/schema.sql
-```
-
-Ou copiez-collez le contenu du fichier SQL dans votre client MySQL.
-
-### Étape 2 : Configuration de l'Application
-
-1. Créez un fichier `database.properties` dans le dossier `resources/` :
-
-```properties
-db.url=jdbc:mysql://localhost:3306/gestion_tontine?useSSL=false&serverTimezone=UTC
-db.username=root
-db.password=votre_mot_de_passe
-```
-
-2. Modifiez les paramètres selon votre configuration MySQL.
-
-### Étape 3 : Compilation du Projet
-
-#### Option A : Avec un IDE (Eclipse, IntelliJ, NetBeans)
-
-1. Importez le projet dans votre IDE
-2. Ajoutez le driver MySQL Connector/J aux bibliothèques du projet
-3. Compilez et exécutez `MainFrame.java`
-
-#### Option B : En ligne de commande
+### 1. Cloner le projet depuis GitHub
 
 ```bash
-# Compiler
-javac -cp ".;lib/mysql-connector-java-8.0.x.jar" -d bin src/com/tontine/**/*.java
-
-# Exécuter
-java -cp ".;bin;lib/mysql-connector-java-8.0.x.jar" com.tontine.ui.MainFrame
+git clone https://github.com/Yvo237/tontine-management.git
+cd tontine-management
 ```
 
-**Note** : Sous Linux/Mac, remplacez `;` par `:` dans le classpath.
+### 2. Installation et configuration de PostgreSQL
 
----
+#### Sur Linux (Ubuntu/Debian) :
+```bash
+# Installer PostgreSQL
+sudo apt update
+sudo apt install postgresql postgresql-contrib
 
-## 📚 Utilisation de l'Application
-
-### 1. Gestion des Membres
-
-- **Ajouter un membre** : Cliquez sur "➕ Nouveau Membre"
-- **Modifier un membre** : Sélectionnez un membre puis cliquez sur "✏️ Modifier"
-- **Supprimer un membre** : Sélectionnez un membre puis cliquez sur "🗑️ Supprimer"
-- **Rechercher** : Utilisez la barre de recherche en haut
-
-### 2. Gestion des Tontines
-
-- Créer des tontines de présence (obligatoires)
-- Créer des tontines optionnelles à parts multiples
-- Suivre l'état de chaque tontine
-
-### 3. Gestion des Séances
-
-- Planifier des séances
-- Enregistrer les cotisations
-- Désigner les bénéficiaires
-- Appliquer des pénalités
-
-### 4. Gestion des Crédits
-
-- Accorder des crédits aux membres
-- Suivre les remboursements
-- Calculer automatiquement les intérêts
-
-### 5. Rapports
-
-- Situation financière par membre
-- État de séance
-- Liste des crédits en cours
-- Synthèse pour assemblée générale
-
----
-
-## 🔒 Contraintes Implémentées
-
-### Contrainte Majeure des Tontines Optionnelles
-
-La base de données utilise un **trigger** pour vérifier automatiquement que :
-
-> Le montant cumulé perçu par un membre dans une tontine optionnelle ne doit jamais excéder le montant total qu'il est censé cotiser sur l'ensemble des tours.
-
-**Exemple** :
-- Tontine de 10 tours
-- Membre avec 2 parts
-- Cotisation de 10 000 FCFA par part
-- Total à cotiser = 10 × 2 × 10 000 = 200 000 FCFA
-- Le membre ne peut recevoir plus de 200 000 FCFA au total
-
----
-
-## 📊 Requêtes SQL Implémentées
-
-L'application inclut au minimum 15 requêtes variées :
-
-1. **Requêtes de sélection** : Liste des membres, tontines actives, etc.
-2. **Requêtes paramétrées** : Recherche de membres, filtrage par statut
-3. **Requêtes de regroupement** : Statistiques par tontine, totaux par membre
-4. **Requêtes d'action** : Mises à jour de statut, calculs automatiques
-
----
-
-## 🧪 Jeux de Données de Test
-
-Le fichier SQL inclut des données de test :
-- 5 membres exemple
-- 3 types de tontine
-- 2 tontines actives
-
-Vous pouvez les utiliser pour tester l'application ou les supprimer pour partir d'une base vierge.
-
----
-
-## 🔧 Dépannage
-
-### Problème de connexion à la base de données
-
-**Erreur** : `Communications link failure`
-
-**Solutions** :
-1. Vérifiez que MySQL est démarré
-2. Vérifiez l'URL de connexion dans `database.properties`
-3. Vérifiez les identifiants (username/password)
-4. Vérifiez que le port 3306 est disponible
-
-### Erreur de driver JDBC
-
-**Erreur** : `ClassNotFoundException: com.mysql.cj.jdbc.Driver`
-
-**Solution** : Assurez-vous que le fichier JAR du MySQL Connector est dans le classpath
-
-### Problème d'encodage des caractères
-
-Si les caractères accentués ne s'affichent pas correctement :
-```properties
-db.url=jdbc:mysql://localhost:3306/gestion_tontine?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
+# Démarrer le service PostgreSQL
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
 ```
 
----
+#### Sur macOS 
+```bash
+# Installer PostgreSQL
+brew install postgresql
+brew services start postgresql
+```
 
-## 📝 Fonctionnalités à Développer
+#### Sur Windows :
+Télécharger et installer PostgreSQL depuis : https://www.postgresql.org/download/windows/
 
-Les panneaux suivants nécessitent encore du développement :
-- [ ] Gestion complète des tontines
-- [ ] Gestion complète des séances
-- [ ] Gestion complète des crédits
-- [ ] Module de rapports avancés
-- [ ] Module FIAC (projets collectifs)
+### 3. Configuration de la base de données
 
----
+Le projet inclut un script automatisé pour configurer PostgreSQL :
 
-## 👥 Équipe de Développement
+```bash
+# Rendre le script exécutable
+chmod +x configure_postgresql.sh
 
-Ce projet est réalisé dans le cadre de l'UE INF2212 par un groupe de 15 étudiants environ.
+# Exécuter le script de configuration
+./configure_postgresql.sh
+```
 
-**Chef de groupe** : [À compléter]
+**Ou manuellement :**
+```bash
+# Se connecter à PostgreSQL
+sudo -u postgres psql
 
-**Membres** :
-1. [À compléter]
-2. [À compléter]
-3. ...
+# Créer l'utilisateur et la base de données
+CREATE USER tontine_user WITH PASSWORD 'tontine123';
+CREATE DATABASE gestion_tontine OWNER tontine_user;
+GRANT ALL PRIVILEGES ON DATABASE gestion_tontine TO tontine_user;
+\q
+```
 
----
+### 4. Création des tables et données initiales
 
-## 📅 Échéances
+```bash
+# Appliquer le schéma complet de la base de données
+PGPASSWORD=tontine123 psql -U tontine_user -d gestion_tontine -f sql/schema_complete_postgresql.sql
 
-- **Date limite de remise** : 18 janvier 2026 à 12h00
-- **Email de soumission** : etienne.kouokam@facsciences-uy1.cm
-- **Démonstration** : Séance en présentiel (date à confirmer)
+# Appliquer les corrections si nécessaire
+PGPASSWORD=tontine123 psql -U tontine_user -d gestion_tontine -f sql/correction_complete.sql
+```
 
----
+### 5. Compilation de l'application
 
-## 📄 Livrables
+#### Option A : Avec Maven (recommandé pour le développement)
+```bash
+# Compiler et créer le JAR exécutable
+mvn clean package
 
-### Documents PDF
-- ✅ Cahier des charges
-- ✅ MCD/MLD (Modèle Conceptuel/Logique de Données)
-- ✅ Dictionnaire des données
-- ✅ Manuel utilisateur
+# Le JAR sera généré dans target/tontine-management-elite-3.0.0-RELEASE.jar
+```
 
-### Fichiers Techniques
-- ✅ Scripts SQL (schema.sql)
-- ✅ Code source Java
-- ✅ Données de test
-- ✅ Fichier de configuration
+#### Option B : Compilation manuelle
+```bash
+# Télécharger les dépendances Maven dans un dossier lib/
+mvn dependency:copy-dependencies -DoutputDirectory=lib
 
-### Document Confidentiel
-- ✅ Pourcentages de participation (si nécessaire)
+# Compiler les sources
+javac -cp ".:lib/*" -d target/classes src/**/*.java
 
----
+# Créer le JAR
+jar cfe tontine-management.jar ui.MainFrame -C target/classes .
+```
 
-## 📜 Licence
+### 6. Lancement de l'application
 
-Ce projet est développé à des fins pédagogiques dans le cadre de l'UE INF2212 de l'Université de Yaoundé I.
+#### Option A : Avec le script fourni (recommandé)
+```bash
+# Rendre le script exécutable
+chmod +x run.sh
 
----
+# Lancer l'application
+./run.sh
+```
 
-## 📞 Contact
+#### Option B : Avec le JAR Maven
+```bash
+java -jar target/tontine-management-elite-3.0.0-RELEASE.jar
+```
 
-Pour toute question concernant le projet :
-- **Enseignant** : Etienne Kouokam
-- **Email** : etienne.kouokam@facsciences-uy1.cm
+#### Option C : Directement avec les classes compilées
+```bash
+# Télécharger les dépendances 
+mvn dependency:copy-dependencies -DoutputDirectory=lib
 
----
-
-**Bon courage pour votre projet ! 🎓**
+# Lancer avec le classpath complet
+java -cp "target/classes:resources:lib/*" ui.MainFrame
+```

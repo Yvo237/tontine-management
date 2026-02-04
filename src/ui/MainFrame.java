@@ -34,15 +34,11 @@ import database.DatabaseConnection;
 import ui.panels.AccueilPanel;
 import ui.panels.CreditsPanel;
 import ui.panels.MembresPanel;
+import ui.panels.ProjetsFIACPanel;
 import ui.panels.RapportsPanel;
 import ui.panels.SeancesPanel;
 import ui.panels.TontinesPanel;
 
-/**
- * Fenêtre principale ultra-moderne de l'application
- * Design 3.0 - Interface Premium cohérente finale
- * Projet INF2212 - Université de Yaoundé I
- */
 public class MainFrame extends JFrame {
     
     private static final long serialVersionUID = 1L;
@@ -60,6 +56,7 @@ public class MainFrame extends JFrame {
     private TontinesPanel tontinesPanel;
     private SeancesPanel seancesPanel;
     private CreditsPanel creditsPanel;
+    private ProjetsFIACPanel projetsFIACPanel;
     private RapportsPanel rapportsPanel;
     
     // Base de données
@@ -95,9 +92,6 @@ public class MainFrame extends JFrame {
         startTimeUpdater();
     }
     
-    /**
-     * Configure le look and feel moderne
-     */
     private void setupModernLookAndFeel() {
         try {
             FlatLightLaf.setup();
@@ -111,9 +105,6 @@ public class MainFrame extends JFrame {
         }
     }
     
-    /**
-     * Initialise tous les composants
-     */
     private void initializeComponents() {
         // Panel principal
         mainPanel = new JPanel(new BorderLayout(0, 0));
@@ -133,6 +124,7 @@ public class MainFrame extends JFrame {
         tontinesPanel = new TontinesPanel(this);
         seancesPanel = new SeancesPanel(this);
         creditsPanel = new CreditsPanel(this);
+        projetsFIACPanel = new ProjetsFIACPanel(this);
         rapportsPanel = new RapportsPanel(this);
         
         contentPanel.add(accueilPanel, "accueil");
@@ -140,6 +132,7 @@ public class MainFrame extends JFrame {
         contentPanel.add(tontinesPanel, "tontines");
         contentPanel.add(seancesPanel, "seances");
         contentPanel.add(creditsPanel, "credits");
+        contentPanel.add(projetsFIACPanel, "projets");
         contentPanel.add(rapportsPanel, "rapports");
         
         mainPanel.add(sidePanel, BorderLayout.WEST);
@@ -151,9 +144,6 @@ public class MainFrame extends JFrame {
         showPanel("accueil");
     }
     
-    /**
-     * Crée la sidebar ultra-moderne
-     */
     private JPanel createModernSidebar() {
         JPanel sidebar = new JPanel(new BorderLayout());
         sidebar.setBackground(SIDEBAR_BG);
@@ -186,9 +176,6 @@ public class MainFrame extends JFrame {
         return sidebar;
     }
     
-    /**
-     * Crée le header de la sidebar
-     */
     private JPanel createSidebarHeader() {
         JPanel header = new JPanel();
         header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
@@ -209,9 +196,9 @@ public class MainFrame extends JFrame {
             Image scaledImage = logoIcon.getImage().getScaledInstance(48, 48, Image.SCALE_SMOOTH);
             logoLabel = new JLabel(new ImageIcon(scaledImage));
             logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-            System.out.println("✅ Logo chargé avec succès depuis: " + logoPath);
+            System.out.println("Logo chargé avec succès depuis: " + logoPath);
         } catch (Exception e) {
-            System.err.println("❌ Erreur lors du chargement du logo: " + e.getMessage());
+            System.err.println("Erreur lors du chargement du logo: " + e.getMessage());
             // Fallback : utiliser l'emoji si le logo ne peut pas être chargé
             logoLabel = new JLabel("💎");
             logoLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 48));
@@ -238,9 +225,6 @@ public class MainFrame extends JFrame {
         return header;
     }
     
-    /**
-     * Crée le panneau de navigation
-     */
     private JPanel createNavigationPanel() {
         JPanel nav = new JPanel();
         nav.setLayout(new BoxLayout(nav, BoxLayout.Y_AXIS));
@@ -262,6 +246,7 @@ public class MainFrame extends JFrame {
         JButton btnTontines = createNavButton("Tontines", "💰", "tontines", false);
         JButton btnSeances = createNavButton("Séances", "📅", "seances", false);
         JButton btnCredits = createNavButton("Crédits", "💳", "credits", false);
+        JButton btnProjets = createNavButton("Projets FIAC", "🏗️", "projets", false);
         JButton btnRapports = createNavButton("Rapports", "📊", "rapports", false);
         
         currentActiveButton = btnAccueil;
@@ -276,14 +261,13 @@ public class MainFrame extends JFrame {
         nav.add(Box.createVerticalStrut(4));
         nav.add(btnCredits);
         nav.add(Box.createVerticalStrut(4));
+        nav.add(btnProjets);
+        nav.add(Box.createVerticalStrut(4));
         nav.add(btnRapports);
         
         return nav;
     }
     
-    /**
-     * Crée un bouton de navigation moderne
-     */
     private JButton createNavButton(String text, String icon, String panel, boolean active) {
         JButton button = new JButton();
         button.setLayout(new BorderLayout(12, 0));
@@ -367,9 +351,6 @@ public class MainFrame extends JFrame {
         return button;
     }
     
-    /**
-     * Crée le footer de la sidebar
-     */
     private JPanel createSidebarFooter() {
         JPanel footer = new JPanel();
         footer.setLayout(new BoxLayout(footer, BoxLayout.Y_AXIS));
@@ -430,9 +411,6 @@ public class MainFrame extends JFrame {
         return footer;
     }
     
-    /**
-     * Affiche le panneau spécifié
-     */
     private void showPanel(String panelName) {
         CardLayout cardLayout = (CardLayout) contentPanel.getLayout();
         cardLayout.show(contentPanel, panelName);
@@ -462,12 +440,9 @@ public class MainFrame extends JFrame {
         // RÉACTIVÉ : Refresh automatique pour afficher les données BDD
         refreshCurrentPanel();
         
-        System.out.println("✅ Panneau affiché: " + panelName + " (avec données BDD)");
+        System.out.println("Panneau affiché: " + panelName + " (avec données BDD)");
     }
     
-    /**
-     * Rafraîchit le panneau actuel avec les données BDD
-     */
     private void refreshCurrentPanel() {
         for (Component comp : contentPanel.getComponents()) {
             if (comp.isVisible()) {
@@ -490,9 +465,6 @@ public class MainFrame extends JFrame {
     }
     
     
-    /**
-     * Configure les gestionnaires d'événements
-     */
     private void setupEventHandlers() {
         addWindowListener(new WindowAdapter() {
             @Override
@@ -513,17 +485,11 @@ public class MainFrame extends JFrame {
         });
     }
     
-    /**
-     * Démarre le timer pour mettre à jour l'heure
-     */
     private void startTimeUpdater() {
         Timer timer = new Timer(1000, e -> updateTime());
         timer.start();
     }
     
-    /**
-     * Met à jour l'heure affichée
-     */
     private void updateTime() {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -544,9 +510,6 @@ public class MainFrame extends JFrame {
         return accueilPanel;
     }
     
-    /**
-     * Point d'entrée de l'application
-     */
     public static void main(String[] args) {
         try {
             FlatLightLaf.setup();

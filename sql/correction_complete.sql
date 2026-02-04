@@ -1,7 +1,3 @@
--- Script de correction complète pour la base de données PostgreSQL
--- Projet INF2212 - Université de Yaoundé I
-
--- Supprimer et recréer la table Membre avec la bonne structure
 DROP TABLE IF EXISTS Membre CASCADE;
 
 CREATE TABLE Membre (
@@ -17,7 +13,6 @@ CREATE TABLE Membre (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Insérer les données de test
 INSERT INTO Membre (nom, prenom, telephone, email, adresse, date_adhesion, statut) VALUES
 ('Dupont', 'Jean', '690123456', 'jean.dupont@email.com', 'Yaoundé, Bastos', '2024-01-15', 'actif'),
 ('Martin', 'Marie', '691234567', 'marie.martin@email.com', 'Yaoundé, Mokolo', '2024-01-20', 'actif'),
@@ -25,7 +20,6 @@ INSERT INTO Membre (nom, prenom, telephone, email, adresse, date_adhesion, statu
 ('Ngo', 'Sophie', '693456789', 'sophie.ngo@email.com', 'Yaoundé, Efoulan', '2024-02-10', 'actif'),
 ('Kamga', 'Paul', '694567890', 'paul.kamga@email.com', 'Yaoundé, Mendong', '2024-02-15', 'actif');
 
--- Vérifier/créer les autres tables
 DROP TABLE IF EXISTS Participation CASCADE;
 DROP TABLE IF EXISTS Cotisation CASCADE;
 DROP TABLE IF EXISTS Seance CASCADE;
@@ -33,7 +27,6 @@ DROP TABLE IF EXISTS Credit CASCADE;
 DROP TABLE IF EXISTS Tontine CASCADE;
 DROP TABLE IF EXISTS TypeTontine CASCADE;
 
--- Recréer toutes les tables dans le bon ordre
 CREATE TABLE TypeTontine (
     id_type SERIAL PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
@@ -94,7 +87,6 @@ CREATE TABLE Participation (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Insérer des données de test pour les autres tables
 INSERT INTO TypeTontine (nom, description, est_obligatoire, montant_cotisation, frequence) VALUES
 ('Tontine Présence', 'Tontine obligatoire de présence', TRUE, 5000.00, 'mensuel'),
 ('Tontine Sociale', 'Tontine optionnelle sociale', FALSE, 10000.00, 'mensuel'),
@@ -104,7 +96,6 @@ INSERT INTO Tontine (id_type, nom, date_debut, date_fin, nombre_tours) VALUES
 (1, 'Tontine Mensuelle 2024', '2024-01-01', '2024-12-31', 12),
 (2, 'Tontine Sociale 2024', '2024-01-01', '2024-12-31', 12);
 
--- Afficher un résumé
 DO $$
 BEGIN
     RAISE NOTICE 'Base de données corrigée avec succès!';

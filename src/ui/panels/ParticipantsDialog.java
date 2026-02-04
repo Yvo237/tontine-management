@@ -23,9 +23,6 @@ import models.Membre;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
-/**
- * Dialogue pour gérer les participants d'une tontine
- */
 public class ParticipantsDialog extends JDialog {
     private static final long serialVersionUID = 1L;
     

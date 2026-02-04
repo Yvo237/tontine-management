@@ -2,10 +2,6 @@ package models;
 
 import java.time.LocalDate;
 
-/**
- * Modèle représentant une tontine
- * Projet INF2212 - Université de Yaoundé I
- */
 public class Tontine {
     
     private int idTontine;
@@ -18,7 +14,6 @@ public class Tontine {
     private String statut;
     private TypeTontine typeTontine; // Association
     
-    // Constructeurs
     public Tontine() {}
     
     public Tontine(int idType, String nom, LocalDate dateDebut, int nombreTours) {
@@ -30,7 +25,6 @@ public class Tontine {
         this.statut = "active";
     }
     
-    // Getters et Setters
     public int getIdTontine() {
         return idTontine;
     }
@@ -103,7 +97,6 @@ public class Tontine {
         this.typeTontine = typeTontine;
     }
     
-    // Méthodes utilitaires
     public boolean isActive() {
         return "active".equals(statut);
     }

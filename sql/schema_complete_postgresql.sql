@@ -1,11 +1,3 @@
--- =============================================
--- Base de données : Gestion de Tontine (PostgreSQL)
--- Projet INF2212 - Université de Yaoundé I
--- =============================================
-
--- =============================================
--- Table : TypeTontine
--- =============================================
 CREATE TABLE typetontine (
     id_type SERIAL PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
@@ -16,9 +8,6 @@ CREATE TABLE typetontine (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- =============================================
--- Table : Membre
--- =============================================
 CREATE TABLE membre (
     id_membre SERIAL PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
@@ -32,9 +21,6 @@ CREATE TABLE membre (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- =============================================
--- Table : Tontine
--- =============================================
 CREATE TABLE tontine (
     id_tontine SERIAL PRIMARY KEY,
     id_type INTEGER NOT NULL,
@@ -49,9 +35,6 @@ CREATE TABLE tontine (
     CHECK (date_fin IS NULL OR date_fin > date_debut)
 );
 
--- =============================================
--- Table : Participation
--- =============================================
 CREATE TABLE participation (
     id_participation SERIAL PRIMARY KEY,
     id_membre INTEGER NOT NULL,
@@ -65,9 +48,6 @@ CREATE TABLE participation (
     UNIQUE (id_membre, id_tontine)
 );
 
--- =============================================
--- Table : Seance
--- =============================================
 CREATE TABLE seance (
     id_seance SERIAL PRIMARY KEY,
     id_tontine INTEGER NOT NULL,
@@ -82,9 +62,6 @@ CREATE TABLE seance (
     CHECK (numero_tour <= (SELECT nombre_tours FROM tontine WHERE id_tontine = seance.id_tontine))
 );
 
--- =============================================
--- Table : Cotisation
--- =============================================
 CREATE TABLE cotisation (
     id_cotisation SERIAL PRIMARY KEY,
     id_seance INTEGER NOT NULL,
@@ -96,9 +73,6 @@ CREATE TABLE cotisation (
     FOREIGN KEY (id_membre) REFERENCES membre(id_membre) ON DELETE CASCADE
 );
 
--- =============================================
--- Table : Beneficiaire
--- =============================================
 CREATE TABLE beneficiaire (
     id_beneficiaire SERIAL PRIMARY KEY,
     id_seance INTEGER NOT NULL,
@@ -112,9 +86,6 @@ CREATE TABLE beneficiaire (
     FOREIGN KEY (id_participation) REFERENCES participation(id_participation) ON DELETE CASCADE
 );
 
--- =============================================
--- Table : Credit
--- =============================================
 CREATE TABLE credit (
     id_credit SERIAL PRIMARY KEY,
     id_membre INTEGER NOT NULL,
@@ -131,9 +102,6 @@ CREATE TABLE credit (
     CHECK (date_echeance > date_emprunt)
 );
 
--- =============================================
--- Table : RemboursementCredit
--- =============================================
 CREATE TABLE remboursementcredit (
     id_remboursement SERIAL PRIMARY KEY,
     id_credit INTEGER NOT NULL,
@@ -144,9 +112,7 @@ CREATE TABLE remboursementcredit (
     FOREIGN KEY (id_credit) REFERENCES credit(id_credit) ON DELETE CASCADE
 );
 
--- =============================================
--- Table : Penalite
--- =============================================
+
 CREATE TABLE penalite (
     id_penalite SERIAL PRIMARY KEY,
     id_membre INTEGER NOT NULL,
@@ -160,9 +126,7 @@ CREATE TABLE penalite (
     FOREIGN KEY (id_seance) REFERENCES seance(id_seance) ON DELETE SET NULL
 );
 
--- =============================================
--- Table : ProjetFIAC
--- =============================================
+
 CREATE TABLE projetfiac (
     id_projet SERIAL PRIMARY KEY,
     id_tontine INTEGER NOT NULL,
@@ -178,9 +142,7 @@ CREATE TABLE projetfiac (
     CHECK (date_fin_prevue IS NULL OR date_fin_prevue > date_debut)
 );
 
--- =============================================
--- Table : ContributionFIAC
--- =============================================
+
 CREATE TABLE contributionfiac (
     id_contribution SERIAL PRIMARY KEY,
     id_projet INTEGER NOT NULL,
@@ -192,9 +154,7 @@ CREATE TABLE contributionfiac (
     FOREIGN KEY (id_membre) REFERENCES membre(id_membre) ON DELETE CASCADE
 );
 
--- =============================================
--- Index de performance
--- =============================================
+
 CREATE INDEX idx_membre_statut ON membre(statut);
 CREATE INDEX idx_participation_membre ON participation(id_membre);
 CREATE INDEX idx_participation_tontine ON participation(id_tontine);
@@ -204,17 +164,12 @@ CREATE INDEX idx_seance_date ON seance(date_seance);
 CREATE INDEX idx_tontine_statut ON tontine(statut);
 CREATE INDEX idx_beneficiaire_seance ON beneficiaire(id_seance);
 
--- =============================================
--- Données de test
--- =============================================
 
--- Types de tontine
 INSERT INTO typetontine (nom, description, est_obligatoire, montant_cotisation, frequence) VALUES
 ('Tontine de Présence', 'Tontine obligatoire pour tous les membres', TRUE, 5000.00, 'mensuel'),
 ('Tontine Épargne', 'Tontine optionnelle à parts multiples', FALSE, 10000.00, 'mensuel'),
 ('Tontine Solidarité', 'Tontine optionnelle pour projets communautaires', FALSE, 7500.00, 'mensuel');
 
--- Membres de test
 INSERT INTO membre (nom, prenom, telephone, email, adresse, date_adhesion) VALUES
 ('Kamga', 'Marie', '237612345678', 'marie.kamga@email.com', 'Yaoundé, Bastos', '2024-01-15'),
 ('Tchamba', 'Paul', '237698765432', 'paul.tchamba@email.com', 'Yaoundé, Mokolo', '2024-01-20'),
@@ -222,23 +177,20 @@ INSERT INTO membre (nom, prenom, telephone, email, adresse, date_adhesion) VALUE
 ('Mballa', 'Jean', '237677777777', 'jean.mballa@email.com', 'Yaoundé, Efoulan', '2024-02-10'),
 ('Ngono', 'Alice', '237699999999', 'alice.ngono@email.com', 'Yaoundé, Tsinga', '2024-02-15');
 
--- Tontines de test
 INSERT INTO tontine (id_type, nom, date_debut, nombre_tours) VALUES
 (1, 'Tontine Présence 2024', '2024-01-01', 12),
 (2, 'Tontine Épargne 2024', '2024-01-01', 12);
 
--- Participations de test
 INSERT INTO participation (id_membre, id_tontine, nombre_parts, date_participation) VALUES
-(1, 1, 1, '2024-01-01'), -- Marie, Tontine Présence
-(2, 1, 1, '2024-01-01'), -- Paul, Tontine Présence
-(3, 1, 1, '2024-01-01'), -- Claire, Tontine Présence
-(4, 1, 1, '2024-01-01'), -- Jean, Tontine Présence
-(5, 1, 1, '2024-01-01'), -- Alice, Tontine Présence
-(1, 2, 2, '2024-01-01'), -- Marie, Tontine Épargne (2 parts)
-(2, 2, 1, '2024-01-01'), -- Paul, Tontine Épargne (1 part)
-(3, 2, 3, '2024-01-01'); -- Claire, Tontine Épargne (3 parts)
+(1, 1, 1, '2024-01-01'),
+(2, 1, 1, '2024-01-01'),
+(3, 1, 1, '2024-01-01'),
+(4, 1, 1, '2024-01-01'),
+(5, 1, 1, '2024-01-01'),
+(1, 2, 2, '2024-01-01'),
+(2, 2, 1, '2024-01-01'),
+(3, 2, 3, '2024-01-01'); 
 
--- Première séance de test
 INSERT INTO seance (id_tontine, numero_tour, date_seance, lieu) VALUES
 (1, 1, '2024-01-15', 'Domicile de Marie'),
 (2, 1, '2024-01-15', 'Domicile de Marie');

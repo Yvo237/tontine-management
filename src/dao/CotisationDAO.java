@@ -11,10 +11,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO pour la gestion des cotisations
- * Projet INF2212 - Université de Yaoundé I
- */
 public class CotisationDAO {
     
     private DatabaseConnection dbConnection;
@@ -27,20 +23,9 @@ public class CotisationDAO {
         this.membreDAO = new MembreDAO();
     }
     
-    /**
-     * Ajoute une nouvelle cotisation
-     */
     public boolean create(Cotisation cotisation) {
         String sql = "INSERT INTO cotisation (id_seance, id_membre, montant_du, montant, date_paiement) " +
                     "VALUES (?, ?, ?, ?, ?)";
-        
-        System.out.println("🔍 [DAO DEBUG] Tentative d'insertion cotisation:");
-        System.out.println("  - SQL: " + sql);
-        System.out.println("  - id_seance: " + cotisation.getIdSeance());
-        System.out.println("  - id_membre: " + cotisation.getIdMembre());
-        System.out.println("  - montant_du: " + cotisation.getMontant());
-        System.out.println("  - montant: " + cotisation.getMontant());
-        System.out.println("  - date_paiement: " + cotisation.getDatePaiement());
         
         try (Connection conn = dbConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -52,31 +37,24 @@ public class CotisationDAO {
             pstmt.setDate(5, Date.valueOf(cotisation.getDatePaiement()));
             
             int affectedRows = pstmt.executeUpdate();
-            System.out.println("🔍 [DAO DEBUG] affectedRows: " + affectedRows);
             
             if (affectedRows > 0) {
                 ResultSet generatedKeys = pstmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     cotisation.setIdCotisation(generatedKeys.getInt(1));
-                    System.out.println("✅ [DAO DEBUG] Cotisation créée avec ID: " + cotisation.getIdCotisation());
                 }
                 return true;
             } else {
-                System.out.println("❌ [DAO DEBUG] Aucune ligne affectée");
             }
             
         } catch (SQLException ex) {
-            System.err.println("❌ [DAO ERROR] Erreur lors de la création de la cotisation: " + ex.getMessage());
+            System.err.println("Erreur lors de la création de la cotisation: " + ex.getMessage());
             ex.printStackTrace();
         }
         
-        System.out.println("❌ [DAO DEBUG] Création cotisation échouée");
         return false;
     }
     
-    /**
-     * Met à jour une cotisation
-     */
     public boolean update(Cotisation cotisation) {
         String sql = "UPDATE cotisation SET id_seance = ?, id_membre = ?, montant_du = ?, montant = ?, date_paiement = ? WHERE id_cotisation = ?";
         
@@ -99,9 +77,6 @@ public class CotisationDAO {
         return false;
     }
     
-    /**
-     * Supprime une cotisation
-     */
     public boolean delete(int idCotisation) {
         String sql = "DELETE FROM cotisation WHERE id_cotisation = ?";
         
@@ -118,10 +93,7 @@ public class CotisationDAO {
         return false;
     }
     
-    /**
-     * Recherche une cotisation par son ID
-     */
-    public Cotisation findById(int idCotisation) {
+    public Cotisation getById(int idCotisation) {
         String sql = "SELECT c.*, " +
                     "s.date_seance, s.numero_tour, s.lieu as seance_lieu, " +
                     "m.nom as membre_nom, m.prenom as membre_prenom, " +
@@ -149,10 +121,7 @@ public class CotisationDAO {
         return null;
     }
     
-    /**
-     * Récupère toutes les cotisations
-     */
-    public List<Cotisation> findAll() {
+    public List<Cotisation> getAll() {
         String sql = "SELECT c.*, " +
                     "s.date_seance, s.numero_tour, s.lieu as seance_lieu, " +
                     "m.nom as membre_nom, m.prenom as membre_prenom, " +
@@ -180,10 +149,7 @@ public class CotisationDAO {
         return cotisations;
     }
     
-    /**
-     * Récupère les cotisations par séance
-     */
-    public List<Cotisation> findBySeance(int idSeance) {
+    public List<Cotisation> getBySeance(int idSeance) {
         String sql = "SELECT c.*, " +
                     "s.date_seance, s.numero_tour, s.lieu as seance_lieu, " +
                     "m.nom as membre_nom, m.prenom as membre_prenom, " +
@@ -195,9 +161,6 @@ public class CotisationDAO {
                     "WHERE c.id_seance = ? " +
                     "ORDER BY m.nom, m.prenom";
         
-        System.out.println("🔍 [DAO DEBUG] Recherche cotisations pour séance " + idSeance);
-        System.out.println("  - SQL: " + sql);
-        
         List<Cotisation> cotisations = new ArrayList<>();
         
         try (Connection conn = dbConnection.getConnection();
@@ -206,29 +169,18 @@ public class CotisationDAO {
             pstmt.setInt(1, idSeance);
             ResultSet rs = pstmt.executeQuery();
             
-            int count = 0;
             while (rs.next()) {
                 cotisations.add(mapResultSetToCotisation(rs));
-                count++;
-                System.out.println("🔍 [DAO DEBUG] Cotisation trouvée: " + 
-                    rs.getString("membre_nom") + " " + rs.getString("membre_prenom") + 
-                    " - " + rs.getBigDecimal("montant") + " FCFA");
             }
             
-            System.out.println("🔍 [DAO DEBUG] Total cotisations trouvées: " + count);
-            
         } catch (SQLException ex) {
-            System.err.println("❌ [DAO ERROR] Erreur lors de la récupération des cotisations par séance: " + ex.getMessage());
-            ex.printStackTrace();
+            System.err.println("Erreur lors de la récupération des cotisations par séance: " + ex.getMessage());
         }
         
         return cotisations;
     }
     
-    /**
-     * Récupère les cotisations par membre
-     */
-    public List<Cotisation> findByMembre(int idMembre) {
+    public List<Cotisation> getByMembre(int idMembre) {
         String sql = "SELECT c.*, " +
                     "s.date_seance, s.numero_tour, s.lieu as seance_lieu, " +
                     "m.nom as membre_nom, m.prenom as membre_prenom, " +
@@ -259,9 +211,18 @@ public class CotisationDAO {
         return cotisations;
     }
     
-    /**
-     * Calcule le total des cotisations pour une séance
-     */
+    public List<Cotisation> findBySeance(int idSeance) {
+        return getBySeance(idSeance);
+    }
+    
+    public Cotisation findById(int idCotisation) {
+        return getById(idCotisation);
+    }
+    
+    public List<Cotisation> findAll() {
+        return getAll();
+    }
+    
     public BigDecimal sumBySeance(int idSeance) {
         String sql = "SELECT COALESCE(SUM(montant), 0) FROM cotisation WHERE id_seance = ?";
         
@@ -282,9 +243,6 @@ public class CotisationDAO {
         return BigDecimal.ZERO;
     }
     
-    /**
-     * Convertit un ResultSet en objet Cotisation
-     */
     private Cotisation mapResultSetToCotisation(ResultSet rs) throws SQLException {
         Cotisation cotisation = new Cotisation();
         cotisation.setIdCotisation(rs.getInt("id_cotisation"));

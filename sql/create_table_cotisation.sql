@@ -1,8 +1,3 @@
--- =============================================
--- Création de la table cotisation manquante
--- =============================================
-
--- Créer la table cotisation si elle n'existe pas
 CREATE TABLE IF NOT EXISTS cotisation (
     id_cotisation SERIAL PRIMARY KEY,
     id_seance INTEGER NOT NULL,
@@ -18,12 +13,11 @@ CREATE TABLE IF NOT EXISTS cotisation (
     UNIQUE (id_seance, id_membre)
 );
 
--- Créer un index pour optimiser les performances
+
 CREATE INDEX IF NOT EXISTS idx_cotisation_seance ON cotisation(id_seance);
 CREATE INDEX IF NOT EXISTS idx_cotisation_membre ON cotisation(id_membre);
 CREATE INDEX IF NOT EXISTS idx_cotisation_statut ON cotisation(statut);
 
--- Trigger pour mettre à jour updated_at
 CREATE OR REPLACE FUNCTION update_cotisation_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN

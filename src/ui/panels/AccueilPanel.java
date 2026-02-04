@@ -30,10 +30,6 @@ import ui.MainFrame;
 import utils.ThemeColors;
 import utils.UIUtils;
 
-/**
- * Panneau d'accueil avec tableau de bord ultra-moderne
- * Design 3.0 - Interface Premium avec gradients et animations subtiles
- */
 public class AccueilPanel extends JPanel {
     private MainFrame mainFrame;
     private MembreDAO membreDAO;
@@ -55,9 +51,6 @@ public class AccueilPanel extends JPanel {
         chargerStatistiques();
     }
     
-    /**
-     * Initialise tous les composants avec un design ultra-moderne
-     */
     private void initComponents() {
         setLayout(new BorderLayout(0, 0));
         setBackground(ThemeColors.BACKGROUND);
@@ -87,9 +80,6 @@ public class AccueilPanel extends JPanel {
         add(mainContainer, BorderLayout.CENTER);
     }
     
-    /**
-     * Crée l'en-tête ultra-moderne avec gradient et informations de session
-     */
     private JPanel createUltraModernHeader() {
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(ThemeColors.CARD_BG);
@@ -155,9 +145,6 @@ public class AccueilPanel extends JPanel {
         return header;
     }
     
-    /**
-     * Crée la grille premium des cartes statistiques
-     */
 
         private JPanel createPremiumStatsGrid() {
     JPanel grid = new JPanel(new GridLayout(2, 2, 24, 24));
@@ -194,9 +181,6 @@ public class AccueilPanel extends JPanel {
 
 
     
-    /**
-     * Crée une carte statistique premium avec design moderne
-     */
     private JPanel createPremiumStatCard(String titre, String valeur, String icone, 
                                          Color accentColor, Color bgColor) {
         JPanel card = new JPanel(new BorderLayout());
@@ -306,9 +290,6 @@ public class AccueilPanel extends JPanel {
         return card;
     }
     
-    /**
-     * Crée le panneau d'actions rapides
-     */
     private JPanel createQuickActionsPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(ThemeColors.CARD_BG);
@@ -340,9 +321,6 @@ public class AccueilPanel extends JPanel {
         return panel;
     }
     
-    /**
-     * Crée un bouton d'action moderne
-     */
     private JButton createActionButton(String text, Color color) {
         JButton button = new JButton(text);
         button.setFont(new Font("Segoe UI", Font.BOLD, 13));
@@ -367,12 +345,9 @@ public class AccueilPanel extends JPanel {
         return button;
     }
     
-    /**
-     * Charge les statistiques depuis la base de données (VERSION OPTIMISÉE)
-     */
     private void chargerStatistiques() {
         try {
-            System.out.println("📊 Chargement statistiques AccueilPanel...");
+            System.out.println("Chargement statistiques AccueilPanel...");
             
             // Récupération unique des données pour éviter les appels multiples
             List<Membre> membres = null;
@@ -381,7 +356,7 @@ public class AccueilPanel extends JPanel {
             
             try {
                 membres = membreDAO.findAll();
-                System.out.println("✅ Membres chargés: " + membres.size());
+                System.out.println("Membres chargés: " + membres.size());
             } catch (Exception e) {
                 System.err.println("Erreur chargement membres: " + e.getMessage());
                 membres = new ArrayList<>();
@@ -389,7 +364,7 @@ public class AccueilPanel extends JPanel {
             
             try {
                 tontines = tontineDAO.findAll();
-                System.out.println("✅ Tontines chargées: " + tontines.size());
+                System.out.println("Tontines chargées: " + tontines.size());
             } catch (Exception e) {
                 System.err.println("Erreur chargement tontines: " + e.getMessage());
                 tontines = new ArrayList<>();
@@ -397,7 +372,7 @@ public class AccueilPanel extends JPanel {
             
             try {
                 credits = creditDAO.findAll();
-                System.out.println("✅ Crédits chargés: " + credits.size());
+                System.out.println("Crédits chargés: " + credits.size());
             } catch (Exception e) {
                 System.err.println("Erreur chargement crédits: " + e.getMessage());
                 credits = new ArrayList<>();
@@ -435,16 +410,13 @@ public class AccueilPanel extends JPanel {
                 lblCreditsEnCours.setText(String.valueOf(creditsEnCours));
             }
             
-            System.out.println("✅ Statistiques AccueilPanel mises à jour avec succès");
+            System.out.println("Statistiques AccueilPanel mises à jour avec succès");
             
         } catch (Exception e) {
             System.err.println("Erreur générale chargement statistiques: " + e.getMessage());
         }
     }
     
-    /**
-     * Rafraîchit le panneau
-     */
     public void rafraichir() {
         chargerStatistiques();
     }

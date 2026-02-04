@@ -35,11 +35,6 @@ import ui.MainFrame;
 import utils.ThemeColors;
 import utils.UIUtils;
 
-/**
- * Panneau de gestion des membres avec design ultra-moderne
- * Design 3.0 - Interface Premium cohérente
- * Projet INF2212 - Université de Yaoundé I
- */
 public class MembresPanel extends JPanel {
     
     private static final long serialVersionUID = 1L;
@@ -76,9 +71,6 @@ public class MembresPanel extends JPanel {
         SwingUtilities.invokeLater(() -> updateMemberCount());
     }
     
-    /**
-     * Initialise tous les composants avec design ultra-moderne
-     */
     private void initializeComponents() {
         setLayout(new BorderLayout(0, 0));
         setBackground(ThemeColors.BACKGROUND);
@@ -113,9 +105,6 @@ public class MembresPanel extends JPanel {
         add(mainContainer, BorderLayout.CENTER);
     }
     
-    /**
-     * Crée l'en-tête moderne
-     */
     private JPanel createModernHeader() {
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(ThemeColors.CARD_BG);
@@ -176,9 +165,6 @@ public class MembresPanel extends JPanel {
         return header;
     }
     
-    /**
-     * Crée le panneau de statistiques rapides
-     */
     private JPanel createStatsPanel() {
         JPanel panel = new JPanel(new GridLayout(1, 3, 20, 0));
         panel.setBackground(ThemeColors.BACKGROUND);
@@ -202,9 +188,6 @@ public class MembresPanel extends JPanel {
         return panel;
     }
     
-    /**
-     * Crée une mini carte de statistique
-     */
     private JPanel createMiniStatCard(String titre, String valeur, String icone, Color color) {
         JPanel card = new JPanel(new BorderLayout());
         card.setBackground(ThemeColors.CARD_BG);
@@ -253,9 +236,6 @@ public class MembresPanel extends JPanel {
         return card;
     }
     
-    /**
-     * Crée le panneau de contenu avec recherche et tableau
-     */
     private JPanel createContentPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(ThemeColors.CARD_BG);
@@ -282,9 +262,6 @@ public class MembresPanel extends JPanel {
         return panel;
     }
     
-    /**
-     * Crée le panneau de recherche moderne
-     */
     private JPanel createSearchPanel() {
         JPanel panel = new JPanel(new BorderLayout(12, 0));
         panel.setBackground(ThemeColors.CARD_BG);
@@ -333,9 +310,6 @@ public class MembresPanel extends JPanel {
         return panel;
     }
     
-    /**
-     * Crée le tableau moderne
-     */
     private void createModernTable() {
         String[] columns = {"ID", "Nom", "Prénom", "Téléphone", "Email", "Statut"};
         tableModel = new DefaultTableModel(columns, 0) {
@@ -412,9 +386,6 @@ public class MembresPanel extends JPanel {
         tblMembres.getColumnModel().getColumn(5).setPreferredWidth(110);
     }
     
-    /**
-     * Crée le panneau d'actions
-     */
     private JPanel createActionPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
         panel.setBackground(ThemeColors.BACKGROUND);
@@ -435,9 +406,6 @@ public class MembresPanel extends JPanel {
         return panel;
     }
     
-    /**
-     * Crée un bouton moderne
-     */
     private JButton createModernButton(String text, Color textColor, Color bgColor) {
         JButton button = new JButton(text);
         button.setFont(new Font("Segoe UI", Font.BOLD, 13));
@@ -463,9 +431,6 @@ public class MembresPanel extends JPanel {
         return button;
     }
     
-    /**
-     * Ajuste la luminosité d'une couleur
-     */
     private Color adjustBrightness(Color color, float factor) {
         int r = Math.min(255, (int)(color.getRed() * factor));
         int g = Math.min(255, (int)(color.getGreen() * factor));
@@ -473,9 +438,6 @@ public class MembresPanel extends JPanel {
         return new Color(r, g, b);
     }
     
-    /**
-     * Configure les gestionnaires d'événements
-     */
     private void setupEventHandlers() {
         // Recherche
         txtRecherche.addActionListener(e -> {
@@ -517,9 +479,6 @@ public class MembresPanel extends JPanel {
         });
     }
     
-    /**
-     * Charge tous les membres
-     */
     private void loadMembres() {
         try {
             membresList = membreDAO.findAll();
@@ -534,9 +493,6 @@ public class MembresPanel extends JPanel {
         }
     }
     
-    /**
-     * Met à jour le tableau
-     */
     private void updateTable() {
         tableModel.setRowCount(0);
         
@@ -553,9 +509,6 @@ public class MembresPanel extends JPanel {
         }
     }
     
-    /**
-     * Recherche des membres
-     */
     private void rechercherMembres() {
         String critere = txtRecherche.getText().trim();
         if (critere.isEmpty() || critere.equals("Rechercher un membre par nom, prénom, téléphone...")) {
@@ -576,9 +529,6 @@ public class MembresPanel extends JPanel {
         }
     }
     
-    /**
-     * Ajoute un nouveau membre
-     */
     private void ajouterMembre() {
         MembreDialog dialog = new MembreDialog(
             (JFrame) SwingUtilities.getWindowAncestor(this), 
@@ -601,9 +551,6 @@ public class MembresPanel extends JPanel {
         }
     }
     
-    /**
-     * Modifie le membre sélectionné
-     */
     private void modifierMembre() {
         int selectedRow = tblMembres.getSelectedRow();
         if (selectedRow == -1) return;
@@ -633,9 +580,6 @@ public class MembresPanel extends JPanel {
         }
     }
     
-    /**
-     * Supprime le membre sélectionné
-     */
     private void supprimerMembre() {
         int selectedRow = tblMembres.getSelectedRow();
         if (selectedRow == -1) return;
@@ -666,18 +610,12 @@ public class MembresPanel extends JPanel {
         }
     }
     
-    /**
-     * Met à jour le compteur de membres
-     */
     private void updateMemberCount() {
         if (lblCount != null && membresList != null) {
             lblCount.setText(String.valueOf(membresList.size()));
         }
     }
     
-    /**
-     * Met à jour les statistiques
-     */
     private void updateStatistics() {
         if (membresList == null) return;
         
@@ -703,9 +641,6 @@ public class MembresPanel extends JPanel {
         }
     }
     
-    /**
-     * Donne le focus au champ de recherche
-     */
     public void focusRecherche() {
         txtRecherche.requestFocus();
         if (!txtRecherche.getText().equals("Rechercher un membre par nom, prénom, téléphone...")) {
@@ -713,9 +648,6 @@ public class MembresPanel extends JPanel {
         }
     }
     
-    /**
-     * Rafraîchit le panneau
-     */
     public void rafraichir() {
         loadMembres();
     }

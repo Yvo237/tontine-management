@@ -24,13 +24,6 @@ import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 
-/**
- * Générateur de rapports PDF ultra-modernes et professionnels
- * VERSION AMÉLIORÉE - Rapports détaillés basés sur données BDD
- * 
- * @author Votre Nom
- * @version 4.0 - Rapports Détaillés et Professionnels
- */
 public class ReportGenerator {
     
     // === PALETTE DE COULEURS MODERNE ===
@@ -60,16 +53,10 @@ public class ReportGenerator {
     private PdfWriter writer;
     private PdfContentByte canvas;
     
-    /**
-     * Constructeur - Initialise les fonts
-     */
     public ReportGenerator() {
         initializeFonts();
     }
     
-    /**
-     * Initialise les polices modernes
-     */
     private void initializeFonts() {
         try {
             baseFontNormal = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED);
@@ -87,12 +74,9 @@ public class ReportGenerator {
         }
     }
     
-    /**
-     * Génère un rapport moderne complet - VERSION AMÉLIORÉE
-     */
     public void generateReport(String filename, String reportType, Map<String, Object> data) {
         try {
-            System.out.println("🚀 GÉNÉRATION RAPPORT PROFESSIONNEL - " + reportType);
+            System.out.println("GÉNÉRATION RAPPORT PROFESSIONNEL - " + reportType);
             long startTime = System.currentTimeMillis();
             
             // Créer document
@@ -130,17 +114,14 @@ public class ReportGenerator {
             document.close();
             
             long elapsed = System.currentTimeMillis() - startTime;
-            System.out.println("✅ Rapport généré en " + (elapsed/1000.0) + " secondes");
+            System.out.println("Rapport généré en " + (elapsed/1000.0) + " secondes");
             
         } catch (Exception e) {
-            System.err.println("❌ ERREUR GÉNÉRATION: " + e.getMessage());
+            System.err.println("ERREUR GÉNÉRATION: " + e.getMessage());
             e.printStackTrace();
         }
     }
     
-    /**
-     * PAGE DE COUVERTURE PROFESSIONNELLE
-     */
     private void addProfessionalCoverPage(String reportType, Map<String, Object> data) throws DocumentException {
         // Fond gradient moderne
         canvas.saveState();
@@ -212,9 +193,6 @@ public class ReportGenerator {
         document.add(infoCard);
     }
     
-    /**
-     * RÉSUMÉ EXÉCUTIF AVEC KPIs DÉTAILLÉS
-     */
     private void addExecutiveSummaryWithKPIs(Map<String, Object> data) throws DocumentException {
         // Titre section
         addProfessionalSectionTitle("📈 Résumé Exécutif", PRIMARY_PURPLE);
@@ -263,9 +241,6 @@ public class ReportGenerator {
         );
     }
     
-    /**
-     * CONTENU DÉTAILLÉ SELON LE TYPE DE RAPPORT
-     */
     private void addDetailedContentByType(String reportType, Map<String, Object> data) throws DocumentException {
         addProfessionalSectionTitle("📋 Analyse Détaillée - " + reportType, PRIMARY_BLUE);
         
@@ -305,9 +280,6 @@ public class ReportGenerator {
             PRIMARY_AMBER);
     }
     
-    /**
-     * TABLEAU PROFESSIONNEL AVEC STYLE PREMIUM
-     */
     private PdfPTable createProfessionalTable(List<String[]> data) throws DocumentException {
         if (data.isEmpty()) return new PdfPTable(1);
         
@@ -371,15 +343,12 @@ public class ReportGenerator {
         }
         
         if (rowCount >= 50) {
-            addWarningMessage("⚠️ Tableau limité aux 50 premières lignes pour optimiser les performances");
+            addWarningMessage("Tableau limité aux 50 premières lignes pour optimiser les performances");
         }
         
         return table;
     }
     
-    /**
-     * STATISTIQUES DÉTAILLÉES
-     */
     private void addDetailedStatistics(List<String[]> data, String reportType) throws DocumentException {
         document.add(new Paragraph("\n"));
         
@@ -401,9 +370,6 @@ public class ReportGenerator {
         document.add(statsCard);
     }
     
-    /**
-     * CELLULE DE STATISTIQUE
-     */
     private PdfPCell createStatCell(String label, String value, BaseColor color) {
         PdfPCell cell = new PdfPCell();
         cell.setBorder(Rectangle.BOX);
@@ -420,9 +386,6 @@ public class ReportGenerator {
         return cell;
     }
     
-    /**
-     * PAGE DE VISUALISATIONS
-     */
     private void addVisualizationsPage(Map<String, Double> chartData) throws DocumentException {
         addProfessionalSectionTitle("📊 Visualisations et Graphiques", PRIMARY_PURPLE);
         
@@ -455,9 +418,6 @@ drawEnhancedBarChart(canvas, chartData,
 addEnhancedChartLegend(chartData);
 }
 
-/**
- * GRAPHIQUE EN BARRES - CONTRIBUTIONS TONTINE
- */
 private void drawEnhancedBarChart(PdfContentByte cb, Map<String, Double> data, 
         float x, float y, float width, float height) {
     try {
@@ -526,9 +486,6 @@ private void drawEnhancedBarChart(PdfContentByte cb, Map<String, Double> data,
     }
 }
 
-/**
- * LÉGENDE DES MEMBRES ET VERSEMENTS
- */
 private void addEnhancedChartLegend(Map<String, Double> data) throws DocumentException {
     PdfPTable legend = new PdfPTable(Math.min(4, data.size()));
     legend.setWidthPercentage(90);
@@ -558,9 +515,6 @@ private void addEnhancedChartLegend(Map<String, Double> data) throws DocumentExc
 }
 
     
-    /**
-     * CONCLUSIONS PROFESSIONNELLES
-     */
     private void addProfessionalConclusions(String reportType, Map<String, Object> data) throws DocumentException {
         addProfessionalSectionTitle("🎯 Conclusions et Recommandations", PRIMARY_EMERALD);
         
@@ -685,7 +639,7 @@ private void addEnhancedChartLegend(Map<String, Double> data) throws DocumentExc
     }
     
     private void addNoDataMessage() throws DocumentException {
-        Paragraph noData = new Paragraph("⚠️ Aucune donnée disponible pour cette section", 
+        Paragraph noData = new Paragraph("Aucune donnée disponible pour cette section", 
             new Font(Font.FontFamily.HELVETICA, 12, Font.ITALIC, TEXT_SECONDARY));
         noData.setAlignment(Element.ALIGN_CENTER);
         noData.setSpacingBefore(30);
@@ -700,9 +654,6 @@ private void addEnhancedChartLegend(Map<String, Double> data) throws DocumentExc
         document.add(warning);
     }
     
-    /**
-     * HEADER/FOOTER PROFESSIONNELS
-     */
     class ModernHeaderFooter extends PdfPageEventHelper {
         private String reportType;
         

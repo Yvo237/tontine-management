@@ -3,10 +3,6 @@ package models;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-/**
- * Modèle représentant une cotisation de membre pour une séance
- * Projet INF2212 - Université de Yaoundé I
- */
 public class Cotisation {
     
     private int idCotisation;
@@ -19,7 +15,6 @@ public class Cotisation {
     private Seance seance;
     private Membre membre;
     
-    // Constructeurs
     public Cotisation() {}
     
     public Cotisation(int idSeance, int idMembre, BigDecimal montant) {
@@ -29,7 +24,6 @@ public class Cotisation {
         this.datePaiement = LocalDate.now();
     }
     
-    // Getters et Setters
     public int getIdCotisation() {
         return idCotisation;
     }

@@ -46,10 +46,6 @@ import ui.MainFrame;
 import utils.ThemeColors;
 import utils.UIUtils;
 
-/**
- * Panneau de gestion des tontines avec design ultra-moderne
- * Design 3.0 - Interface Premium finale cohérente
- */
 public class TontinesPanel extends JPanel {
     private MainFrame mainFrame;
     private TontineDAO tontineDAO;
@@ -71,9 +67,6 @@ public class TontinesPanel extends JPanel {
         chargerTontines();
     }
     
-    /**
-     * Initialise tous les composants avec design ultra-moderne
-     */
     private void initComponents() {
         setLayout(new BorderLayout(0, 0));
         setBackground(ThemeColors.BACKGROUND);
@@ -108,9 +101,6 @@ public class TontinesPanel extends JPanel {
         add(mainContainer, BorderLayout.CENTER);
     }
     
-    /**
-     * Crée l'en-tête moderne
-     */
     private JPanel createModernHeader() {
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(ThemeColors.CARD_BG);
@@ -150,9 +140,6 @@ public class TontinesPanel extends JPanel {
         return header;
     }
     
-    /**
-     * Crée le panneau de statistiques rapides
-     */
     private JPanel createStatsPanel() {
         JPanel panel = new JPanel(new GridLayout(1, 3, 20, 0));
         panel.setBackground(ThemeColors.BACKGROUND);
@@ -176,9 +163,6 @@ public class TontinesPanel extends JPanel {
         return panel;
     }
     
-    /**
-     * Crée une mini carte de statistique
-     */
     private JPanel createMiniStatCard(String titre, String valeur, String icone, Color color) {
         JPanel card = new JPanel(new BorderLayout());
         card.setBackground(ThemeColors.CARD_BG);
@@ -227,9 +211,6 @@ public class TontinesPanel extends JPanel {
         return card;
     }
     
-    /**
-     * Crée le panneau du tableau moderne
-     */
     private JPanel createTablePanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(ThemeColors.CARD_BG);
@@ -253,9 +234,6 @@ public class TontinesPanel extends JPanel {
         return panel;
     }
     
-    /**
-     * Crée le tableau moderne avec style premium
-     */
     private void createModernTable() {
         String[] columnNames = {"ID", "Nom", "Type", "Date Début", "Tours", "Tour Actuel", "Statut"};
         tableModel = new DefaultTableModel(columnNames, 0) {
@@ -333,9 +311,6 @@ public class TontinesPanel extends JPanel {
         tableTontines.getColumnModel().getColumn(6).setPreferredWidth(120);
     }
     
-    /**
-     * Crée le panneau d'actions avec boutons modernes
-     */
     private JPanel createActionPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
         panel.setBackground(ThemeColors.BACKGROUND);
@@ -361,9 +336,6 @@ public class TontinesPanel extends JPanel {
         return panel;
     }
     
-    /**
-     * Crée un bouton moderne avec effet hover
-     */
     private JButton createModernButton(String text, Color textColor, Color bgColor) {
         JButton button = new JButton(text);
         button.setFont(new Font("Segoe UI", Font.BOLD, 13));
@@ -387,9 +359,6 @@ public class TontinesPanel extends JPanel {
         return button;
     }
     
-    /**
-     * Ajuste la luminosité d'une couleur
-     */
     private Color adjustBrightness(Color color, float factor) {
         int r = Math.min(255, (int)(color.getRed() * factor));
         int g = Math.min(255, (int)(color.getGreen() * factor));
@@ -397,9 +366,6 @@ public class TontinesPanel extends JPanel {
         return new Color(r, g, b);
     }
     
-    /**
-     * Charge les tontines
-     */
     private void chargerTontines() {
         try {
             tableModel.setRowCount(0);
@@ -425,9 +391,6 @@ public class TontinesPanel extends JPanel {
         }
     }
     
-    /**
-     * Met à jour les statistiques
-     */
     private void updateStatistics(List<Tontine> tontines) {
         int total = tontines.size();
         int actives = 0;
@@ -444,9 +407,6 @@ public class TontinesPanel extends JPanel {
         if (lblStatTerminees != null) lblStatTerminees.setText(String.valueOf(terminees));
     }
     
-    /**
-     * Ouvre le dialogue pour créer une nouvelle tontine
-     */
     private void nouvelleTontine() {
         TontineDialog dialog = new TontineDialog(mainFrame, null);
         dialog.setVisible(true);
@@ -455,9 +415,6 @@ public class TontinesPanel extends JPanel {
         }
     }
     
-    /**
-     * Ouvre le dialogue pour modifier une tontine
-     */
     private void modifierTontine() {
         int selectedRow = tableTontines.getSelectedRow();
         if (selectedRow == -1) {
@@ -482,9 +439,6 @@ public class TontinesPanel extends JPanel {
         }
     }
     
-    /**
-     * Supprime la tontine sélectionnée
-     */
     private void supprimerTontine() {
         int selectedRow = tableTontines.getSelectedRow();
         if (selectedRow == -1) {
@@ -516,9 +470,6 @@ public class TontinesPanel extends JPanel {
         }
     }
     
-    /**
-     * Ouvre le dialogue pour gérer les participants
-     */
     private void gererParticipants() {
         int selectedRow = tableTontines.getSelectedRow();
         if (selectedRow == -1) {
@@ -541,9 +492,6 @@ public class TontinesPanel extends JPanel {
         }
     }
     
-    /**
-     * Messages
-     */
     private void showWarningMessage(String message) {
         JOptionPane.showMessageDialog(this, message, "Attention", JOptionPane.WARNING_MESSAGE);
     }
@@ -556,18 +504,12 @@ public class TontinesPanel extends JPanel {
         JOptionPane.showMessageDialog(this, message, "Succès", JOptionPane.INFORMATION_MESSAGE);
     }
     
-    /**
-     * Rafraîchit le panneau
-     */
     public void rafraichir() {
         chargerTontines();
     }
     
 }
 
-/**
- * Dialogue pour créer/modifier une tontine - Design moderne
- */
 class TontineDialog extends JDialog {
     private Tontine tontine;
     private boolean saved = false;

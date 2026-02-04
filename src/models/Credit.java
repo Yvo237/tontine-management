@@ -3,10 +3,6 @@ package models;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-/**
- * Modèle représentant un crédit accordé à un membre
- * Projet INF2212 - Université de Yaoundé I
- */
 public class Credit {
     
     private int idCredit;
@@ -23,7 +19,6 @@ public class Credit {
     private Membre membre;
     private Tontine tontine;
     
-    // Constructeurs
     public Credit() {}
     
     public Credit(int idMembre, int idTontine, BigDecimal montantEmprunte, 
@@ -38,7 +33,6 @@ public class Credit {
         this.statut = "en_cours";
     }
     
-    // Getters et Setters
     public int getIdCredit() {
         return idCredit;
     }
@@ -127,7 +121,6 @@ public class Credit {
         this.tontine = tontine;
     }
     
-    // Méthodes utilitaires
     public boolean isEnCours() {
         return "en_cours".equals(statut);
     }

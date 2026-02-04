@@ -10,10 +10,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO pour la gestion des crédits
- * Projet INF2212 - Université de Yaoundé I
- */
 public class CreditDAO {
     
     private DatabaseConnection dbConnection;
@@ -26,11 +22,7 @@ public class CreditDAO {
         this.tontineDAO = new TontineDAO();
     }
     
-    /**
-     * Ajoute un nouveau crédit
-     */
     public boolean create(Credit credit) {
-        // Validation des données obligatoires
         if (credit.getMontantRembourse() == null) {
             credit.setMontantRembourse(java.math.BigDecimal.ZERO);
         }
@@ -68,9 +60,6 @@ public class CreditDAO {
         return false;
     }
     
-    /**
-     * Met à jour un crédit
-     */
     public boolean update(Credit credit) {
         String sql = "UPDATE credit SET montant_rembourse = ?, statut = ? WHERE id_credit = ?";
         
@@ -90,9 +79,6 @@ public class CreditDAO {
         return false;
     }
     
-    /**
-     * Supprime un crédit
-     */
     public boolean delete(int idCredit) {
         String sql = "DELETE FROM credit WHERE id_credit = ?";
         
@@ -109,10 +95,7 @@ public class CreditDAO {
         return false;
     }
     
-    /**
-     * Recherche un crédit par son ID
-     */
-    public Credit findById(int idCredit) {
+    public Credit getById(int idCredit) {
         String sql = "SELECT c.*, m.nom as membre_nom, m.prenom as membre_prenom, " +
                     "t.nom as tontine_nom " +
                     "FROM Credit c " +
@@ -137,12 +120,7 @@ public class CreditDAO {
         return null;
     }
     
-    /**
-     * Récupère tous les crédits
-     */
-    public List<Credit> findAll() {
-        System.out.println("🔍 [DEBUG] Recherche de tous les crédits...");
-        
+    public List<Credit> getAll() {
         String sql = "SELECT c.*, m.nom as membre_nom, m.prenom as membre_prenom, " +
                     "t.nom as tontine_nom " +
                     "FROM credit c " +
@@ -150,34 +128,31 @@ public class CreditDAO {
                     "JOIN tontine t ON c.id_tontine = t.id_tontine " +
                     "ORDER BY c.date_emprunt DESC";
         
-        System.out.println("🔍 [DEBUG] Requête SQL: " + sql);
-        
         List<Credit> credits = new ArrayList<>();
         
         try (Connection conn = dbConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             
-            System.out.println("🔍 [DEBUG] Connexion établie, exécution de la requête...");
-            
             while (rs.next()) {
                 credits.add(mapResultSetToCredit(rs));
             }
             
-            System.out.println("🔍 [DEBUG] Nombre de crédits trouvés: " + credits.size());
-            
         } catch (SQLException ex) {
-            System.err.println("❌ [ERROR] Erreur lors de la récupération des crédits: " + ex.getMessage());
-            System.err.println("❌ [ERROR] SQL State: " + ex.getSQLState());
-            ex.printStackTrace();
+            System.err.println("Erreur lors de la récupération des crédits: " + ex.getMessage());
         }
         
         return credits;
     }
     
-    /**
-     * Récupère les crédits par membre
-     */
+    public List<Credit> findAll() {
+        return getAll();
+    }
+    
+    public Credit findById(int idCredit) {
+        return getById(idCredit);
+    }
+    
     public List<Credit> findByMembre(int idMembre) {
         String sql = "SELECT c.*, m.nom as membre_nom, m.prenom as membre_prenom, " +
                     "t.nom as tontine_nom " +
@@ -206,10 +181,28 @@ public class CreditDAO {
         return credits;
     }
     
-    /**
-     * Récupère les crédits par tontine
-     */
-    public List<Credit> findByTontine(int idTontine) {
+    public boolean enregistrerPaiement(int idCredit, BigDecimal montant) {
+        String sql = "UPDATE credit SET montant_rembourse = montant_rembourse + ?, " +
+                    "statut = CASE WHEN montant_rembourse + ? >= montant_emprunte THEN 'remboursé' ELSE statut END " +
+                    "WHERE id_credit = ?";
+        
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setBigDecimal(1, montant);
+            pstmt.setBigDecimal(2, montant);
+            pstmt.setInt(3, idCredit);
+            
+            return pstmt.executeUpdate() > 0;
+            
+        } catch (SQLException ex) {
+            System.err.println("Erreur lors de l'enregistrement du paiement: " + ex.getMessage());
+        }
+        
+        return false;
+    }
+    
+    public List<Credit> getByTontine(int idTontine) {
         String sql = "SELECT c.*, m.nom as membre_nom, m.prenom as membre_prenom, " +
                     "t.nom as tontine_nom " +
                     "FROM Credit c " +
@@ -237,190 +230,6 @@ public class CreditDAO {
         return credits;
     }
     
-    /**
-     * Récupère les crédits par statut
-     */
-    public List<Credit> findByStatut(String statut) {
-        String sql = "SELECT c.*, m.nom as membre_nom, m.prenom as membre_prenom, " +
-                    "t.nom as tontine_nom " +
-                    "FROM Credit c " +
-                    "JOIN Membre m ON c.id_membre = m.id_membre " +
-                    "JOIN Tontine t ON c.id_tontine = t.id_tontine " +
-                    "WHERE c.statut = ? " +
-                    "ORDER BY c.date_emprunt DESC";
-        
-        List<Credit> credits = new ArrayList<>();
-        
-        try (Connection conn = dbConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setString(1, statut);
-            ResultSet rs = pstmt.executeQuery();
-            
-            while (rs.next()) {
-                credits.add(mapResultSetToCredit(rs));
-            }
-            
-        } catch (SQLException ex) {
-            System.err.println("Erreur lors de la récupération des crédits par statut: " + ex.getMessage());
-        }
-        
-        return credits;
-    }
-    
-    /**
-     * Récupère les crédits en cours
-     */
-    public List<Credit> findEnCours() {
-        return findByStatut("en_cours");
-    }
-    
-    /**
-     * Récupère les crédits en retard
-     */
-    public List<Credit> findEnRetard() {
-        return findByStatut("en_retard");
-    }
-    
-    /**
-     * Met à jour le statut des crédits en retard
-     */
-    public int updateCreditsEnRetard() {
-        String sql = "UPDATE Credit " +
-                    "SET statut = 'en_retard' " +
-                    "WHERE statut = 'en_cours' " +
-                    "  AND date_echeance < CURRENT_DATE() " +
-                    "  AND montant_rembourse < (montant_emprunte * (1 + taux_interet/100))";
-        
-        try (Connection conn = dbConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            return pstmt.executeUpdate();
-            
-        } catch (SQLException ex) {
-            System.err.println("Erreur lors de la mise à jour des crédits en retard: " + ex.getMessage());
-        }
-        
-        return 0;
-    }
-    
-    /**
-     * Compte le nombre total de crédits
-     */
-    public int count() {
-        String sql = "SELECT COUNT(*) FROM Credit";
-        
-        try (Connection conn = dbConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-            
-        } catch (SQLException ex) {
-            System.err.println("Erreur lors du comptage des crédits: " + ex.getMessage());
-        }
-        
-        return 0;
-    }
-    
-    /**
-     * Compte le nombre de crédits par statut
-     */
-    public int countByStatut(String statut) {
-        String sql = "SELECT COUNT(*) FROM Credit WHERE statut = ?";
-        
-        try (Connection conn = dbConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setString(1, statut);
-            ResultSet rs = pstmt.executeQuery();
-            
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-            
-        } catch (SQLException ex) {
-            System.err.println("Erreur lors du comptage des crédits par statut: " + ex.getMessage());
-        }
-        
-        return 0;
-    }
-    
-    /**
-     * Calcule le montant total des crédits en cours
-     */
-    public BigDecimal getMontantTotalEnCours() {
-        String sql = "SELECT COALESCE(SUM(montant_emprunte), 0) FROM Credit WHERE statut = 'en_cours'";
-        
-        try (Connection conn = dbConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            
-            if (rs.next()) {
-                return rs.getBigDecimal(1);
-            }
-            
-        } catch (SQLException ex) {
-            System.err.println("Erreur lors du calcul du montant total: " + ex.getMessage());
-        }
-        
-        return BigDecimal.ZERO;
-    }
-    
-    /**
-     * Enregistre un paiement pour un crédit
-     */
-    public boolean enregistrerPaiement(int idCredit, BigDecimal montantPaiement) {
-        try {
-            // Récupérer le crédit actuel pour validation
-            Credit credit = findById(idCredit);
-            if (credit == null) {
-                System.err.println("Crédit introuvable pour l'ID: " + idCredit);
-                return false;
-            }
-            
-            BigDecimal resteAPayer = credit.getResteARembourser();
-            
-            // Validation : ne pas permettre le paiement supérieur au reste à payer
-            if (montantPaiement.compareTo(resteAPayer) > 0) {
-                System.err.println("Paiement de " + montantPaiement + " supérieur au reste à payer de " + resteAPayer);
-                return false;
-            }
-            
-            // Calcul du nouveau montant remboursé
-            BigDecimal nouveauMontantRembourse = credit.getMontantRembourse().add(montantPaiement);
-            BigDecimal totalDu = credit.getMontantTotal();
-            
-            // Déterminer le statut
-            String nouveauStatut = credit.getStatut();
-            if (nouveauMontantRembourse.compareTo(totalDu) == 0) {
-                nouveauStatut = "rembourse";
-            }
-            
-            String sql = "UPDATE credit SET montant_rembourse = ?, statut = ? WHERE id_credit = ?";
-            
-            try (Connection conn = dbConnection.getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                
-                pstmt.setBigDecimal(1, nouveauMontantRembourse);
-                pstmt.setString(2, nouveauStatut);
-                pstmt.setInt(3, idCredit);
-                
-                return pstmt.executeUpdate() > 0;
-            }
-            
-        } catch (SQLException ex) {
-            System.err.println("Erreur lors de l'enregistrement du paiement: " + ex.getMessage());
-        }
-        
-        return false;
-    }
-    
-    /**
-     * Convertit un ResultSet en objet Credit
-     */
     private Credit mapResultSetToCredit(ResultSet rs) throws SQLException {
         Credit credit = new Credit();
         credit.setIdCredit(rs.getInt("id_credit"));

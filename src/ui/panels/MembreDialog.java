@@ -34,11 +34,6 @@ import javax.swing.border.AbstractBorder;
 
 import models.Membre;
 
-/**
- * Boîte de dialogue moderne pour l'ajout et la modification d'un membre
- * Design 3.0 - Interface Premium cohérente
- * Projet INF2212 - Université de Yaoundé I
- */
 public class MembreDialog extends JDialog {
     
     private static final long serialVersionUID = 1L;
@@ -86,9 +81,6 @@ public class MembreDialog extends JDialog {
         getContentPane().setBackground(BACKGROUND);
     }
     
-    /**
-     * Initialise tous les composants avec un style moderne
-     */
     private void initializeComponents() {
         txtNom = createStyledTextField();
         txtPrenom = createStyledTextField();
@@ -115,9 +107,6 @@ public class MembreDialog extends JDialog {
 
     }
     
-    /**
-     * Crée un TextField stylisé moderne
-     */
     private JTextField createStyledTextField() {
         JTextField field = new JTextField();
         field.setFont(new Font("Segoe UI", Font.PLAIN, 13));
@@ -146,9 +135,6 @@ public class MembreDialog extends JDialog {
         return field;
     }
     
-    /**
-     * Crée un ComboBox stylisé moderne
-     */
     private JComboBox<String> createStyledComboBox() {
         JComboBox<String> combo = new JComboBox<>();
         combo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
@@ -161,9 +147,6 @@ public class MembreDialog extends JDialog {
         return combo;
     }
     
-    /**
-     * Crée un bouton moderne avec effet hover
-     */
     private JButton createStyledButton(String text, Color bgColor, Color fgColor) {
         JButton button = new JButton(text);
         button.setFont(new Font("Segoe UI", Font.BOLD, 13));
@@ -187,9 +170,6 @@ public class MembreDialog extends JDialog {
         return button;
     }
     
-    /**
-     * Configure la disposition moderne des composants
-     */
     private void setupLayout() {
         setLayout(new BorderLayout(0, 0));
         
@@ -210,9 +190,6 @@ public class MembreDialog extends JDialog {
         add(buttonPanel, BorderLayout.SOUTH);
     }
     
-    /**
-     * Crée le panneau de titre moderne
-     */
     private JPanel createTitlePanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(CARD_BG);
@@ -254,9 +231,6 @@ public class MembreDialog extends JDialog {
         return panel;
     }
     
-    /**
-     * Crée le panneau du formulaire moderne
-     */
     private JPanel createFormPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(BACKGROUND);
@@ -289,9 +263,6 @@ public class MembreDialog extends JDialog {
         return panel;
     }
     
-    /**
-     * Crée la carte d'informations personnelles
-     */
     private JPanel createInfoCard() {
         JPanel card = new JPanel(new GridBagLayout());
         card.setBackground(CARD_BG);
@@ -334,9 +305,6 @@ public class MembreDialog extends JDialog {
         return card;
     }
     
-    /**
-     * Crée la carte de contact
-     */
     private JPanel createContactCard() {
         JPanel card = new JPanel(new GridBagLayout());
         card.setBackground(CARD_BG);
@@ -390,9 +358,6 @@ public class MembreDialog extends JDialog {
         return card;
     }
     
-    /**
-     * Crée la carte de statut
-     */
     private JPanel createStatusCard() {
         JPanel card = new JPanel(new GridBagLayout());
         card.setBackground(CARD_BG);
@@ -427,9 +392,6 @@ public class MembreDialog extends JDialog {
         return card;
     }
     
-    /**
-     * Crée un label de champ avec description
-     */
     private JPanel createFieldLabel(String label, String description) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -452,9 +414,6 @@ public class MembreDialog extends JDialog {
         return panel;
     }
     
-    /**
-     * Crée le panneau des boutons moderne
-     */
     private JPanel createButtonPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
         panel.setBackground(CARD_BG);
@@ -469,9 +428,6 @@ public class MembreDialog extends JDialog {
         return panel;
     }
     
-    /**
-     * Configure les gestionnaires d'événements
-     */
     private void setupEventHandlers() {
         btnOK.addActionListener(e -> {
             if (validateFields()) {
@@ -506,9 +462,6 @@ public class MembreDialog extends JDialog {
         });
     }
     
-    /**
-     * Validation en temps réel d'un champ
-     */
     private void validateFieldRealtime(JTextField field) {
         if (field.getText().trim().isEmpty()) {
             field.setBorder(BorderFactory.createCompoundBorder(
@@ -523,9 +476,6 @@ public class MembreDialog extends JDialog {
         }
     }
     
-    /**
-     * Remplit les champs avec les données du membre existant
-     */
     private void populateFields() {
         if (membre != null) {
             txtNom.setText(membre.getNom());
@@ -537,9 +487,6 @@ public class MembreDialog extends JDialog {
         }
     }
     
-    /**
-     * Valide les champs du formulaire avec messages modernes
-     */
     private boolean validateFields() {
         if (txtNom.getText().trim().isEmpty()) {
             showModernError("Le nom est obligatoire!", "Veuillez saisir le nom du membre.");
@@ -570,9 +517,6 @@ public class MembreDialog extends JDialog {
         return true;
     }
     
-    /**
-     * Affiche un message d'erreur moderne
-     */
     private void showModernError(String title, String message) {
         JOptionPane optionPane = new JOptionPane(
             message,
@@ -587,9 +531,6 @@ public class MembreDialog extends JDialog {
         dialog.setVisible(true);
     }
     
-    /**
-     * Sauvegarde les données du formulaire dans l'objet Membre
-     */
     private void saveMembre() {
         if (membre == null) {
             membre = new Membre();
@@ -608,23 +549,14 @@ public class MembreDialog extends JDialog {
         }
     }
     
-    /**
-     * Retourne le membre créé ou modifié
-     */
     public Membre getMembre() {
         return membre;
     }
     
-    /**
-     * Indique si l'utilisateur a confirmé la saisie
-     */
     public boolean isConfirmed() {
         return confirmed;
     }
     
-    /**
-     * Classe pour créer des bordures arrondies
-     */
     private static class RoundedBorder extends AbstractBorder {
         private int radius;
         private Color borderColor;

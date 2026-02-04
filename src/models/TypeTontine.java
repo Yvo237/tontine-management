@@ -2,10 +2,6 @@ package models;
 
 import java.math.BigDecimal;
 
-/**
- * Modèle représentant un type de tontine
- * Projet INF2212 - Université de Yaoundé I
- */
 public class TypeTontine {
     
     private int idType;
@@ -15,7 +11,6 @@ public class TypeTontine {
     private BigDecimal montantCotisation;
     private String frequence;
     
-    // Constructeurs
     public TypeTontine() {}
     
     public TypeTontine(String nom, String description, boolean estObligatoire, 
@@ -27,7 +22,6 @@ public class TypeTontine {
         this.frequence = frequence;
     }
     
-    // Getters et Setters
     public int getIdType() {
         return idType;
     }
@@ -76,7 +70,6 @@ public class TypeTontine {
         this.frequence = frequence;
     }
     
-    // Méthodes utilitaires
     public boolean isObligatoire() {
         return estObligatoire;
     }

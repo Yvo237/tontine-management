@@ -51,10 +51,6 @@ import ui.MainFrame;
 import utils.ThemeColors;
 import utils.UIUtils;
 
-/**
- * Panneau de gestion des crédits avec design ultra-moderne
- * Design 3.0 - Interface Premium cohérente
- */
 public class CreditsPanel extends JPanel {
     private MainFrame mainFrame;
     private CreditDAO creditDAO;
@@ -77,9 +73,6 @@ public class CreditsPanel extends JPanel {
         chargerCredits();
     }
     
-    /**
-     * Initialise tous les composants avec un design ultra-moderne
-     */
     private void initComponents() {
         setLayout(new BorderLayout(0, 0));
         setBackground(ThemeColors.BACKGROUND);
@@ -114,9 +107,6 @@ public class CreditsPanel extends JPanel {
         add(mainContainer, BorderLayout.CENTER);
     }
     
-    /**
-     * Crée l'en-tête moderne avec filtres
-     */
     private JPanel createModernHeader() {
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(ThemeColors.CARD_BG);
@@ -194,9 +184,6 @@ public class CreditsPanel extends JPanel {
         return header;
     }
     
-    /**
-     * Crée le panneau de statistiques rapides
-     */
     private JPanel createStatsPanel() {
         JPanel panel = new JPanel(new GridLayout(1, 3, 20, 0));
         panel.setBackground(ThemeColors.BACKGROUND);
@@ -220,9 +207,6 @@ public class CreditsPanel extends JPanel {
         return panel;
     }
     
-    /**
-     * Crée une mini carte de statistique
-     */
     private JPanel createMiniStatCard(String titre, String valeur, String icone, Color color) {
         JPanel card = new JPanel(new BorderLayout());
         card.setBackground(ThemeColors.CARD_BG);
@@ -272,9 +256,6 @@ public class CreditsPanel extends JPanel {
         return card;
     }
     
-    /**
-     * Crée le panneau du tableau moderne
-     */
     private JPanel createTablePanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(ThemeColors.CARD_BG);
@@ -298,9 +279,6 @@ public class CreditsPanel extends JPanel {
         return panel;
     }
     
-    /**
-     * Crée le tableau moderne avec style premium
-     */
     private void createModernTable() {
         String[] columnNames = {"ID", "Membre", "Montant", "Date Début", "Date Fin", "Statut", "Reste à Payer"};
         tableModel = new DefaultTableModel(columnNames, 0) {
@@ -369,9 +347,6 @@ public class CreditsPanel extends JPanel {
         tableCredits.getColumnModel().getColumn(6).setPreferredWidth(120);
     }
     
-    /**
-     * Crée le panneau d'actions avec boutons modernes
-     */
     private JPanel createActionPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
         panel.setBackground(ThemeColors.BACKGROUND);
@@ -397,9 +372,6 @@ public class CreditsPanel extends JPanel {
         return panel;
     }
     
-    /**
-     * Crée un bouton moderne avec effet hover
-     */
     private JButton createModernButton(String text, Color textColor, Color bgColor) {
         JButton button = new JButton(text);
         button.setFont(new Font("Segoe UI", Font.BOLD, 13));
@@ -423,9 +395,6 @@ public class CreditsPanel extends JPanel {
         return button;
     }
     
-    /**
-     * Ajuste la luminosité d'une couleur
-     */
     private Color adjustBrightness(Color color, float factor) {
         int r = Math.min(255, (int)(color.getRed() * factor));
         int g = Math.min(255, (int)(color.getGreen() * factor));
@@ -433,9 +402,6 @@ public class CreditsPanel extends JPanel {
         return new Color(r, g, b);
     }
     
-    /**
-     * Charge tous les crédits depuis la base de données
-     */
     private void chargerCredits() {
         try {
             tableModel.setRowCount(0);
@@ -447,9 +413,6 @@ public class CreditsPanel extends JPanel {
         }
     }
     
-    /**
-     * Met à jour les statistiques
-     */
     private void updateStatistics(List<Credit> credits) {
         int total = credits.size();
         double montantTotal = 0;
@@ -473,9 +436,6 @@ public class CreditsPanel extends JPanel {
         }
     }
     
-    /**
-     * Filtre les crédits par membre
-     */
     private void filtrerCredits() {
         Membre selected = (Membre) cmbFiltreMembre.getSelectedItem();
         if (selected == null) {
@@ -492,9 +452,6 @@ public class CreditsPanel extends JPanel {
         }
     }
     
-    /**
-     * Affiche les crédits dans le tableau
-     */
     private void afficherCredits(List<Credit> credits) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         
@@ -532,9 +489,6 @@ public class CreditsPanel extends JPanel {
         }
     }
     
-    /**
-     * Ouvre le dialogue pour créer un nouveau crédit
-     */
     private void nouveauCredit() {
         CreditDialog dialog = new CreditDialog(mainFrame, null, membreDAO);
         dialog.setVisible(true);
@@ -543,9 +497,6 @@ public class CreditsPanel extends JPanel {
         }
     }
     
-    /**
-     * Ouvre le dialogue pour modifier un crédit
-     */
     private void modifierCredit() {
         int selectedRow = tableCredits.getSelectedRow();
         if (selectedRow == -1) {
@@ -570,9 +521,6 @@ public class CreditsPanel extends JPanel {
         }
     }
     
-    /**
-     * Supprime le crédit sélectionné
-     */
     private void supprimerCredit() {
         int selectedRow = tableCredits.getSelectedRow();
         if (selectedRow == -1) {
@@ -601,9 +549,6 @@ public class CreditsPanel extends JPanel {
         }
     }
     
-    /**
-     * Enregistre un paiement pour le crédit sélectionné
-     */
     private void enregistrerPaiement() {
         int selectedRow = tableCredits.getSelectedRow();
         if (selectedRow == -1) {
@@ -662,9 +607,6 @@ public class CreditsPanel extends JPanel {
         }
     }
     
-    /**
-     * Messages d'information
-     */
     private void showWarningMessage(String message) {
         JOptionPane.showMessageDialog(this, message, "Attention", JOptionPane.WARNING_MESSAGE);
     }
@@ -677,18 +619,12 @@ public class CreditsPanel extends JPanel {
         JOptionPane.showMessageDialog(this, message, "Succès", JOptionPane.INFORMATION_MESSAGE);
     }
     
-    /**
-     * Rafraîchit le panneau
-     */
     public void rafraichir() {
         chargerCredits();
     }
     
 }
 
-/**
- * Dialogue pour créer/modifier un crédit - Design moderne
- */
 class CreditDialog extends JDialog {
     private Credit credit;
     private boolean saved = false;
@@ -838,9 +774,6 @@ class CreditDialog extends JDialog {
         return panel;
     }
     
-    /**
-     * Initialise tous les composants du formulaire
-     */
     private void initializeComponents() {
         // Initialiser les composants principaux
         cmbMembre = createStyledComboBox();
@@ -862,9 +795,6 @@ class CreditDialog extends JDialog {
         addRealTimeValidation();
     }
     
-    /**
-     * Charge les données dans les combobox
-     */
     private void loadComboBoxData() {
         try {
             List<Membre> membres = membreDAO.findAll();
@@ -885,9 +815,6 @@ class CreditDialog extends JDialog {
         }
     }
     
-    /**
-     * Ajoute les listeners pour la validation en temps réel
-     */
     private void addRealTimeValidation() {
         // Listener pour le montant
         txtMontant.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -919,9 +846,6 @@ class CreditDialog extends JDialog {
         });
     }
     
-    /**
-     * Crée le panneau d'aperçu des calculs
-     */
     private JPanel createPreviewPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(ThemeColors.CARD_BG);
@@ -964,9 +888,6 @@ class CreditDialog extends JDialog {
         return panel;
     }
     
-    /**
-     * Ajoute une ligne d'aperçu
-     */
     private void addPreviewRow(JPanel parent, GridBagConstraints gbc, int row, String label, String value, Color valueColor) {
         JPanel rowPanel = new JPanel(new BorderLayout());
         rowPanel.setBackground(ThemeColors.CARD_BG);
@@ -1023,9 +944,6 @@ class CreditDialog extends JDialog {
         gbc.insets = new Insets(10, 0, 10, 0);
     }
     
-    /**
-     * Met à jour l'aperçu des calculs en temps réel
-     */
     private void updatePreview() {
         try {
             double montant = getDoubleValue(txtMontant.getText());
@@ -1059,9 +977,6 @@ class CreditDialog extends JDialog {
         }
     }
     
-    /**
-     * Calcule automatiquement la date d'échéance
-     */
     private void calculateEndDate() {
         try {
             int duree = getIntValue(txtDuree.getText());
@@ -1075,18 +990,12 @@ class CreditDialog extends JDialog {
         }
     }
     
-    /**
-     * Réinitialise l'aperçu
-     */
     private void resetPreview() {
         if (lblMontantTotal != null) lblMontantTotal.setText("0 FCFA");
         if (lblTotalInteret != null) lblTotalInteret.setText("0 FCFA");
         if (lblMensualite != null) lblMensualite.setText("0 FCFA");
     }
     
-    /**
-     * Affiche un message de validation
-     */
     private void showValidationMessage(String message, Color color) {
         if (lblValidationMessage != null) {
             lblValidationMessage.setText(message);
@@ -1102,9 +1011,6 @@ class CreditDialog extends JDialog {
         }
     }
     
-    /**
-     * Extrait une valeur double d'un champ texte
-     */
     private double getDoubleValue(String text) {
         if (text == null || text.trim().isEmpty()) return 0;
         try {
@@ -1114,9 +1020,6 @@ class CreditDialog extends JDialog {
         }
     }
     
-    /**
-     * Extrait une valeur entière d'un champ texte
-     */
     private int getIntValue(String text) {
         if (text == null || text.trim().isEmpty()) return 0;
         try {

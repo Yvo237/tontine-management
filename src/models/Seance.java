@@ -2,10 +2,6 @@ package models;
 
 import java.time.LocalDate;
 
-/**
- * Modèle représentant une séance de tontine
- * Projet INF2212 - Université de Yaoundé I
- */
 public class Seance {
     
     private int idSeance;
@@ -19,7 +15,6 @@ public class Seance {
     // Association
     private Tontine tontine;
     
-    // Constructeurs
     public Seance() {}
     
     public Seance(int idTontine, int numeroTour, LocalDate dateSeance) {
@@ -34,7 +29,6 @@ public class Seance {
         this.lieu = lieu;
     }
     
-    // Getters et Setters
     public int getIdSeance() {
         return idSeance;
     }
@@ -99,7 +93,6 @@ public class Seance {
         this.tontine = tontine;
     }
     
-    // Méthodes utilitaires
     public boolean isPlanifiee() {
         return "planifiee".equals(statut);
     }

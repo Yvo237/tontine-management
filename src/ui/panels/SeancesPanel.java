@@ -43,10 +43,9 @@ import ui.MainFrame;
 import utils.ThemeColors;
 import utils.UIUtils;
 import ui.panels.CotisationsDialog;
+import ui.panels.BeneficiaireDialog;
 
 /**
- * Panneau de gestion des séances avec design ultra-moderne
- * Design 3.0 - Interface Premium cohérente
  */
 public class SeancesPanel extends JPanel {
     private MainFrame mainFrame;
@@ -73,7 +72,6 @@ public class SeancesPanel extends JPanel {
     }
     
     /**
-     * Initialise tous les composants avec design ultra-moderne
      */
     private void initComponents() {
         setLayout(new BorderLayout(0, 0));
@@ -110,7 +108,6 @@ public class SeancesPanel extends JPanel {
     }
     
     /**
-     * Crée l'en-tête moderne avec filtres
      */
     private JPanel createModernHeader() {
         JPanel header = new JPanel(new BorderLayout());
@@ -190,7 +187,6 @@ public class SeancesPanel extends JPanel {
     }
     
     /**
-     * Crée le panneau de statistiques rapides
      */
     private JPanel createStatsPanel() {
         JPanel panel = new JPanel(new GridLayout(1, 3, 20, 0));
@@ -216,7 +212,6 @@ public class SeancesPanel extends JPanel {
     }
     
     /**
-     * Crée une mini carte de statistique
      */
     private JPanel createMiniStatCard(String titre, String valeur, String icone, Color color) {
         JPanel card = new JPanel(new BorderLayout());
@@ -267,7 +262,6 @@ public class SeancesPanel extends JPanel {
     }
     
     /**
-     * Crée le panneau du tableau moderne
      */
     private JPanel createTablePanel() {
         JPanel panel = new JPanel(new BorderLayout());
@@ -293,7 +287,6 @@ public class SeancesPanel extends JPanel {
     }
     
     /**
-     * Crée le tableau moderne avec style premium
      */
     private void createModernTable() {
         String[] columnNames = {"ID", "Tontine", "Tour N°", "Date", "Lieu", "Statut"};
@@ -372,7 +365,6 @@ public class SeancesPanel extends JPanel {
     }
     
     /**
-     * Crée le panneau d'actions avec boutons modernes
      */
     private JPanel createActionPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
@@ -380,18 +372,21 @@ public class SeancesPanel extends JPanel {
         
         JButton btnNouvelle = createModernButton("➕ Nouvelle Séance", ThemeColors.PRIMARY_PURPLE, new Color(237, 233, 254));
         JButton btnCotisations = createModernButton("💰 Cotisations", ThemeColors.PRIMARY_AMBER, new Color(254, 243, 199));
+        JButton btnBeneficiaires = createModernButton("🎁 Bénéficiaires", ThemeColors.PRIMARY_EMERALD, new Color(209, 250, 229));
         JButton btnModifier = createModernButton("✏️ Modifier", ThemeColors.PRIMARY_BLUE, new Color(219, 234, 254));
         JButton btnSupprimer = createModernButton("🗑️ Supprimer", ThemeColors.PRIMARY_RED, new Color(254, 226, 226));
         JButton btnRafraichir = createModernButton("🔄 Actualiser", ThemeColors.TEXT_SECONDARY, new Color(241, 245, 249));
         
         btnNouvelle.addActionListener(e -> nouvelleSeance());
         btnCotisations.addActionListener(e -> gererCotisations());
+        btnBeneficiaires.addActionListener(e -> gererBeneficiaires());
         btnModifier.addActionListener(e -> modifierSeance());
         btnSupprimer.addActionListener(e -> supprimerSeance());
         btnRafraichir.addActionListener(e -> chargerSeances());
         
         panel.add(btnNouvelle);
         panel.add(btnCotisations);
+        panel.add(btnBeneficiaires);
         panel.add(btnModifier);
         panel.add(btnSupprimer);
         panel.add(btnRafraichir);
@@ -400,7 +395,6 @@ public class SeancesPanel extends JPanel {
     }
     
     /**
-     * Crée un bouton moderne avec effet hover
      */
     private JButton createModernButton(String text, Color textColor, Color bgColor) {
         JButton button = new JButton(text);
@@ -426,7 +420,6 @@ public class SeancesPanel extends JPanel {
     }
     
     /**
-     * Ajuste la luminosité d'une couleur
      */
     private Color adjustBrightness(Color color, float factor) {
         int r = Math.min(255, (int)(color.getRed() * factor));
@@ -436,7 +429,6 @@ public class SeancesPanel extends JPanel {
     }
     
     /**
-     * Charge toutes les séances
      */
     private void chargerSeances() {
         try {
@@ -450,7 +442,6 @@ public class SeancesPanel extends JPanel {
     }
     
     /**
-     * Met à jour les statistiques
      */
     private void updateStatistics(List<Seance> seances) {
         int total = seances.size();
@@ -469,7 +460,6 @@ public class SeancesPanel extends JPanel {
     }
     
     /**
-     * Filtre les séances par tontine
      */
     private void filtrerSeances() {
         Tontine selected = (Tontine) cmbFiltreTontine.getSelectedItem();
@@ -488,7 +478,6 @@ public class SeancesPanel extends JPanel {
     }
     
     /**
-     * Affiche les séances dans le tableau
      */
     private void afficherSeances(List<Seance> seances) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -512,7 +501,6 @@ public class SeancesPanel extends JPanel {
     }
     
     /**
-     * Ouvre le dialogue pour créer une nouvelle séance
      */
     private void nouvelleSeance() {
         SeanceDialog dialog = new SeanceDialog(mainFrame, null, tontineDAO);
@@ -523,7 +511,6 @@ public class SeancesPanel extends JPanel {
     }
     
     /**
-     * Ouvre le dialogue pour modifier une séance
      */
     private void modifierSeance() {
         int selectedRow = tableSeances.getSelectedRow();
@@ -550,7 +537,6 @@ public class SeancesPanel extends JPanel {
     }
     
     /**
-     * Supprime la séance sélectionnée
      */
     private void supprimerSeance() {
         int selectedRow = tableSeances.getSelectedRow();
@@ -584,7 +570,26 @@ public class SeancesPanel extends JPanel {
     }
     
     /**
-     * Ouvre le dialogue pour gérer les cotisations
+     */
+    private void gererBeneficiaires() {
+        int selectedRow = tableSeances.getSelectedRow();
+        if (selectedRow == -1) {
+            showWarningMessage("Veuillez sélectionner une séance");
+            return;
+        }
+        
+        int id = (int) tableModel.getValueAt(selectedRow, 0);
+        Seance seance = seanceDAO.findById(id);
+        
+        if (seance != null) {
+            BeneficiaireDialog dialog = new BeneficiaireDialog(mainFrame, seance);
+            dialog.setVisible(true);
+        } else {
+            showErrorMessage("Séance introuvable");
+        }
+    }
+    
+    /**
      */
     private void gererCotisations() {
         int selectedRow = tableSeances.getSelectedRow();
@@ -605,7 +610,6 @@ public class SeancesPanel extends JPanel {
     }
     
     /**
-     * Messages
      */
     private void showWarningMessage(String message) {
         JOptionPane.showMessageDialog(this, message, "Attention", JOptionPane.WARNING_MESSAGE);
@@ -620,7 +624,6 @@ public class SeancesPanel extends JPanel {
     }
     
     /**
-     * Rafraîchit le panneau
      */
     public void rafraichir() {
         chargerSeances();

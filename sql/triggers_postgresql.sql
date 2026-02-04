@@ -1,11 +1,4 @@
--- =============================================
--- Triggers pour la gestion de tontine (PostgreSQL)
--- Projet INF2212 - Université de Yaoundé I
--- =============================================
 
--- =============================================
--- Trigger 1 : Mise à jour automatique du statut des crédits
--- =============================================
 CREATE OR REPLACE FUNCTION update_statut_credit()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -41,9 +34,6 @@ AFTER INSERT ON remboursementcredit
 FOR EACH ROW
 EXECUTE FUNCTION update_statut_credit();
 
--- =============================================
--- Trigger 2 : Mise à jour automatique du statut des cotisations
--- =============================================
 CREATE OR REPLACE FUNCTION update_statut_cotisation()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -65,9 +55,6 @@ BEFORE UPDATE ON cotisation
 FOR EACH ROW
 EXECUTE FUNCTION update_statut_cotisation();
 
--- =============================================
--- Trigger 3 : Mise à jour du tour actuel de la tontine
--- =============================================
 CREATE OR REPLACE FUNCTION update_tour_actuel()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -95,9 +82,6 @@ AFTER UPDATE ON seance
 FOR EACH ROW
 EXECUTE FUNCTION update_tour_actuel();
 
--- =============================================
--- Trigger 4 : Vérification avant suppression d'une séance
--- =============================================
 CREATE OR REPLACE FUNCTION verifier_suppression_seance()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -123,9 +107,6 @@ BEFORE DELETE ON seance
 FOR EACH ROW
 EXECUTE FUNCTION verifier_suppression_seance();
 
--- =============================================
--- Procédure pour mettre à jour les crédits en retard
--- =============================================
 CREATE OR REPLACE FUNCTION mettre_a_jour_credits_en_retard()
 RETURNS VOID AS $$
 BEGIN
@@ -137,9 +118,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- =============================================
--- Procédure pour marquer les cotisations impayées
--- =============================================
+
 CREATE OR REPLACE FUNCTION marquer_cotisations_impayees()
 RETURNS VOID AS $$
 BEGIN
@@ -151,9 +130,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- =============================================
--- Vue pour la situation financière par membre
--- =============================================
 CREATE OR REPLACE VIEW vue_situation_financiere_membre AS
 SELECT 
     m.id_membre,
@@ -176,9 +152,6 @@ LEFT JOIN credit cr ON m.id_membre = cr.id_membre
 LEFT JOIN penalite p ON m.id_membre = p.id_membre
 GROUP BY m.id_membre, m.nom, m.prenom, m.telephone;
 
--- =============================================
--- Vue pour l'état des tontines
--- =============================================
 CREATE OR REPLACE VIEW vue_etat_tontines AS
 SELECT 
     t.id_tontine,

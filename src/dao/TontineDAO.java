@@ -8,10 +8,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO pour la gestion des tontines
- * Projet INF2212 - Université de Yaoundé I
- */
 public class TontineDAO {
     
     private DatabaseConnection dbConnection;
@@ -20,14 +16,11 @@ public class TontineDAO {
         this.dbConnection = DatabaseConnection.getInstance();
     }
     
-    /**
-     * Ajoute une nouvelle tontine dans la base de données
-     */
     public boolean create(Tontine tontine) {
         String sql = "INSERT INTO tontine (type, nom, montant_part, frequence, date_debut, date_fin, statut, id_type, nombre_tours, tour_actuel) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
-        System.out.println("🔍 [TONTINE DEBUG] Création tontine...");
+        System.out.println("[TONTINE DEBUG] Création tontine...");
         System.out.println("  - type: " + tontine.getIdType());
         System.out.println("  - nom: " + tontine.getNom());
         System.out.println("  - date_debut: " + tontine.getDateDebut());
@@ -60,7 +53,7 @@ public class TontineDAO {
                     }
                 }
             } catch (Exception e) {
-                System.out.println("⚠️ [TONTINE DEBUG] Impossible de récupérer le type, utilisation de 'OPTIONNELLE'");
+                System.out.println("[TONTINE DEBUG] Impossible de récupérer le type, utilisation de 'OPTIONNELLE'");
             }
             
             pstmt.setString(1, typeNom);
@@ -98,36 +91,33 @@ public class TontineDAO {
             pstmt.setInt(9, tontine.getNombreTours());
             pstmt.setInt(10, tontine.getTourActuel());
             
-            System.out.println("🔍 [TONTINE DEBUG] Type normalisé: " + typeNom);
-            System.out.println("🔍 [TONTINE DEBUG] Paramètres préparés, exécution de la requête...");
+            System.out.println("[TONTINE DEBUG] Type normalisé: " + typeNom);
+            System.out.println("[TONTINE DEBUG] Paramètres préparés, exécution de la requête...");
             int affectedRows = pstmt.executeUpdate();
-            System.out.println("🔍 [TONTINE DEBUG] Lignes affectées: " + affectedRows);
+            System.out.println("[TONTINE DEBUG] Lignes affectées: " + affectedRows);
             
             if (affectedRows > 0) {
                 ResultSet generatedKeys = pstmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     tontine.setIdTontine(generatedKeys.getInt(1));
-                    System.out.println("✅ [TONTINE DEBUG] Tontine créée avec ID: " + tontine.getIdTontine());
+                    System.out.println("[TONTINE DEBUG] Tontine créée avec ID: " + tontine.getIdTontine());
                 }
                 return true;
             } else {
-                System.out.println("❌ [TONTINE DEBUG] Aucune ligne affectée");
+                System.out.println("[TONTINE DEBUG] Aucune ligne affectée");
             }
             
         } catch (SQLException ex) {
-            System.err.println("❌ [TONTINE ERROR] Erreur SQL: " + ex.getMessage());
-            System.err.println("❌ [TONTINE ERROR] Code SQL: " + ex.getSQLState());
-            System.err.println("❌ [TONTINE ERROR] Code vendor: " + ex.getErrorCode());
+            System.err.println("[TONTINE ERROR] Erreur SQL: " + ex.getMessage());
+            System.err.println("[TONTINE ERROR] Code SQL: " + ex.getSQLState());
+            System.err.println("[TONTINE ERROR] Code vendor: " + ex.getErrorCode());
             ex.printStackTrace();
         }
         
-        System.out.println("❌ [TONTINE DEBUG] Échec création tontine");
+        System.out.println("[TONTINE DEBUG] Échec création tontine");
         return false;
     }
     
-    /**
-     * Met à jour les informations d'une tontine
-     */
     public boolean update(Tontine tontine) {
         String sql = "UPDATE Tontine SET nom = ?, date_fin = ?, nombre_tours = ?, " +
                     "tour_actuel = ?, statut = ? WHERE id_tontine = ?";
@@ -151,9 +141,6 @@ public class TontineDAO {
         return false;
     }
     
-    /**
-     * Supprime une tontine de la base de données
-     */
     public boolean delete(int idTontine) {
         String sql = "DELETE FROM Tontine WHERE id_tontine = ?";
         
@@ -173,9 +160,6 @@ public class TontineDAO {
         return false;
     }
     
-    /**
-     * Recherche une tontine par son ID
-     */
     public Tontine findById(int idTontine) {
         String sql = "SELECT t.*, tt.nom as type_nom, tt.description as type_description, " +
                     "tt.est_obligatoire, tt.montant_cotisation, tt.frequence " +
@@ -200,9 +184,6 @@ public class TontineDAO {
         return null;
     }
     
-    /**
-     * Récupère toutes les tontines
-     */
     public List<Tontine> findAll() {
         String sql = "SELECT t.*, tt.nom as type_nom, tt.description as type_description, " +
                     "tt.est_obligatoire, tt.montant_cotisation, tt.frequence " +
@@ -210,7 +191,7 @@ public class TontineDAO {
                     "JOIN typetontine tt ON t.id_type = tt.id_type " +
                     "ORDER BY t.date_debut DESC";
         
-        System.out.println("🔍 [TONTINE DEBUG] Recherche de toutes les tontines...");
+        System.out.println("[TONTINE DEBUG] Recherche de toutes les tontines...");
         System.out.println("  - SQL: " + sql);
         
         List<Tontine> tontines = new ArrayList<>();
@@ -224,22 +205,19 @@ public class TontineDAO {
                 Tontine tontine = mapResultSetToTontine(rs);
                 tontines.add(tontine);
                 count++;
-                System.out.println("🔍 [TONTINE DEBUG] Tontine trouvée: " + tontine.getNom() + " (ID: " + tontine.getIdTontine() + ")");
+                System.out.println("[TONTINE DEBUG] Tontine trouvée: " + tontine.getNom() + " (ID: " + tontine.getIdTontine() + ")");
             }
             
-            System.out.println("🔍 [TONTINE DEBUG] Total tontines trouvées: " + count);
+            System.out.println("[TONTINE DEBUG] Total tontines trouvées: " + count);
             
         } catch (SQLException ex) {
-            System.err.println("❌ [TONTINE ERROR] Erreur lors de la récupération des tontines: " + ex.getMessage());
+            System.err.println("[TONTINE ERROR] Erreur lors de la récupération des tontines: " + ex.getMessage());
             ex.printStackTrace();
         }
         
         return tontines;
     }
     
-    /**
-     * Récupère les tontines actives uniquement
-     */
     public List<Tontine> findActives() {
         String sql = "SELECT t.*, tt.nom as type_nom, tt.description as type_description, " +
                     "tt.est_obligatoire, tt.montant_cotisation, tt.frequence " +
@@ -265,9 +243,6 @@ public class TontineDAO {
         return tontines;
     }
     
-    /**
-     * Récupère les tontines par statut
-     */
     public List<Tontine> findByStatut(String statut) {
         String sql = "SELECT t.*, tt.nom as type_nom, tt.description as type_description, " +
                     "tt.est_obligatoire, tt.montant_cotisation, tt.frequence " +
@@ -295,9 +270,6 @@ public class TontineDAO {
         return tontines;
     }
     
-    /**
-     * Récupère les tontines par type
-     */
     public List<Tontine> findByType(int idType) {
         String sql = "SELECT t.*, tt.nom as type_nom, tt.description as type_description, " +
                     "tt.est_obligatoire, tt.montant_cotisation, tt.frequence " +
@@ -325,9 +297,6 @@ public class TontineDAO {
         return tontines;
     }
     
-    /**
-     * Compte le nombre total de tontines
-     */
     public int count() {
         String sql = "SELECT COUNT(*) FROM Tontine";
         
@@ -346,9 +315,6 @@ public class TontineDAO {
         return 0;
     }
     
-    /**
-     * Compte le nombre de tontines par statut
-     */
     public int countByStatut(String statut) {
         String sql = "SELECT COUNT(*) FROM Tontine WHERE statut = ?";
         
@@ -369,9 +335,6 @@ public class TontineDAO {
         return 0;
     }
     
-    /**
-     * Met à jour le tour actuel d'une tontine
-     */
     public boolean updateTourActuel(int idTontine, int nouveauTour) {
         String sql = "UPDATE Tontine SET tour_actuel = ? WHERE id_tontine = ?";
         
@@ -390,9 +353,6 @@ public class TontineDAO {
         return false;
     }
     
-    /**
-     * Clôture une tontine (marque comme terminée)
-     */
     public boolean cloreTontine(int idTontine) {
         String sql = "UPDATE Tontine SET statut = 'terminee', date_fin = CURDATE() WHERE id_tontine = ?";
         
@@ -410,9 +370,6 @@ public class TontineDAO {
         return false;
     }
     
-    /**
-     * Convertit un ResultSet en objet Tontine
-     */
     private Tontine mapResultSetToTontine(ResultSet rs) throws SQLException {
         Tontine tontine = new Tontine();
         tontine.setIdTontine(rs.getInt("id_tontine"));

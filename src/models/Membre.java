@@ -2,10 +2,6 @@ package models;
 
 import java.time.LocalDate;
 
-/**
- * Modèle représentant un membre de la tontine
- * Projet INF2212 - Université de Yaoundé I
- */
 public class Membre {
     
     private int idMembre;
@@ -17,7 +13,6 @@ public class Membre {
     private LocalDate dateAdhesion;
     private String statut;
     
-    // Constructeurs
     public Membre() {}
     
     public Membre(String nom, String prenom, String telephone) {
@@ -34,7 +29,6 @@ public class Membre {
         this.adresse = adresse;
     }
     
-    // Getters et Setters
     public int getIdMembre() {
         return idMembre;
     }
@@ -103,7 +97,6 @@ public class Membre {
         return dateAdhesion;
     }
     
-    // Méthodes utilitaires
     public String getNomComplet() {
         return nom + " " + prenom;
     }

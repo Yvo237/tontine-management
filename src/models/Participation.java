@@ -2,10 +2,6 @@ package models;
 
 import java.time.LocalDate;
 
-/**
- * Modèle représentant la participation d'un membre à une tontine
- * Projet INF2212 - Université de Yaoundé I
- */
 public class Participation {
     
     private int idParticipation;
@@ -19,7 +15,6 @@ public class Participation {
     private Membre membre;
     private Tontine tontine;
     
-    // Constructeurs
     public Participation() {}
     
     public Participation(int idMembre, int idTontine, int nombreParts) {
@@ -30,7 +25,6 @@ public class Participation {
         this.statut = "active";
     }
     
-    // Getters et Setters
     public int getIdParticipation() {
         return idParticipation;
     }
@@ -95,7 +89,6 @@ public class Participation {
         this.tontine = tontine;
     }
     
-    // Méthodes utilitaires
     public boolean isActive() {
         return "active".equals(statut);
     }

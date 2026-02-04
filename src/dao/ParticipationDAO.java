@@ -9,10 +9,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO pour la gestion des participations
- * Projet INF2212 - Université de Yaoundé I
- */
 public class ParticipationDAO {
     
     private DatabaseConnection dbConnection;
@@ -25,9 +21,6 @@ public class ParticipationDAO {
         this.tontineDAO = new TontineDAO();
     }
     
-    /**
-     * Ajoute une nouvelle participation
-     */
     public boolean create(Participation participation) {
         String sql = "INSERT INTO participation (id_membre, id_tontine, nombre_parts, date_participation) " +
                     "VALUES (?, ?, ?, ?)";
@@ -60,9 +53,6 @@ public class ParticipationDAO {
         return false;
     }
     
-    /**
-     * Met à jour une participation
-     */
     public boolean update(Participation participation) {
         String sql = "UPDATE participation SET nombre_parts = ? WHERE id_participation = ?";
         
@@ -81,9 +71,6 @@ public class ParticipationDAO {
         return false;
     }
     
-    /**
-     * Supprime une participation
-     */
     public boolean delete(int idParticipation) {
         String sql = "DELETE FROM Participation WHERE id_participation = ?";
         
@@ -103,9 +90,6 @@ public class ParticipationDAO {
         return false;
     }
     
-    /**
-     * Recherche une participation par son ID
-     */
     public Participation findById(int idParticipation) {
         String sql = "SELECT p.*, m.nom as membre_nom, m.prenom as membre_prenom, m.telephone as membre_telephone, " +
                     "t.nom as tontine_nom " +
@@ -131,9 +115,6 @@ public class ParticipationDAO {
         return null;
     }
     
-    /**
-     * Vérifie si un membre participe à une tontine
-     */
     public Participation findByMembreAndTontine(int idMembre, int idTontine) {
         String sql = "SELECT p.*, m.nom as membre_nom, m.prenom as membre_prenom, m.telephone as membre_telephone, " +
                     "t.nom as tontine_nom " +
@@ -160,9 +141,6 @@ public class ParticipationDAO {
         return null;
     }
     
-    /**
-     * Récupère toutes les participations
-     */
     public List<Participation> findAll() {
         String sql = "SELECT p.*, m.nom as membre_nom, m.prenom as membre_prenom, m.telephone as membre_telephone, " +
                     "t.nom as tontine_nom " +
@@ -188,9 +166,6 @@ public class ParticipationDAO {
         return participations;
     }
     
-    /**
-     * Récupère les participations par tontine
-     */
     public List<Participation> findByTontine(int idTontine) {
         String sql = "SELECT p.*, m.nom as membre_nom, m.prenom as membre_prenom, m.telephone as membre_telephone, " +
                     "t.nom as tontine_nom " +
@@ -219,9 +194,6 @@ public class ParticipationDAO {
         return participations;
     }
     
-    /**
-     * Récupère les participations par membre
-     */
     public List<Participation> findByMembre(int idMembre) {
         String sql = "SELECT p.*, m.nom as membre_nom, m.prenom as membre_prenom, m.telephone as membre_telephone, " +
                     "t.nom as tontine_nom " +
@@ -250,9 +222,6 @@ public class ParticipationDAO {
         return participations;
     }
     
-    /**
-     * Récupère les participations actives par tontine
-     */
     public List<Participation> findActivesByTontine(int idTontine) {
         String sql = "SELECT p.*, m.nom as membre_nom, m.prenom as membre_prenom, m.telephone as membre_telephone, " +
                     "t.nom as tontine_nom " +
@@ -281,9 +250,6 @@ public class ParticipationDAO {
         return participations;
     }
     
-    /**
-     * Compte le nombre de participants par tontine
-     */
     public int countByTontine(int idTontine) {
         String sql = "SELECT COUNT(*) FROM participation WHERE id_tontine = ?";
         
@@ -304,9 +270,6 @@ public class ParticipationDAO {
         return 0;
     }
     
-    /**
-     * Compte le nombre total de parts par tontine
-     */
     public int countPartsByTontine(int idTontine) {
         String sql = "SELECT COALESCE(SUM(nombre_parts), 0) FROM participation WHERE id_tontine = ?";
         
@@ -327,9 +290,6 @@ public class ParticipationDAO {
         return 0;
     }
     
-    /**
-     * Convertit un ResultSet en objet Participation
-     */
     private Participation mapResultSetToParticipation(ResultSet rs) throws SQLException {
         Participation participation = new Participation();
         participation.setIdParticipation(rs.getInt("id_participation"));

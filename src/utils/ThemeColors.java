@@ -2,10 +2,6 @@ package utils;
 
 import java.awt.Color;
 
-/**
- * Palette de couleurs cohérente pour toute l'application
- * Évite la duplication des constantes de couleur
- */
 public class ThemeColors {
     
     // Couleurs primaires

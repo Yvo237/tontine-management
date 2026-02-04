@@ -1,20 +1,8 @@
--- =============================================
--- Requêtes SQL pour l'application de gestion de tontine (PostgreSQL)
--- Projet INF2212 - Université de Yaoundé I
--- Minimum 15 requêtes variées
--- =============================================
-
--- =============================================
--- 1. REQUÊTES DE SÉLECTION (5+)
--- =============================================
-
--- 1.1 Liste des membres actifs
 SELECT id_membre, nom, prenom, telephone, email, date_adhesion
 FROM membre 
 WHERE statut = 'actif'
 ORDER BY nom, prenom;
 
--- 1.2 Tontines actives avec leur type
 SELECT t.id_tontine, t.nom, tt.nom as type_tontine, t.date_debut, 
        t.nombre_tours, t.tour_actuel, COUNT(p.id_participation) as nb_participants
 FROM tontine t
@@ -24,7 +12,6 @@ WHERE t.statut = 'active'
 GROUP BY t.id_tontine, t.nom, tt.nom, t.date_debut, t.nombre_tours, t.tour_actuel
 ORDER BY t.date_debut;
 
--- 1.3 Séances du mois en cours
 SELECT s.id_seance, t.nom as tontine, s.numero_tour, s.date_seance, 
        s.lieu, s.statut, COUNT(c.id_cotisation) as nb_cotisations
 FROM seance s
@@ -35,7 +22,7 @@ WHERE EXTRACT(MONTH FROM s.date_seance) = EXTRACT(MONTH FROM CURRENT_DATE())
 GROUP BY s.id_seance, t.nom, s.numero_tour, s.date_seance, s.lieu, s.statut
 ORDER BY s.date_seance;
 
--- 1.4 Crédits en cours
+
 SELECT cr.id_credit, m.nom || ' ' || m.prenom as membre, 
        t.nom as tontine, cr.montant_emprunte, cr.taux_interet,
        cr.montant_emprunte * (1 + cr.taux_interet/100) as montant_total,
@@ -46,7 +33,7 @@ JOIN tontine t ON cr.id_tontine = t.id_tontine
 WHERE cr.statut IN ('en_cours', 'en_retard')
 ORDER BY cr.date_echeance;
 
--- 1.5 Pénalités impayées
+
 SELECT p.id_penalite, m.nom || ' ' || m.prenom as membre,
        p.motif, p.montant, p.date_penalite
 FROM penalite p
@@ -54,12 +41,8 @@ JOIN membre m ON p.id_membre = m.id_membre
 WHERE p.payee = FALSE
 ORDER BY p.date_penalite DESC;
 
--- =============================================
--- 2. REQUÊTES PARAMÉTRÉES (3+)
--- =============================================
 
--- 2.1 Recherche de membre par critère
--- Paramètre : $recherche (nom, prénom ou téléphone)
+
 SELECT id_membre, nom, prenom, telephone, email, statut
 FROM membre 
 WHERE nom LIKE '%' || $recherche || '%'
@@ -67,8 +50,7 @@ WHERE nom LIKE '%' || $recherche || '%'
    OR telephone LIKE '%' || $recherche || '%'
 ORDER BY nom, prenom;
 
--- 2.2 Cotisations d'un membre pour une tontine spécifique
--- Paramètres : $id_membre, $id_tontine
+
 SELECT c.id_cotisation, s.numero_tour, s.date_seance, c.montant_du, 
        c.montant, c.statut, c.date_paiement
 FROM cotisation c
@@ -78,8 +60,7 @@ WHERE p.id_membre = $id_membre
   AND p.id_tontine = $id_tontine
 ORDER BY s.numero_tour;
 
--- 2.3 Crédits d'un membre spécifique
--- Paramètre : $id_membre
+
 SELECT cr.id_credit, t.nom as tontine, cr.montant_emprunte, cr.taux_interet,
        cr.date_emprunt, cr.date_echeance, cr.montant_rembourse,
        cr.montant_emprunte * (1 + cr.taux_interet/100) as montant_total,
@@ -89,11 +70,7 @@ JOIN tontine t ON cr.id_tontine = t.id_tontine
 WHERE cr.id_membre = $id_membre
 ORDER BY cr.date_emprunt DESC;
 
--- =============================================
--- 3. REQUÊTES DE REGROUPEMENT (4+)
--- =============================================
 
--- 3.1 Total des cotisations par tontine
 SELECT t.id_tontine, t.nom, 
        COUNT(DISTINCT p.id_membre) as nb_participants,
        SUM(c.montant_du) as total_du,
@@ -106,7 +83,6 @@ LEFT JOIN cotisation c ON s.id_seance = c.id_seance
 GROUP BY t.id_tontine, t.nom
 ORDER BY t.nom;
 
--- 3.2 Statistiques par membre
 SELECT m.id_membre, m.nom || ' ' || m.prenom as membre,
        COUNT(DISTINCT p.id_tontine) as nb_tontines,
        SUM(p.nombre_parts) as total_parts,
@@ -122,7 +98,6 @@ LEFT JOIN credit cr ON m.id_membre = cr.id_membre
 GROUP BY m.id_membre, m.nom, m.prenom, m.statut
 ORDER BY m.nom, m.prenom;
 
--- 3.3 Nombre de séances par tontine
 SELECT t.id_tontine, t.nom,
        COUNT(s.id_seance) as nb_seances_planifiees,
        SUM(CASE WHEN s.statut = 'terminee' THEN 1 ELSE 0 END) as nb_seances_terminees,
@@ -133,32 +108,27 @@ LEFT JOIN seance s ON t.id_tontine = s.id_tontine
 GROUP BY t.id_tontine, t.nom
 ORDER BY t.nom;
 
--- 3.4 Répartition des membres par statut
 SELECT statut, COUNT(*) as nombre,
        ROUND((COUNT(*) * 100.0) / (SELECT COUNT(*) FROM membre), 2) as pourcentage
 FROM membre
 GROUP BY statut
 ORDER BY nombre DESC;
 
--- =============================================
--- 4. REQUÊTES D'ACTION (3+)
--- =============================================
 
--- 4.1 Mise à jour du statut des crédits en retard
+
 UPDATE credit 
 SET statut = 'en_retard'
 WHERE statut = 'en_cours' 
   AND date_echeance < CURRENT_DATE
   AND montant_rembourse < (montant_emprunte * (1 + taux_interet/100));
 
--- 4.2 Marquage des cotisations impayées
+
 UPDATE cotisation 
 SET statut = 'impaye'
 WHERE statut = 'en_attente'
   AND (SELECT date_seance FROM seance WHERE id_seance = cotisation.id_seance) < CURRENT_DATE
   AND montant = 0;
 
--- 4.3 Avancement du tour actuel pour les tontines actives
 UPDATE tontine 
 SET tour_actuel = (
     SELECT COALESCE(MAX(numero_tour), 0) + 1
@@ -169,11 +139,7 @@ SET tour_actuel = (
 WHERE statut = 'active'
   AND tour_actuel < nombre_tours;
 
--- =============================================
--- 5. REQUÊTES COMPLÉMENTAIRES
--- =============================================
 
--- 5.1 Bénéficiaires par séance
 SELECT s.id_seance, t.nom as tontine, s.numero_tour, s.date_seance,
        STRING_AGG(m.nom || ' ' || m.prenom, ', ') as beneficiaires,
        SUM(b.montant_gain) as total_distribue
@@ -185,8 +151,7 @@ LEFT JOIN membre m ON p.id_membre = m.id_membre
 GROUP BY s.id_seance, t.nom, s.numero_tour, s.date_seance
 ORDER BY t.nom, s.numero_tour;
 
--- 5.2 État détaillé d'une séance spécifique
--- Paramètre : $id_seance
+
 SELECT 
     s.id_seance, t.nom as tontine, s.numero_tour, s.date_seance, 
     s.lieu, s.statut, s.observations,
@@ -203,7 +168,7 @@ LEFT JOIN beneficiaire b ON s.id_seance = b.id_seance
 WHERE s.id_seance = $id_seance
 GROUP BY s.id_seance, t.nom, s.numero_tour, s.date_seance, s.lieu, s.statut, s.observations;
 
--- 5.3 Projets FIAC en cours
+
 SELECT p.id_projet, p.nom_projet, t.nom as tontine,
        p.montant_objectif, p.montant_collecte,
        ROUND((p.montant_collecte / p.montant_objectif) * 100, 2) as pourcentage_avancement,
@@ -213,8 +178,7 @@ JOIN tontine t ON p.id_tontine = t.id_tontine
 WHERE p.statut IN ('planifie', 'en_cours')
 ORDER BY p.date_debut;
 
--- 5.4 Top 5 des contributeurs par tontine
--- Paramètre : $id_tontine
+
 SELECT 
     m.nom || ' ' || m.prenom as membre,
     p.nombre_parts,
@@ -231,7 +195,6 @@ GROUP BY m.id_membre, m.nom, m.prenom, p.nombre_parts
 ORDER BY total_cotise DESC
 LIMIT 5;
 
--- 5.5 Synthèse pour assemblée générale
 SELECT 
     COUNT(DISTINCT m.id_membre) as nb_total_membres,
     SUM(CASE WHEN m.statut = 'actif' THEN 1 ELSE 0 END) as nb_membres_actifs,

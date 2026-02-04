@@ -10,15 +10,8 @@ import java.awt.RenderingHints;
 import java.awt.geom.RoundRectangle2D;
 import javax.swing.border.AbstractBorder;
 
-/**
- * Classe utilitaire pour les composants UI réutilisables
- * Réduit la duplication de code dans toute l'application
- */
 public class UIUtils {
     
-    /**
-     * Crée une bordure arrondie personnalisée
-     */
     public static class RoundedBorder extends AbstractBorder {
         private int radius;
         private Color borderColor;
@@ -63,9 +56,6 @@ public class UIUtils {
         }
     }
     
-    /**
-     * Ajuste la luminosité d'une couleur
-     */
     public static Color adjustBrightness(Color color, float factor) {
         int r = Math.min(255, (int)(color.getRed() * factor));
         int g = Math.min(255, (int)(color.getGreen() * factor));

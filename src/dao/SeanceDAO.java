@@ -8,10 +8,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO pour la gestion des séances
- * Projet INF2212 - Université de Yaoundé I
- */
 public class SeanceDAO {
     
     private DatabaseConnection dbConnection;
@@ -22,9 +18,6 @@ public class SeanceDAO {
         this.tontineDAO = new TontineDAO();
     }
     
-    /**
-     * Ajoute une nouvelle séance
-     */
     public boolean create(Seance seance) {
         String sql = "INSERT INTO seance (id_tontine, numero_tour, date_seance, lieu, statut, observations) " +
                     "VALUES (?, ?, ?, ?, ?, ?)";
@@ -59,9 +52,6 @@ public class SeanceDAO {
         return false;
     }
     
-    /**
-     * Met à jour une séance
-     */
     public boolean update(Seance seance) {
         String sql = "UPDATE seance SET date_seance = ?, lieu = ?, statut = ?, observations = ? " +
                     "WHERE id_seance = ?";
@@ -84,11 +74,8 @@ public class SeanceDAO {
         return false;
     }
     
-    /**
-     * Supprime une séance et ses cotisations associées
-     */
     public boolean delete(int idSeance) {
-        System.out.println("🔍 [DEBUG] Tentative de suppression de la séance ID: " + idSeance);
+        System.out.println("[DEBUG] Tentative de suppression de la séance ID: " + idSeance);
         
         try (Connection conn = dbConnection.getConnection()) {
             // Désactiver l'auto-commit pour gérer la transaction
@@ -100,7 +87,7 @@ public class SeanceDAO {
                 try (PreparedStatement pstmtCotisations = conn.prepareStatement(sqlCotisations)) {
                     pstmtCotisations.setInt(1, idSeance);
                     int cotisationsDeleted = pstmtCotisations.executeUpdate();
-                    System.out.println("🔍 [DEBUG] Cotisations supprimées: " + cotisationsDeleted);
+                    System.out.println("[DEBUG] Cotisations supprimées: " + cotisationsDeleted);
                 }
                 
                 // 2. Ensuite supprimer la séance
@@ -108,17 +95,17 @@ public class SeanceDAO {
                 try (PreparedStatement pstmtSeance = conn.prepareStatement(sqlSeance)) {
                     pstmtSeance.setInt(1, idSeance);
                     int seanceDeleted = pstmtSeance.executeUpdate();
-                    System.out.println("🔍 [DEBUG] Séance supprimée: " + (seanceDeleted > 0 ? "OUI" : "NON"));
+                    System.out.println("[DEBUG] Séance supprimée: " + (seanceDeleted > 0 ? "OUI" : "NON"));
                     
                     if (seanceDeleted > 0) {
                         // Valider la transaction
                         conn.commit();
-                        System.out.println("✅ [DEBUG] Transaction validée - Séance et cotisations supprimées");
+                        System.out.println("[DEBUG] Transaction validée - Séance et cotisations supprimées");
                         return true;
                     } else {
                         // Annuler la transaction
                         conn.rollback();
-                        System.out.println("❌ [DEBUG] Transaction annulée - Séance non trouvée");
+                        System.out.println("[DEBUG] Transaction annulée - Séance non trouvée");
                         return false;
                     }
                 }
@@ -126,21 +113,18 @@ public class SeanceDAO {
             } catch (SQLException ex) {
                 // Annuler la transaction en cas d'erreur
                 conn.rollback();
-                System.err.println("❌ [ERROR] Erreur lors de la suppression: " + ex.getMessage());
+                System.err.println("[ERROR] Erreur lors de la suppression: " + ex.getMessage());
                 ex.printStackTrace();
                 return false;
             }
             
         } catch (SQLException ex) {
-            System.err.println("❌ [ERROR] Erreur de connexion: " + ex.getMessage());
+            System.err.println("[ERROR] Erreur de connexion: " + ex.getMessage());
             ex.printStackTrace();
             return false;
         }
     }
     
-    /**
-     * Recherche une séance par son ID
-     */
     public Seance findById(int idSeance) {
         String sql = "SELECT s.*, t.nom as tontine_nom, t.statut as tontine_statut, t.nombre_tours " +
                     "FROM seance s " +
@@ -164,9 +148,6 @@ public class SeanceDAO {
         return null;
     }
     
-    /**
-     * Récupère toutes les séances
-     */
     public List<Seance> findAll() {
         String sql = "SELECT s.*, t.nom as tontine_nom, t.statut as tontine_statut, t.nombre_tours " +
                     "FROM seance s " +
@@ -190,9 +171,6 @@ public class SeanceDAO {
         return seances;
     }
     
-    /**
-     * Récupère les séances par tontine
-     */
     public List<Seance> findByTontine(int idTontine) {
         String sql = "SELECT s.*, t.nom as tontine_nom, t.statut as tontine_statut, t.nombre_tours " +
                     "FROM seance s " +
@@ -219,9 +197,6 @@ public class SeanceDAO {
         return seances;
     }
     
-    /**
-     * Récupère les séances par statut
-     */
     public List<Seance> findByStatut(String statut) {
         String sql = "SELECT s.*, t.nom as tontine_nom, t.statut as tontine_statut, t.nombre_tours " +
                     "FROM seance s " +
@@ -248,9 +223,6 @@ public class SeanceDAO {
         return seances;
     }
     
-    /**
-     * Récupère les séances du mois en cours
-     */
     public List<Seance> findMoisEnCours() {
         String sql = "SELECT s.*, t.nom as tontine_nom, t.statut as tontine_statut, t.nombre_tours " +
                     "FROM seance s " +
@@ -276,9 +248,6 @@ public class SeanceDAO {
         return seances;
     }
     
-    /**
-     * Récupère les séances à venir
-     */
     public List<Seance> findAVenir() {
         String sql = "SELECT s.*, t.nom as tontine_nom, t.statut as tontine_statut, t.nombre_tours " +
                     "FROM seance s " +
@@ -303,9 +272,6 @@ public class SeanceDAO {
         return seances;
     }
     
-    /**
-     * Vérifie si un numéro de tour existe pour une tontine
-     */
     public boolean existsTour(int idTontine, int numeroTour) {
         String sql = "SELECT COUNT(*) FROM seance WHERE id_tontine = ? AND numero_tour = ?";
         
@@ -327,9 +293,6 @@ public class SeanceDAO {
         return false;
     }
     
-    /**
-     * Compte le nombre de séances par tontine
-     */
     public int countByTontine(int idTontine) {
         String sql = "SELECT COUNT(*) FROM seance WHERE id_tontine = ?";
         
@@ -350,9 +313,6 @@ public class SeanceDAO {
         return 0;
     }
     
-    /**
-     * Récupère le dernier numéro de tour pour une tontine
-     */
     public int getLastNumeroTour(int idTontine) {
         String sql = "SELECT COALESCE(MAX(numero_tour), 0) FROM seance WHERE id_tontine = ?";
         
@@ -373,9 +333,6 @@ public class SeanceDAO {
         return 0;
     }
     
-    /**
-     * Convertit un ResultSet en objet Seance
-     */
     private Seance mapResultSetToSeance(ResultSet rs) throws SQLException {
         Seance seance = new Seance();
         seance.setIdSeance(rs.getInt("id_seance"));

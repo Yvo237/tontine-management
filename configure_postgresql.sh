@@ -18,16 +18,16 @@ GRANT ALL PRIVILEGES ON DATABASE gestion_tontine TO tontine_user;
 \q
 EOF
 
-echo "✅ Configuration PostgreSQL terminée"
-echo "📊 Utilisateur: tontine_user"
-echo "🔑 Mot de passe: tontine123"
-echo "🗄️ Base de données: gestion_tontine"
+echo "Configuration PostgreSQL terminée"
+echo "Utilisateur: tontine_user"
+echo "Mot de passe: tontine123"
+echo "Base de données: gestion_tontine"
 echo ""
-echo "🚀 Test de la connexion..."
+echo "Test de la connexion..."
 
 # Tester la connexion
-PGPASSWORD=tontine123 psql -U tontine_user -d gestion_tontine -c "SELECT version();" && echo "✅ Connexion réussie !" || echo "❌ Erreur de connexion"
+PGPASSWORD=tontine123 psql -U tontine_user -d gestion_tontine -c "SELECT version();" && echo "Connexion réussie !" || echo "Erreur de connexion"
 
 echo ""
-echo "🎯 Vous pouvez maintenant exécuter le script de correction :"
+echo "Vous pouvez maintenant exécuter le script de correction :"
 echo "PGPASSWORD=tontine123 psql -U tontine_user -d gestion_tontine -f sql/correction_complete.sql"

@@ -15,7 +15,7 @@ public class Penalite {
     private boolean payee;
     private LocalDateTime createdAt;
     
-    // Associations
+    
     private Membre membre;
     private Seance seance;
     
@@ -118,7 +118,7 @@ public class Penalite {
         this.seance = seance;
     }
     
-    // Méthodes utilitaires
+    
     public void marquerCommePayee() {
         this.payee = true;
     }
